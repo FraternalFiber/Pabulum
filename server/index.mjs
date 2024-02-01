@@ -1,0 +1,17 @@
+import express from 'express';
+import cors from 'cors';
+
+const app = express();
+const hostname = '127.0.0.1';
+const port = 9000;
+
+// Middleware for sending cross-origin resource sharing HTTP header, in order for client to access API responses
+app.use(cors());
+
+app.get('/', (req, res) => {
+   res.json({'status': 'Server is working properly'});
+});
+
+app.listen(port, hostname, () => {
+    console.log(`Listening on ${hostname}:${port}`);
+})
