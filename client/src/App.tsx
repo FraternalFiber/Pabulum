@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
-import { Button } from "@/components/ui/button";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {routes} from "@/helpers/routes.tsx";
 
 function App() {
     console.log('App component is rendering');
@@ -13,7 +14,7 @@ function App() {
         .then(res => res.json())
         .then((res) => {
           setServerStatus(res.status);
-          console.log(res.status);
+          console.log(serverStatus);
         })
         .catch((error) => {
             console.error('Backend API connection error: ', error);
@@ -21,10 +22,17 @@ function App() {
   }, []);
 
   return (
-    <>
-      <p className={"font-bold"}>{serverStatus}</p>
-      <Button type={'button'}>Ok</Button>
-    </>
+    <BrowserRouter>
+      <Routes>
+        {routes.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={route.element}
+            />
+        ))}
+      </Routes>
+    </BrowserRouter>
   )
 }
 
