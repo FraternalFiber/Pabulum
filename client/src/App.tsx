@@ -8,7 +8,7 @@ function App() {
 
   useEffect(() => {
     // Set tab title
-    document.title = "Pabulum - home";
+    document.title = "Pabulum";
     // Connect to backend API at return server status
     fetch('http://127.0.0.1:42069/')
         .then(res => res.json())
