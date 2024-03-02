@@ -1,5 +1,5 @@
-import Menu from "@/components/Menu";
-import Main from "@/components/Main";
+import { Menu } from "@/components/Menu";
+import { Main } from "@/components/Main";
 import {useEffect} from "react";
 
 export default function MyRecipes() {

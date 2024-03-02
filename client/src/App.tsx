@@ -3,7 +3,6 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {routes} from "@/helpers/routes.tsx";
 
 function App() {
-    console.log('App component is rendering');
   const [serverStatus, setServerStatus] = useState<string>('Server is not working');
 
   useEffect(() => {

@@ -4,9 +4,9 @@ interface Props {
   children?: React.ReactNode
 }
 
-export default function Main({children}: Props) {
+export function Main({children}: Props) {
   return (
-      <main>
+      <main className={'p-4 md:p-6'}>
         {children}
       </main>
   )
