@@ -1,4 +1,4 @@
-import {Link} from "react-router-dom";
+import {Link, NavLink} from "react-router-dom";
 import React from "react";
 import {Compass, PlusCircle, Refrigerator, ScrollText, Search as SearchIcon, User} from 'lucide-react';
 
@@ -18,10 +18,11 @@ const menuButtons : Array<MenuButtonProps> = [
 
 function MenuButton({title, path, icon}: MenuButtonProps) {
   return (
-    <Link to={path} className={'flex w-100 p-4 hover:bg-primary'}>
+    // highlight the button when the corresponding subpage is active
+    <NavLink to={path} className={nav => `${nav.isActive ? 'bg-primary' : ''} flex w-100 p-4 hover:bg-primary rounded-sm`} end>
       <div className={'flex items-center mr-2'}>{icon}</div>
       <div>{title}</div>
-    </Link>
+    </NavLink>
   )
 }
 
@@ -29,10 +30,10 @@ function Menu() {
   return (
       <nav className={'flex flex-col w-60 h-100 min-h-screen bg-secondary border-r border-gray-300'}>
         <Link to={'/'} className={'flex flex-row items-center mt-4 mr-20 ml-3 select-none'}>
-          <img src={'public/logo_main.svg'} alt={'logo'} className={'w-14'} draggable={'false'}/>
+          <img src={'/logo_main.svg'} alt={'logo'} className={'w-14'} draggable={'false'}/>
           <h1 className={'text-2xl ml-2 font-bold tracking-wide'}>Pabulum</h1>
         </Link>
-        <div className={'flex flex-col justify-between grow mt-5 h-100'}>
+        <div className={'flex flex-col justify-between grow mt-5 mb-2 pr-2 pl-2 h-100'}>
           <div className={'flex flex-col gap-y-2'}>
             {menuButtons.map((button : MenuButtonProps) => (
                 <MenuButton title={button.title} path={button.path} icon={button.icon} key={button.path}/>
