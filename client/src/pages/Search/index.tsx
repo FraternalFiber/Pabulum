@@ -1,7 +1,7 @@
 import { Menu } from "@/components/Menu";
 import { Main } from "@/components/Main";
-import {useEffect} from "react";
-import SearchForm from "@/components/SearchForm";
+import { useEffect } from "react";
+import { SearchForm } from "@/components/SearchForm";
 
 export default function Search() {
   useEffect(() => {

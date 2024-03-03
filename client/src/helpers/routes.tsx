@@ -26,7 +26,7 @@ export const routes: Array<RouteElement> = [
     element: <Discover/>
   },
   {
-    path: '/myRecipes',
+    path: '/recipe',
     element: <MyRecipes/>
   },
   {
@@ -34,7 +34,7 @@ export const routes: Array<RouteElement> = [
     element: <Pantry/>
   },
   {
-    path: '/createRecipe',
+    path: '/recipe/create',
     element: <CreateRecipe/>
   },
   {

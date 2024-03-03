@@ -1,12 +1,13 @@
 import React from "react";
 
-interface Props {
+interface MainProps {
   children?: React.ReactNode
 }
 
-export function Main({children}: Props) {
+// Main container, next to the Menu.
+export function Main({children}: MainProps) {
   return (
-      <main className={'p-4 md:p-6'}>
+      <main className={'grow p-5 md:p-6'}>
         {children}
       </main>
   )
