@@ -12,6 +12,26 @@ app.get('/', (req, res) => {
    res.json({'status': 'Server is working properly'});
 });
 
+// test data for fetching
+app.get('/search', (req, res) => {
+    res.json({
+        'results': [
+            {
+                "id": 654959,
+                "title": "Pasta With Tuna",
+                "image": "https://spoonacular.com/recipeImages/654959-312x231.jpg",
+                "imageType": "jpg"
+            },
+            {
+                "id": 511728,
+                "title": "Pasta Margherita",
+                "image": "https://spoonacular.com/recipeImages/511728-312x231.jpg",
+                "imageType": "jpg"
+            }
+        ]
+    });
+})
+
 app.listen(port, hostname, () => {
     console.log(`Listening on ${hostname}:${port}`);
 })
