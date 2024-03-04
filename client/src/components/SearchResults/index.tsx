@@ -1,8 +1,8 @@
 import {RecipeResultCard} from "@/components/RecipeResultCard/index.js";
-import {RecipeResult} from "@/types/RecipeResult.ts";
+import {IRecipeResult} from "@/types/IRecipeResult.ts";
 
 interface SearchResultsProps {
-    results: Array<RecipeResult> | null
+    results: Array<IRecipeResult> | null
 }
 
 // Container with recipes result cards shown after submitting a SearchForm
