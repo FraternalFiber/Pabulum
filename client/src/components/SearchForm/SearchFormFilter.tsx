@@ -3,7 +3,13 @@ import {Button} from "@/components/ui/button.tsx";
 import {FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {ISearchFormFilterInterface} from "@/types/ISearchFormFilter.ts";
-// import {UseFormWatch} from 'react-hook-form';
+// import {FieldValues, UseFormReturn} from "react-hook-form";
+
+// interface FormValues {
+//   searchTerm: string,
+//   dietItems: string[],
+//   cuisineItems: string[]
+// }
 
 interface SearchFormFilterProps {
   title: string
@@ -41,7 +47,7 @@ export function SearchFormFilter({title, name, items, form}: SearchFormFilterPro
                                               ? field.onChange([...field.value, item.id])
                                               : field.onChange(
                                                   field.value?.filter(
-                                                      (value: any) => value !== item.id
+                                                      (value: never) => value !== item.id
                                                   )
                                               )
                                         }}
