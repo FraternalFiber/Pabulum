@@ -1,6 +1,7 @@
 import { Menu } from "@/components/Menu";
 import { Main } from "@/components/Main";
 import {useEffect} from "react";
+import Heading from "@/components/Heading";
 
 export default function Home() {
   useEffect(() => {
@@ -10,7 +11,9 @@ export default function Home() {
   return (
       <>
         <Menu/>
-        <Main/>
+        <Main>
+          <Heading text={'Pabulum - tańsi niż nasza DROGA konkurencja'}/>
+        </Main>
       </>
   )
 }

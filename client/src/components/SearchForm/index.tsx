@@ -6,9 +6,10 @@ import {Input} from "@/components/ui/input.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {useState} from "react";
 import {SearchResults} from "@/components/SearchResults";
-import {IRecipeResult} from "@/types/IRecipeResult.ts";
-import {cuisineItems, dietItems} from './searchFormFilterItems.ts'
+// import {IRecipeResult} from "@/types/IRecipeResult.ts";
+import {cuisineItems, dietItems, mealTypeItems} from './searchFormFilterItems.ts'
 import {SearchFormFilter} from "@/components/SearchForm/SearchFormFilter.tsx";
+import {useRecipes} from "@/services/useRecipes.ts";
 // import {FancyMultiSelect} from "@/components/ui/fancy-multi-select.tsx";
 
 // Zod schema object, used to define a form schema for validation
@@ -19,12 +20,30 @@ const formSchema = z.object({
       .min(2, {message: "Enter at least 2 characters"})
       .max(50, {message: "Enter no more than 50 characters."}),
   dietItems: z.array(z.string()),
-  cuisineItems: z.array(z.string())
+  cuisineItems: z.array(z.string()),
+  mealTypeItems: z.array(z.string())
 })
 
 export function SearchForm() {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false)
-  const [searchResults, setSearchResults] = useState<Array<IRecipeResult> | null>(null)
+  // const [searchResults, setSearchResults] = useState<Array<IRecipeResult> | null>(null)
+
+  // Code executed after submitting a form
+  function handleSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitted(true)
+    console.log(values, isSubmitted)
+
+    // fetch('http://127.0.0.1:42069/search')
+    //     .then(res => res.json())
+    //     .then((res) => {
+    //       console.log(res.results)
+    //       setSearchResults(res.results)
+    //     })
+    //     .catch((error) => {
+    //       console.error('Backend API connection error: ', error)
+    //       throw ('Backend API connection error: ' + error)
+    //     })
+  }
 
   // Form definition using a Zod schema for validation. "z.infer" infers a TypeScript type from a Zod schema.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -33,25 +52,22 @@ export function SearchForm() {
     defaultValues: {
       searchTerm: "",
       dietItems: [],
-      cuisineItems: []
+      cuisineItems: [],
+      mealTypeItems: []
     }
   })
 
-  // Code executed after submitting a form
-  function handleSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitted(true)
-    console.log(values)
+  // useRecipes service, used for fetching recipes data from backend
+  const {
+    data: recipes,
+    isLoading: recipesLoading,
+    error: recipesError
+  } = useRecipes()
 
-    fetch('http://127.0.0.1:42069/search')
-        .then(res => res.json())
-        .then((res) => {
-          console.log(res.results)
-          setSearchResults(res.results)
-        })
-        .catch((error) => {
-          console.error('Backend API connection error: ', error)
-          throw ('Backend API connection error: ' + error)
-        })
+  if(isSubmitted) {
+    console.log(recipes)
+    console.log(recipesLoading)
+    console.log(recipesError)
   }
 
   return (
@@ -79,12 +95,19 @@ export function SearchForm() {
               <SearchFormFilter title={'Diet'} name={'dietItems'} items={dietItems} form={form}/>
               {/* Cuisine filter */}
               <SearchFormFilter title={'Cuisine'} name={'cuisineItems'} items={cuisineItems} form={form}/>
+              {/* Meal type filter */}
+              <SearchFormFilter title={'Meal type'} name={'mealTypeItems'} items={mealTypeItems} form={form}/>
             </div>
           </form>
         </Form>
         {/* If form submitted show search results */}
-        {isSubmitted &&
-           <SearchResults results={searchResults}/>
+        {isSubmitted && (
+            <>
+              {recipesLoading && <p>Loading...</p>}
+              {recipesError && <p>An error occured while loading results</p>}
+              {recipes && <SearchResults results={recipes}/>}
+            </>
+          )
         }
       </>
   );

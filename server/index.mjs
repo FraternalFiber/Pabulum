@@ -32,6 +32,19 @@ app.get('/search', (req, res) => {
     });
 })
 
+app.get('/search/:id', (req, res) => {
+    if(req.params.id == 1) {
+        res.json({
+            "vegetarian": false,
+            "vegan": false,
+            "glutenFree": false,
+            "dairyFree": false,
+            "title": "Pasta With Tuna",
+            "image": "https://spoonacular.com/recipeImages/654959-556x370.jpg",
+        })
+    }
+})
+
 app.listen(port, hostname, () => {
     console.log(`Listening on ${hostname}:${port}`);
 })
