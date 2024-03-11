@@ -11,14 +11,14 @@ export function SearchResults({results}: SearchResultsProps) {
         <>
             {results
                 ? (
-                    <div className={'mt-9 flex flex-col gap-5 md:flex-row'}>
+                    <div className={'flex flex-col w-100 gap-5'}>
                         {results.map((result) => (
                             <RecipeResultCard title={result.title} imageUrl={result.image} key={result.id}/>
                         ))}
                     </div>
                 )
                 : (
-                    <div className={'mt-7 ml-2'}>
+                    <div>
                         <p>No results</p>
                     </div>
                 )

@@ -12,7 +12,7 @@ export const getRecipes = async () => {
 
 export const useRecipes = () => {
   return useQuery<IRecipeResult[]>({
-    queryKey: ['recipes'],
+    queryKey: ['recipesSearchResults'],
     queryFn: getRecipes
   })
 }
