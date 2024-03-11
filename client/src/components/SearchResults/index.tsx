@@ -11,7 +11,7 @@ export function SearchResults({results}: SearchResultsProps) {
         <>
             {results
                 ? (
-                    <div className={'flex flex-col w-100 gap-5'}>
+                    <div className={'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-100 gap-5'}>
                         {results.map((result) => (
                             <RecipeResultCard title={result.title} imageUrl={result.image} key={result.id}/>
                         ))}

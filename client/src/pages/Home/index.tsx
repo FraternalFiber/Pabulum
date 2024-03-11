@@ -48,26 +48,28 @@ export default function Home() {
       <>
         <Menu/>
         <Main>
-          <Heading text={'Pabulum - tańsi niż nasza DROGA konkurencja'}/>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)}>
-              <div className={'flex gap-x-2'}>
-                {/* Search field */}
-                <FormField
-                    control={form.control}
-                    name={'q'}
-                    render={({field}) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input className={'w-72 pt-6 pr-6 pb-6 pl-4'} placeholder={"Search for your favourite dishes..."} {...field}/>
-                          </FormControl>
-                        </FormItem>
-                    )}
-                />
-                <Button type={'submit'} className={'p-6'}>Search</Button>
-              </div>
-            </form>
-          </Form>
+          <div>
+            <Heading text={'Pabulum - tańsi niż nasza DROGA konkurencja'}/>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleSubmit)}>
+                <div className={'flex gap-x-2'}>
+                  {/* Search field */}
+                  <FormField
+                      control={form.control}
+                      name={'q'}
+                      render={({field}) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input className={'w-72 pt-6 pr-6 pb-6 pl-4'} placeholder={"Search for your favourite dishes..."} {...field}/>
+                            </FormControl>
+                          </FormItem>
+                      )}
+                  />
+                  <Button type={'submit'} className={'p-6'}>Search</Button>
+                </div>
+              </form>
+            </Form>
+          </div>
         </Main>
       </>
   )

@@ -11,7 +11,7 @@ interface RecipeResultCardProps {
 // Small card with brief information about a recipe shown in the search results page.
 export function RecipeResultCard({className, title, imageUrl}: RecipeResultCardProps) {
   return (
-      <Card className={cn(className, 'w-100')}>
+      <Card className={cn(className, 'w-100 ')}>
         <CardHeader>
           <CardTitle>{title}</CardTitle>
         </CardHeader>
