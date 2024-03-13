@@ -13,7 +13,7 @@ export function SearchResults({results}: SearchResultsProps) {
                 ? (
                     <div className={'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-100 gap-5'}>
                         {results.map((result) => (
-                            <RecipeResultCard title={result.title} imageUrl={result.image} key={result.id}/>
+                            <RecipeResultCard id={result.id} title={result.title} imageUrl={result.image} key={result.id}/>
                         ))}
                     </div>
                 )
