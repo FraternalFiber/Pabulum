@@ -56,10 +56,10 @@ function Menu() {
           <MenuContent/>
         </nav>
         {/* Collapsable menu */}
-        <div className={'sm:hidden fixed flex-col top-0 p-3'}>
+        <div className={'sm:hidden fixed flex-col w-screen top-0 pl-3 pt-2 pb-1 bg-white'}>
           <Sheet>
             <SheetTrigger>
-              <MenuIcon size={35}/>
+              <MenuIcon size={35} className={'p-0 m-0'}/>
             </SheetTrigger>
             <SheetContent className={'w-60 p-2 pt-5'} side={'left'}>
               <MenuContent/>
