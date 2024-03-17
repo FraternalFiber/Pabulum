@@ -1,6 +1,6 @@
 import {Link, NavLink} from "react-router-dom";
 import React from "react";
-import {Compass, PlusCircle, Refrigerator, ScrollText, Search as SearchIcon, User, Menu as MenuIcon} from 'lucide-react';
+import {Compass as CompassIcon, PlusCircle as PlusCircleIcon, Refrigerator as RefrigeratorIcon, ScrollText as ScrollTextIcon, Search as SearchIcon, User as UserIcon, Menu as MenuIcon} from 'lucide-react';
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet.tsx";
 
 interface MenuButtonProps {
@@ -11,10 +11,10 @@ interface MenuButtonProps {
 
 const menuButtons : Array<MenuButtonProps> = [
   { title: 'Search recipes', path: '/search', icon: <SearchIcon size={20}/>},
-  { title: 'Discover', path: '/discover', icon: <Compass size={20}/>},
-  { title: 'My recipes', path: '/recipe', icon: <ScrollText size={20}/>},
-  { title: 'My pantry', path: '/pantry', icon: <Refrigerator size={20}/>},
-  { title: 'Create recipe', path: '/recipe/create', icon: <PlusCircle size={20}/>}
+  { title: 'Discover', path: '/discover', icon: <CompassIcon size={20}/>},
+  { title: 'My recipes', path: '/recipe', icon: <ScrollTextIcon size={20}/>},
+  { title: 'My pantry', path: '/pantry', icon: <RefrigeratorIcon size={20}/>},
+  { title: 'Create recipe', path: '/recipe/create', icon: <PlusCircleIcon size={20}/>}
 ]
 
 function MenuButton({title, path, icon}: MenuButtonProps) {
@@ -41,7 +41,7 @@ function MenuContent() {
             ))}
           </div>
           <div className={'flex flex-col mt-2 gap-y-2'}>
-            <MenuButton title={'My account'} path={'/account'} icon={<User size={20}/>} key={'/account'}/>
+            <MenuButton title={'My account'} path={'/account'} icon={<UserIcon size={20}/>} key={'/account'}/>
           </div>
         </div>
       </>
