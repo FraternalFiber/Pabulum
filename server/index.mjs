@@ -17,6 +17,7 @@ app.get('/', (req, res) => {
    res.json({'status': 'Server is working properly'});
 });
 
+
 //response for search result
 app.get('/search', async (req, res) => {
     let {query, ingredients, cuisine, diet, type} = req.body;
