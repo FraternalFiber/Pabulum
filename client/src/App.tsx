@@ -1,6 +1,9 @@
 import {useEffect, useState} from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {routes} from "@/helpers/routes.tsx";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+
+const queryClient = new QueryClient()
 
 function App() {
   const [serverStatus, setServerStatus] = useState<string>('Server is not working');
@@ -21,17 +24,19 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        {routes.map((route) => (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={route.element}
-            />
-        ))}
-      </Routes>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Routes>
+          {routes.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={route.element}
+              />
+          ))}
+        </Routes>
+      </BrowserRouter>
+    </QueryClientProvider>
   )
 }
 

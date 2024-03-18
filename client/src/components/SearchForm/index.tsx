@@ -1,59 +1,84 @@
 import { z } from "zod";
-import { useForm } from "react-hook-form"
+import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem} from "@/components/ui/form.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {SearchResults} from "@/components/SearchResults";
-import {RecipeResult} from "@/types/RecipeResult.ts";
+import {cuisineItems, dietItems, mealTypeItems} from './searchFormFilterItems.ts'
+import {SearchFormFilter} from "@/components/SearchForm/SearchFormFilter.tsx";
+import {useRecipes} from "@/services/useRecipes.ts";
+import {useSearchParams} from "react-router-dom";
 
 // Zod schema object, used to define a form schema for validation
 const formSchema = z.object({
-  searchTerm: z
+  q: z
       .string()
       .trim()
       .min(2, {message: "Enter at least 2 characters"})
-      .max(50, {message: "Enter no more than 50 characters."})
+      .max(50, {message: "Enter no more than 50 characters."}),
+  diet: z.array(z.string()),
+  cuisine: z.array(z.string()),
+  mealType: z.array(z.string())
 })
 
 export function SearchForm() {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false)
-  const [searchResults, setSearchResults] = useState<Array<RecipeResult> | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  // const [searchResults, setSearchResults] = useState<Array<IRecipeResult> | null>(null)
+
+  // Code executed after submitting a form
+  function handleSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitted(true)
+    setSearchParams(values)
+
+    console.log(values)
+  }
+
+  // Submit form when search params changed
+  useEffect(() => {
+    if(searchParams.size > 0) {
+      console.log("submit")
+      setIsSubmitted(true)
+    }
+  }, [searchParams.size])
 
   // Form definition using a Zod schema for validation. "z.infer" infers a TypeScript type from a Zod schema.
   const form = useForm<z.infer<typeof formSchema>>({
     // use forSchema to validate form data
     resolver: zodResolver(formSchema),
     defaultValues: {
-      searchTerm: ""
+      q: "",
+      diet: [],
+      cuisine: [],
+      mealType: []
     }
   })
 
-  // Code executed after submitting a form
-  function handleSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitted(true)
-    console.log(values)
-    fetch('http://127.0.0.1:42069/search')
-        .then(res => res.json())
-        .then((res) => {
-          console.log(res.results)
-          setSearchResults(res.results)
-        })
-        .catch((error) => {
-          console.error('Backend API connection error: ', error)
-          throw ('Backend API connection error: ' + error)
-        })
-  }
+  // useRecipes service, used for fetching recipes data from backend
+  const {
+    data: recipes,
+    isLoading: recipesLoading,
+    error: recipesError
+  } = useRecipes()
+
+  // if(isSubmitted) {
+  //   console.log(recipes)
+  //   console.log(recipesLoading)
+  //   console.log(recipesError)
+  // }
 
   return (
       <>
+        {/* Main form form searching recipes */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className={'flex flex-col'}>
             <div className={'flex gap-x-2'}>
+              {/* Main search field */}
               <FormField
                   control={form.control}
-                  name={'searchTerm'}
+                  name={'q'}
                   render={({field}) => (
                       <FormItem>
                         <FormControl>
@@ -64,11 +89,24 @@ export function SearchForm() {
               />
               <Button type={'submit'}>Search</Button>
             </div>
+            <div className={'mt-3 flex gap-x-3'}>
+              {/* Diet filter */}
+              <SearchFormFilter title={'Diet'} name={'diet'} items={dietItems} form={form}/>
+              {/* Cuisine filter */}
+              <SearchFormFilter title={'Cuisine'} name={'cuisine'} items={cuisineItems} form={form}/>
+              {/* Meal type filter */}
+              <SearchFormFilter title={'Meal type'} name={'mealType'} items={mealTypeItems} form={form}/>
+            </div>
           </form>
         </Form>
         {/* If form submitted show search results */}
-        {isSubmitted &&
-           <SearchResults results={searchResults}/>
+        {isSubmitted && (
+            <div className={'mt-7'}>
+              {recipesLoading && <p>Loading...</p>}
+              {recipesError && <p>An error occurred while loading results</p>}
+              {recipes && <SearchResults results={recipes}/>}
+            </div>
+          )
         }
       </>
   );

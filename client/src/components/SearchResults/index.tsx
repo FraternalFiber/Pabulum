@@ -1,8 +1,8 @@
 import {RecipeResultCard} from "@/components/RecipeResultCard/index.js";
-import {RecipeResult} from "@/types/RecipeResult.ts";
+import {IRecipeResult} from "@/types/IRecipeResult.ts";
 
 interface SearchResultsProps {
-    results: Array<RecipeResult> | null
+    results: Array<IRecipeResult> | undefined
 }
 
 // Container with recipes result cards shown after submitting a SearchForm
@@ -11,13 +11,17 @@ export function SearchResults({results}: SearchResultsProps) {
         <>
             {results
                 ? (
-                    <div className={'mt-9 flex flex-col gap-5 md:flex-row'}>
+                    <div className={'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-100 gap-5'}>
                         {results.map((result) => (
-                            <RecipeResultCard title={result.title} imageUrl={result.image} key={result.id}/>
+                            <RecipeResultCard id={result.id} title={result.title} imageUrl={result.image} key={result.id}/>
                         ))}
                     </div>
                 )
-                : (<p>No results</p>)
+                : (
+                    <div>
+                        <p>No results</p>
+                    </div>
+                )
             }
         </>
     )

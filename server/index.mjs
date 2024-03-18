@@ -17,7 +17,6 @@ app.get('/', (req, res) => {
    res.json({'status': 'Server is working properly'});
 });
 
-
 //response for search result
 app.get('/search', async (req, res) => {
     let {query, ingredients, cuisine, diet, type} = req.body;
@@ -48,7 +47,7 @@ app.get('/search', async (req, res) => {
 });
 
 //details of specific recipe containing detailed informations and instructions
-app.get('/search/:id', async (req, res) => {
+app.get('/recipe/:id', async (req, res) => {
     const id = req.params.id;
 
     try

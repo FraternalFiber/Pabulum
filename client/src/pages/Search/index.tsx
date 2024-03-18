@@ -2,6 +2,7 @@ import { Menu } from "@/components/Menu";
 import { Main } from "@/components/Main";
 import { useEffect } from "react";
 import { SearchForm } from "@/components/SearchForm";
+import Heading from "@/components/Heading";
 
 export default function Search() {
   useEffect(() => {
@@ -12,9 +13,7 @@ export default function Search() {
       <>
         <Menu/>
         <Main>
-          <h1 className={'text-2xl md:text-3xl mt-2 mb-7 font-bold tracking-tight'}>
-            Find your favourite recipes
-          </h1>
+          <Heading text={'Find your favourite recipes'}/>
           <SearchForm/>
         </Main>
       </>
