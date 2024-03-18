@@ -1,0 +1,110 @@
+const dietItems = [
+  {
+    id: 'vegetarian',
+    label: 'Vegetarian'
+  },
+  {
+    id: 'vegan',
+    label: 'Vegan'
+  },
+  {
+    id: 'gluten_free',
+    label: 'Gluten free'
+  },
+  {
+    id: 'ketogenic',
+    label: 'Ketogenic'
+  },
+]
+
+const cuisineItems = [
+  {
+    id: 'asian',
+    label: 'Asian'
+  },
+  {
+    id: 'french',
+    label: 'French'
+  },
+  {
+    id: 'italian',
+    label: 'Italian'
+  },
+  {
+    id: 'korean',
+    label: 'Korean'
+  },
+  {
+    id: 'mexican',
+    label: 'Mexican'
+  },
+  {
+    id: 'spanish',
+    label: 'Spanish'
+  },
+  {
+    id: 'vietnamese',
+    label: 'Vietnamese'
+  }
+]
+
+const mealTypeItems = [
+  {
+    id: 'main_course',
+    label: 'Main course'
+  },
+  {
+    id: 'side_dish',
+    label: 'Side dish'
+  },
+  {
+    id: 'dessert',
+    label: 'Dessert'
+  },
+  {
+    id: 'appetizer',
+    label: 'Appetizer'
+  },
+  {
+    id: 'salad',
+    label: 'Salad'
+  },
+  {
+    id: 'bread',
+    label: 'Bread'
+  },
+  {
+    id: 'breakfast',
+    label: 'Breakfast'
+  },
+  {
+    id: 'soup',
+    label: 'Soup'
+  },
+  {
+    id: 'beverage',
+    label: 'Beverage'
+  },
+  {
+    id: 'sauce',
+    label: 'Sauce'
+  },
+  {
+    id: 'marinade',
+    label: 'Marinade'
+  },
+  {
+    id: 'fingerfood',
+    label: 'Finger food'
+  },
+  {
+    id: 'snack',
+    label: 'Snack'
+  },
+  {
+    id: 'drink',
+    label: 'Drink'
+  },
+]
+
+export {dietItems, cuisineItems, mealTypeItems}
