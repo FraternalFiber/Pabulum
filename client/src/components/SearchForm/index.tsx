@@ -4,12 +4,12 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem} from "@/components/ui/form.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {SearchResults} from "@/components/SearchResults";
 import {cuisineItems, dietItems, mealTypeItems} from './searchFormFilterItems.ts'
 import {SearchFormFilter} from "@/components/SearchForm/SearchFormFilter.tsx";
-import {useRecipes} from "@/services/useRecipes.ts";
-import {useSearchParams} from "react-router-dom";
+// import {useSearchParams} from "react-router-dom";
+// import {IRecipeSearchParams} from "@/types/IRecipeSearchParams.ts";
 
 // Zod schema object, used to define a form schema for validation
 const formSchema = z.object({
@@ -25,24 +25,34 @@ const formSchema = z.object({
 
 export function SearchForm() {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false)
-  const [searchParams, setSearchParams] = useSearchParams()
-  // const [searchResults, setSearchResults] = useState<Array<IRecipeResult> | null>(null)
+  // const [URLSearchParams, setURLSearchParams] = useSearchParams()
+  // const [searchParams, setSearchParams] = useState<IRecipeSearchParams>()
+  const [query, setQuery] = useState<string>('')
+  // useRecipes service, used for fetching recipes data from backend
+  // const {
+  //   data: recipes,
+  //   isLoading: recipesLoading,
+  //   error: recipesError
+  // } = useRecipes()
 
   // Code executed after submitting a form
-  function handleSubmit(values: z.infer<typeof formSchema>) {
+  async function handleSubmit(values: z.infer<typeof formSchema>) {
+    // setURLSearchParams(values)
+    // setSearchParams(values)
+    console.log("SUBMITTED")
     setIsSubmitted(true)
-    setSearchParams(values)
+    setQuery(values.q)
 
-    console.log(values)
+    // console.log('SearchForm')
+    // console.log(values.q)
   }
 
   // Submit form when search params changed
-  useEffect(() => {
-    if(searchParams.size > 0) {
-      console.log("submit")
-      setIsSubmitted(true)
-    }
-  }, [searchParams.size])
+  // useEffect(() => {
+  //   if(URLSearchParams.size > 0) {
+  //     setIsSubmitted(true)
+  //   }
+  // }, [URLSearchParams])
 
   // Form definition using a Zod schema for validation. "z.infer" infers a TypeScript type from a Zod schema.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -55,19 +65,6 @@ export function SearchForm() {
       mealType: []
     }
   })
-
-  // useRecipes service, used for fetching recipes data from backend
-  const {
-    data: recipes,
-    isLoading: recipesLoading,
-    error: recipesError
-  } = useRecipes()
-
-  // if(isSubmitted) {
-  //   console.log(recipes)
-  //   console.log(recipesLoading)
-  //   console.log(recipesError)
-  // }
 
   return (
       <>
@@ -99,12 +96,10 @@ export function SearchForm() {
             </div>
           </form>
         </Form>
-        {/* If form submitted show search results */}
-        {isSubmitted && (
+        {/* If form submitted and query is not empty show search results */}
+        {isSubmitted && query && (
             <div className={'mt-7'}>
-              {recipesLoading && <p>Loading...</p>}
-              {recipesError && <p>An error occurred while loading results</p>}
-              {recipes && <SearchResults results={recipes}/>}
+              <SearchResults query={query}/>
             </div>
           )
         }
