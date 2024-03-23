@@ -11,6 +11,10 @@ export const getRecipe = async (id: string) => {
 export const useRecipe = (id: string) => {
   return useQuery({
     queryKey: ['recipe', id],
-    queryFn: () => getRecipe(id)
+    queryFn: () => getRecipe(id),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    gcTime: 60 * 60 * 1000 //garbage collect after 60 minutes
   })
 }
