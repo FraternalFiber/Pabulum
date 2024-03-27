@@ -22,46 +22,35 @@ var counter = 0
 //response for search result
 app.get('/search', async (req, res) => {
     const data = req.query
+
     counter += 1
-    console.log('q: ' + data.q + ' (' + counter + ')')
+    console.log(`q ${counter}: ${data.q}`)
+    console.log(data)
+
+    // add search params to url only if they are not undefined
+    const searchParams = Object.assign({},
+        data.q === undefined ? null : {query: data.q},
+        data.diet === undefined ? null : {diet: data.diet},
+        data.cuisine === undefined ? null : {cuisine: data.cuisine},
+        data.mealType === undefined ? null : {type: data.mealType}
+    )
+
     const url = 'https://api.spoonacular.com/recipes/complexSearch?' + new URLSearchParams({
       apiKey: SPOONACULAR_APIKEY,
-      instructionsRequired: true,
-      query: data.q
+      // instructionsRequired: true,
+      ...searchParams
     })
-    // console.log(url)
+    console.log(url)
     fetch(url)
         .then((response) => response.json())
         .then((data) => {
             // console.log(data.toString());
             res.json(data);
-        });
-    // let {q, ingredients, cuisine, diet, type} = req.body;
-    // console.log(req.body)
-    // const number = 5;
-    //
-    // if(q === undefined) q = '';
-    // if(ingredients === undefined) ingredients = '';
-    // if(cuisine === undefined) cuisine = '';
-    // if(diet === undefined) diet = '';
-    // if(type === undefined) type = '';
-    //
-    // try
-    // {
-    //     // console.log(SPOONACULAR_APIKEY);
-    //     // console.log(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${SPOONACULAR_APIKEY}&query=${q}&instructionsRequired=true&includeIngredients=${ingredients}&cuisine=${cuisine}&diet=${diet}&type=${type}&number=${number}`);
-    //     fetch(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${SPOONACULAR_APIKEY}&query=${q}&instructionsRequired=true&includeIngredients=${ingredients}&cuisine=${cuisine}&diet=${diet}&type=${type}&number=${number}`)
-    //         .then((response) => response.json())
-    //         .then((data) => {
-    //             // console.log(data.toString());
-    //             res.json(data);
-    //         });
-    // }
-    // catch (error)
-    // {
-    //     console.error('Error fetching data from external API:', error);
-    //     res.status(500).json({ error: 'An error occurred while fetching data' });
-    // }
+        })
+        .catch((error) => {
+            console.error('Error fetching data from external API: ', error);
+            res.status(500).json({ error: 'An error occurred while fetching data' });
+        })
 });
 
 //details of specific recipe containing detailed information and instructions
@@ -74,7 +63,10 @@ app.get('/recipe/:id', async (req, res) => {
             .then((response) => response.json())
             .then((data) => {
                 res.json(data);
-            });
+            })
+            .catch((error) => {
+                console.error('Error fetching data from external API: ', error);
+            })
     }
     catch (error)
     {

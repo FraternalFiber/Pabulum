@@ -8,7 +8,7 @@ const dietItems = [
     label: 'Vegan'
   },
   {
-    id: 'gluten_free',
+    id: 'gluten free',
     label: 'Gluten free'
   },
   {
@@ -50,11 +50,11 @@ const cuisineItems = [
 
 const mealTypeItems = [
   {
-    id: 'main_course',
+    id: 'main course',
     label: 'Main course'
   },
   {
-    id: 'side_dish',
+    id: 'side dish',
     label: 'Side dish'
   },
   {
