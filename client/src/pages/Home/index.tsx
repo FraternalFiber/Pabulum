@@ -19,7 +19,6 @@ const formSchema = z.object({
       .max(50, {message: "Enter no more than 50 characters."}),
 })
 
-
 export default function Home() {
   const navigate = useNavigate();
 
@@ -49,7 +48,7 @@ export default function Home() {
         <Menu/>
         <Main>
           <div>
-            <Heading text={'Pabulum - tańsi niż nasza DROGA konkurencja'}/>
+            <Heading text={'Pabulum - savor the flavor, master the meal!'}/>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)}>
                 <div className={'flex gap-x-2'}>

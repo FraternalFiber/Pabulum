@@ -1,30 +1,29 @@
 import {RecipeResultCard} from "@/components/RecipeResultCard/index.js";
 // import {IRecipeResult} from "@/types/IRecipeResult.ts";
 import {useRecipes} from "@/services/useRecipes.ts";
-
-interface SearchResultsProps {
-    // results: Array<IRecipeResult> | undefined
-    query: string
-}
+import {useEffect} from "react";
+import {IRecipeSearchParams} from "@/types/IRecipeSearchParams.ts";
+import {useSearchParams} from "react-router-dom";
 
 // Container with recipes result cards shown after submitting a SearchForm
-// export function SearchResults({results}: SearchResultsProps) {
-export function SearchResults({query}: SearchResultsProps) {
-    const {
-      data: recipes,
-      isLoading: recipesLoading,
-      error: recipesError
-    } = useRecipes(query)
+export function SearchResults(searchParams: IRecipeSearchParams) {
+    const [URLSearchParams] = useSearchParams()
+    const {data: recipes, isLoading, isError, refetch} = useRecipes(searchParams)
 
-    if(recipesLoading) {
+    // Refetch when search params changed
+    useEffect(() => {
+        refetch()
+    }, [URLSearchParams])
+
+    if(isLoading) {
         return <p>Loading...</p>
     }
 
-    if(recipesError) {
+    if(isError) {
         return <p>An error occurred while fetching recipes</p>
     }
 
-    console.log(recipes)
+    // console.log(recipes)
 
     return (
         <>

@@ -1,11 +1,16 @@
 import {useQuery} from "@tanstack/react-query";
 import {IRecipeResult} from "@/types/IRecipeResult.ts";
-// import {IRecipeSearchParams} from "@/types/IRecipeSearchParams.ts";
+import {IRecipeSearchParams} from "@/types/IRecipeSearchParams.ts";
 
-export const getRecipes = async (query : string) => {
-  // if(recipeSearchParams != null) {
+export const getRecipes = async (searchParams : IRecipeSearchParams) => {
   const url = new URL('http://127.0.0.1:42069/search?')
-  url.search = new URLSearchParams({q: query}).toString()
+  const params = new URLSearchParams({q: searchParams.q})
+
+  // Add an array of filters to url.search params
+  searchParams.diet.forEach(diet => params.append('diet', diet))
+  searchParams.cuisine.forEach(cuisine => params.append('cuisine', cuisine))
+  searchParams.mealType.forEach(mealType => params.append('mealType', mealType))
+  url.search = params.toString()
 
   return fetch(url)
       .then(res => res.json())
@@ -15,10 +20,11 @@ export const getRecipes = async (query : string) => {
       })
 }
 
-export const useRecipes = (query : string) => {
+// service used for fetching recipes data from backend
+export const useRecipes = (searchParams : IRecipeSearchParams) => {
   return useQuery<IRecipeResult[]>({
     queryKey: ['recipesSearchResults'],
-    queryFn: () => getRecipes(query),
+    queryFn: () => getRecipes(searchParams),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,

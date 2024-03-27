@@ -4,12 +4,12 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem} from "@/components/ui/form.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {SearchResults} from "@/components/SearchResults";
 import {cuisineItems, dietItems, mealTypeItems} from './searchFormFilterItems.ts'
 import {SearchFormFilter} from "@/components/SearchForm/SearchFormFilter.tsx";
-// import {useSearchParams} from "react-router-dom";
-// import {IRecipeSearchParams} from "@/types/IRecipeSearchParams.ts";
+import {useSearchParams} from "react-router-dom";
+import {IRecipeSearchParams} from "@/types/IRecipeSearchParams.ts";
 
 // Zod schema object, used to define a form schema for validation
 const formSchema = z.object({
@@ -25,46 +25,49 @@ const formSchema = z.object({
 
 export function SearchForm() {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false)
-  // const [URLSearchParams, setURLSearchParams] = useSearchParams()
+  const [URLSearchParams, setURLSearchParams] = useSearchParams()
   // const [searchParams, setSearchParams] = useState<IRecipeSearchParams>()
-  const [query, setQuery] = useState<string>('')
-  // useRecipes service, used for fetching recipes data from backend
-  // const {
-  //   data: recipes,
-  //   isLoading: recipesLoading,
-  //   error: recipesError
-  // } = useRecipes()
+  const [searchParams, setSearchParams] = useState<IRecipeSearchParams>()
 
   // Code executed after submitting a form
   async function handleSubmit(values: z.infer<typeof formSchema>) {
-    // setURLSearchParams(values)
-    // setSearchParams(values)
-    console.log("SUBMITTED")
+    setURLSearchParams(values)
     setIsSubmitted(true)
-    setQuery(values.q)
-
-    // console.log('SearchForm')
-    // console.log(values.q)
+    // setSearchParams(values)
+    setSearchParams(values)
+    // console.log(searchParams)
   }
-
-  // Submit form when search params changed
-  // useEffect(() => {
-  //   if(URLSearchParams.size > 0) {
-  //     setIsSubmitted(true)
-  //   }
-  // }, [URLSearchParams])
 
   // Form definition using a Zod schema for validation. "z.infer" infers a TypeScript type from a Zod schema.
   const form = useForm<z.infer<typeof formSchema>>({
     // use forSchema to validate form data
     resolver: zodResolver(formSchema),
+    // set default values to URL params if they are not undefined (e.g. when reloading page)
     defaultValues: {
-      q: "",
+      q: '',
       diet: [],
       cuisine: [],
       mealType: []
     }
   })
+
+  // Submit form when URL search params changed
+  useEffect(() => {
+    if(URLSearchParams.size > 0) {
+      setIsSubmitted(true)
+      console.log(URLSearchParams)
+      console.log(URLSearchParams.get('q'))
+
+      const values : IRecipeSearchParams = {
+        q: URLSearchParams.get('q') ?? '', //assign an empty string if equals null
+        diet: URLSearchParams.getAll('diet') ?? [],
+        cuisine: URLSearchParams.getAll('cuisine') ?? [],
+        mealType: URLSearchParams.getAll('mealType') ?? [],
+      }
+
+      setSearchParams(values)
+    }
+  }, [URLSearchParams])
 
   return (
       <>
@@ -97,9 +100,9 @@ export function SearchForm() {
           </form>
         </Form>
         {/* If form submitted and query is not empty show search results */}
-        {isSubmitted && query && (
+        {isSubmitted && searchParams && (
             <div className={'mt-7'}>
-              <SearchResults query={query}/>
+              <SearchResults {...searchParams}/>
             </div>
           )
         }
