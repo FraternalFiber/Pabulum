@@ -62,6 +62,9 @@ app.get('/recipe/:id', async (req, res) => {
         fetch(`https://api.spoonacular.com/recipes/${id}/information?apiKey=${SPOONACULAR_APIKEY}&instructionsRequired=true`)
             .then((response) => response.json())
             .then((data) => {
+                //remove ingredients that don't exist in API's database anymore from given list
+                data.extendedIngredients = data.extendedIngredients.filter(object => object.id !== -1);
+
                 res.json(data);
             })
             .catch((error) => {
