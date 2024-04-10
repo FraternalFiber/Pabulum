@@ -1,7 +1,7 @@
 import { Menu } from "@/components/Menu";
 import { Main } from "@/components/Main";
 import {useEffect} from "react";
-import Heading from "@/components/Heading";
+import {Heading} from "@/components/Heading";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
@@ -19,7 +19,7 @@ const formSchema = z.object({
       .max(50, {message: "Enter no more than 50 characters."}),
 })
 
-export default function Home() {
+export function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {

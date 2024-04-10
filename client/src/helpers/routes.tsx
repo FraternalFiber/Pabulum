@@ -1,12 +1,12 @@
 import React from "react";
-import Home from "@/pages/Home";
-import Search from "@/pages/Search";
-import Discover from "@/pages/Discover";
-import MyRecipes from "@/pages/MyRecipes";
-import Pantry from "@/pages/Pantry";
-import CreateRecipe from "@/pages/CreateRecipe";
-import Account from "@/pages/Account";
-import Recipe from "@/pages/Recipe";
+import {Home} from "@/pages/Home";
+import {Search} from "@/pages/Search";
+import {Discover} from "@/pages/Discover";
+import {MyRecipes} from "@/pages/MyRecipes";
+import {Pantry} from "@/pages/Pantry";
+import {CreateRecipe} from "@/pages/CreateRecipe";
+import {Account} from "@/pages/Account";
+import {Recipe} from "@/pages/Recipe";
 
 interface RouteElement {
   path: string
@@ -31,12 +31,12 @@ export const routes: Array<RouteElement> = [
     element: <MyRecipes/>
   },
   {
-    path: '/recipe/:id',
-    element: <Recipe/>
-  },
-  {
     path: '/recipe/create',
     element: <CreateRecipe/>
+  },
+  {
+    path: '/recipe/:id',
+    element: <Recipe/>
   },
   {
     path: '/pantry',
