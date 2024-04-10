@@ -1,4 +1,4 @@
-export interface IRecipeResult {
+export type TRecipeResult = {
   id: number
   title: string
   image: string

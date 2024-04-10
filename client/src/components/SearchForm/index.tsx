@@ -9,7 +9,7 @@ import {SearchResults} from "@/components/SearchResults";
 import {cuisineItems, dietItems, mealTypeItems} from './searchFormFilterItems.ts'
 import {SearchFormFilter} from "@/components/SearchForm/SearchFormFilter.tsx";
 import {useSearchParams} from "react-router-dom";
-import {IRecipeSearchParams} from "@/types/IRecipeSearchParams.ts";
+import {TRecipeSearchParams} from "@/types/TRecipeSearchParams.ts";
 
 // Zod schema object, used to define a form schema for validation
 const formSchema = z.object({
@@ -27,7 +27,7 @@ export function SearchForm() {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false)
   const [URLSearchParams, setURLSearchParams] = useSearchParams()
   // const [searchParams, setSearchParams] = useState<IRecipeSearchParams>()
-  const [searchParams, setSearchParams] = useState<IRecipeSearchParams>()
+  const [searchParams, setSearchParams] = useState<TRecipeSearchParams>()
 
   // Code executed after submitting a form
   async function handleSubmit(values: z.infer<typeof formSchema>) {
@@ -58,7 +58,7 @@ export function SearchForm() {
       console.log(URLSearchParams)
       console.log(URLSearchParams.get('q'))
 
-      const values : IRecipeSearchParams = {
+      const values : TRecipeSearchParams = {
         q: URLSearchParams.get('q') ?? '', //assign an empty string if equals null
         diet: URLSearchParams.getAll('diet') ?? [],
         cuisine: URLSearchParams.getAll('cuisine') ?? [],
@@ -77,8 +77,8 @@ export function SearchForm() {
             <div className={'flex gap-x-2'}>
               {/* Main search field */}
               <FormField
-                  control={form.control}
                   name={'q'}
+                  control={form.control}
                   render={({field}) => (
                       <FormItem>
                         <FormControl>

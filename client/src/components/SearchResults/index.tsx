@@ -2,11 +2,11 @@ import {RecipeResultCard} from "@/components/RecipeResultCard/index.js";
 // import {IRecipeResult} from "@/types/IRecipeResult.ts";
 import {useRecipes} from "@/services/useRecipes.ts";
 import {useEffect} from "react";
-import {IRecipeSearchParams} from "@/types/IRecipeSearchParams.ts";
+import {TRecipeSearchParams} from "@/types/TRecipeSearchParams.ts";
 import {useSearchParams} from "react-router-dom";
 
 // Container with recipes result cards shown after submitting a SearchForm
-export function SearchResults(searchParams: IRecipeSearchParams) {
+export function SearchResults(searchParams: TRecipeSearchParams) {
     const [URLSearchParams] = useSearchParams()
     const {data: recipes, isLoading, isError, refetch} = useRecipes(searchParams)
 
