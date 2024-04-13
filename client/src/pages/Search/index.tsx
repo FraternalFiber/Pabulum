@@ -13,7 +13,7 @@ export function Search() {
       <>
         <Menu/>
         <Main>
-          <Heading text={'Find your favourite recipes'}/>
+          <Heading content={'Find your favourite recipes'}/>
           <SearchForm/>
         </Main>
       </>
