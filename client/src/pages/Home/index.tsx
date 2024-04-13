@@ -48,7 +48,7 @@ export function Home() {
         <Menu/>
         <Main>
           <div>
-            <Heading text={'Pabulum - savor the flavor, master the meal!'}/>
+            <Heading content={'Pabulum - savor the flavor, master the meal!'}/>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)}>
                 <div className={'flex gap-x-2'}>

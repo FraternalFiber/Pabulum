@@ -1,11 +1,11 @@
 interface HeadingProps {
-  text: string
+  content: string
 }
 
-export function Heading({text}: HeadingProps) {
+export function Heading({content}: HeadingProps) {
   return (
       <h1 className={'text-3xl mt-2 mb-7 font-bold tracking-tight'}>
-        {text}
+        {content}
       </h1>
   )
 }

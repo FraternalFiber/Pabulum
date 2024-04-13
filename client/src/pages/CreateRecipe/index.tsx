@@ -13,7 +13,7 @@ export function CreateRecipe() {
       <>
         <Menu/>
         <Main>
-          <Heading text={'Create recipe'}/>
+          <Heading content={'Create recipe'}/>
           <CreateRecipeForm/>
         </Main>
       </>
