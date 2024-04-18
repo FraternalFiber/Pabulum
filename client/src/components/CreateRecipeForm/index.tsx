@@ -7,6 +7,9 @@ import {Button} from "@/components/ui/button.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
 import {IngredientsTable} from "./IngredientsTable.tsx";
 import {StepsTable} from "@/components/CreateRecipeForm/StepsTable.tsx";
+import styled from "styled-components";
+import {dietItems} from "@/components/SearchForm/searchFormFilterItems.ts";
+import {Checkbox} from "@/components/ui/checkbox.tsx";
 
 // Schema for a single ingredient
 const ingredientSchema = z.object({
@@ -37,9 +40,14 @@ const formSchema = z.object({
   description: z.string().trim()
       .min(0)
       .max(2000, {message: 'Enter no more than 2000 characters'}),
+  diets: z.array(z.string()),
   ingredients: z.array(ingredientSchema),
   steps: z.array(stepSchema)
 })
+
+const FormLabelStyled = styled(FormLabel).attrs({
+  className: 'text-2xl'
+})``
 
 export function CreateRecipeForm() {
   // Code executed after submitting a form
@@ -56,6 +64,7 @@ export function CreateRecipeForm() {
       preparationTime: 0,
       servingsNumber: 1,
       description: '',
+      diets: [],
       ingredients: [
         {
           name: '',
@@ -80,7 +89,7 @@ export function CreateRecipeForm() {
                 control={form.control}
                 render={({field}) => (
                     <FormItem>
-                      <FormLabel>Title</FormLabel>
+                      <FormLabelStyled>Title</FormLabelStyled>
                       <FormControl>
                         <Input className={''} placeholder={'Italian pizza...'} {...field}/>
                       </FormControl>
@@ -96,7 +105,7 @@ export function CreateRecipeForm() {
                   control={form.control}
                   render={({field}) => (
                       <FormItem>
-                        <FormLabel>Prep time</FormLabel>
+                        <FormLabelStyled>Prep time</FormLabelStyled>
                         <FormControl>
                           <Input type={'number'} className={'w-16'} placeholder={'20'} {...field}/>
                         </FormControl>
@@ -109,7 +118,7 @@ export function CreateRecipeForm() {
                   control={form.control}
                   render={({field}) => (
                       <FormItem>
-                        <FormLabel>Servings</FormLabel>
+                        <FormLabelStyled>Servings</FormLabelStyled>
                         <FormControl>
                           <Input type={'number'} className={'w-16'} placeholder={'20'} {...field}/>
                         </FormControl>
@@ -125,14 +134,46 @@ export function CreateRecipeForm() {
                 control={form.control}
                 render={({field}) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabelStyled>Description</FormLabelStyled>
                       <FormControl>
-                        <Textarea placeholder={'The best pizza in the world'} {...field}/>
+                        <Textarea className={'h-10 min-h-10'} placeholder={'The best pizza in the world!'} {...field}/>
                       </FormControl>
                       <FormMessage/>
                     </FormItem>
                 )}
             />
+            {/*#endregion*/}
+            {/*#region Diet checkboxes*/}
+            <FormLabelStyled>Diets</FormLabelStyled>
+            <div className={'flex flex-wrap gap-5'}>
+              {dietItems.map((diet) => (
+                <FormField
+                    key={diet.id}
+                    name={'diets'}
+                    control={form.control}
+                    render={({field}) => {
+                      return (
+                          <FormItem key={diet.id}>
+                            <FormControl>
+                              <Checkbox
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...field.value, diet.id])
+                                    : field.onChange(
+                                        field.value?.filter(
+                                            (value) => value !== diet.id
+                                        )
+                                      )
+                                }}/>
+                            </FormControl>
+                            <FormLabel className={'ml-2 cursor-pointer'}>
+                              {diet.label}
+                            </FormLabel>
+                          </FormItem>
+                      )
+                    }}/>
+              ))}
+            </div>
             {/*#endregion*/}
             {/*#region Ingredients dynamic list */}
             <IngredientsTable form={form}/>
