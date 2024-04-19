@@ -3,7 +3,7 @@ import React from "react";
 import {Compass as CompassIcon, PlusCircle as PlusCircleIcon, Refrigerator as RefrigeratorIcon, ScrollText as ScrollTextIcon, Search as SearchIcon, User as UserIcon, Menu as MenuIcon} from 'lucide-react';
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet.tsx";
 
-interface MenuButtonProps {
+type MenuButtonProps = {
   path: string
   title: string
   icon: React.JSX.Element
@@ -20,7 +20,7 @@ const menuButtons : Array<MenuButtonProps> = [
 function MenuButton({title, path, icon}: MenuButtonProps) {
   return (
     // highlight the button when the corresponding subpage is active
-    <NavLink to={path} className={nav => `${nav.isActive ? 'bg-primary' : ''} flex w-100 p-4 hover:bg-primary rounded-sm`} end>
+    <NavLink to={path} className={nav => `${nav.isActive ? 'bg-primary' : ''} flex p-4 hover:bg-primary rounded-sm`} end>
       <div className={'flex items-center mr-2'}>{icon}</div>
       <div>{title}</div>
     </NavLink>

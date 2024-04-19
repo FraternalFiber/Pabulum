@@ -3,7 +3,6 @@ import {Button} from "@/components/ui/button.tsx";
 import {FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {TSearchFormFilter} from "@/types/TSearchFormFilter.ts";
-// import {FieldValues, UseFormReturn} from "react-hook-form";
 
 // interface FormValues {
 //   searchTerm: string,
@@ -11,7 +10,7 @@ import {TSearchFormFilter} from "@/types/TSearchFormFilter.ts";
 //   cuisineItems: string[]
 // }
 
-interface SearchFormFilterProps {
+type SearchFormFilterProps = {
   title: string
   name: string
   items: Array<TSearchFormFilter>

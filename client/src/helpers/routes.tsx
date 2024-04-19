@@ -7,6 +7,7 @@ import {Pantry} from "@/pages/Pantry";
 import {CreateRecipe} from "@/pages/CreateRecipe";
 import {Account} from "@/pages/Account";
 import {Recipe} from "@/pages/Recipe";
+import {NotFound} from "@/pages/NotFound";
 
 interface RouteElement {
   path: string
@@ -45,5 +46,9 @@ export const routes: Array<RouteElement> = [
   {
     path: '/account',
     element: <Account/>
+  },
+  {
+    path: '*',
+    element: <NotFound/>
   }
 ]

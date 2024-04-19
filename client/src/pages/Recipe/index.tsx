@@ -2,10 +2,10 @@ import {useParams} from "react-router-dom";
 import {useRecipe} from "@/services/useRecipe.ts";
 import {Menu} from "@/components/Menu";
 import {Main} from "@/components/Main";
-import {Clock as ClockIcon, MoveLeft as MoveLeftIcon, UsersRound as UsersRoundIcon} from "lucide-react";
-import {useNavigate} from "react-router-dom";
+import {Clock as ClockIcon, UsersRound as UsersRoundIcon} from "lucide-react";
 import {useEffect, useState} from "react";
 import {Separator} from "@/components/ui/separator.tsx";
+import {BackButton} from "@/components/BackButton";
 
 export function Recipe() {
   const { id } = useParams<{id?: string}>() || {}
@@ -14,14 +14,8 @@ export function Recipe() {
     isLoading: recipeLoading,
     error: recipeError
   } = useRecipe(id || '')
-  const navigate = useNavigate()
   const [ingredients, setIngredients] = useState<Array<object>>()
   const [instructions, setInstructions] = useState<Array<object>>()
-
-  // navigate back when the back button is clicked
-  function handleBackButton() {
-    navigate(-1)
-  }
 
   useEffect(() => {
     setIngredients(recipe?.extendedIngredients)
@@ -38,10 +32,7 @@ export function Recipe() {
             {recipe && (
                 <div className={'flex flex-col gap-y-5'}>
                   {/* Back button */}
-                  <div className={'flex gap-x-2 hover:cursor-pointer select-none'} onClick={handleBackButton}>
-                    <MoveLeftIcon/>
-                    <div>Back</div>
-                  </div>
+                  <BackButton/>
                   {/* Main photo */}
                   <img src={recipe.image} alt={recipe.title} className={'rounded-sm max-w-[28rem]'}/>
                   {/* Title */}

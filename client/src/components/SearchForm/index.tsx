@@ -10,6 +10,7 @@ import {cuisineItems, dietItems, mealTypeItems} from './searchFormFilterItems.ts
 import {SearchFormFilter} from "@/components/SearchForm/SearchFormFilter.tsx";
 import {useSearchParams} from "react-router-dom";
 import {TRecipeSearchParams} from "@/types/TRecipeSearchParams.ts";
+import {MAX_SEARCH_QUERY_LEN} from "@/helpers/constants.ts";
 
 // Zod schema object, used to define a form schema for validation
 const formSchema = z.object({
@@ -17,7 +18,7 @@ const formSchema = z.object({
       .string()
       .trim()
       .min(2, {message: "Enter at least 2 characters"})
-      .max(50, {message: "Enter no more than 50 characters."}),
+      .max(MAX_SEARCH_QUERY_LEN, {message: `Enter no more than ${MAX_SEARCH_QUERY_LEN} characters.`}),
   diet: z.array(z.string()),
   cuisine: z.array(z.string()),
   mealType: z.array(z.string())
