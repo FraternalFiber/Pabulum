@@ -15,7 +15,7 @@ const formSchema = z.object({
   q: z
       .string()
       .trim()
-      .min(2, {message: "Enter at least 2 characters"})
+      .min(1, {message: "Enter a search term"})
       .max(50, {message: "Enter no more than 50 characters."}),
 })
 
@@ -47,7 +47,7 @@ export function Home() {
       <>
         <Menu/>
         <Main>
-          <div>
+          <div className={'w-full mt-10 flex flex-col justify-center items-center'}>
             <Heading content={'Pabulum - savor the flavor, master the meal!'}/>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)}>
@@ -64,6 +64,7 @@ export function Home() {
                           </FormItem>
                       )}
                   />
+                  {/* Submit button*/}
                   <Button type={'submit'} className={'p-6'}>Search</Button>
                 </div>
               </form>

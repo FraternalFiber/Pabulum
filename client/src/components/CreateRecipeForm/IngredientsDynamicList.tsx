@@ -1,6 +1,6 @@
 import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow} from "../ui/table";
 import {Button} from "@/components/ui/button.tsx";
-import {Trash2} from "lucide-react";
+import {Plus, Trash2} from "lucide-react";
 import {useFieldArray} from "react-hook-form";
 import {FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form.tsx";
 import {Input} from "@/components/ui/input.tsx";
@@ -10,7 +10,7 @@ type IngredientsTableProps = {
 }
 
 // Part of a CreateRecipeForm component, for adding ingredients dynamically
-export function IngredientsTable({form}: IngredientsTableProps) {
+export function IngredientsDynamicList({form}: IngredientsTableProps) {
   // Every pair of inputs (name and quantity) is added to an ingredients array
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -71,7 +71,7 @@ export function IngredientsTable({form}: IngredientsTableProps) {
                   {/* Button to delete a row with an ingredient */}
                   <TableCell className={'m-0 p-0'}>
                     <Button type={'button'} className={'bg-transparent hover:bg-destructive'} onClick={() => removeIngredient(index)}>
-                      <Trash2 />
+                      <Trash2 color={'black'}/>
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -79,7 +79,9 @@ export function IngredientsTable({form}: IngredientsTableProps) {
           </TableBody>
           {/* Button to add a row with a new ingredient */}
           <TableCaption>
-            <Button type={'button'} onClick={() => append({name: '', quantity: ''})}>+</Button>
+            <Button type={'button'} onClick={() => append({name: '', quantity: ''})}>
+              <Plus/>
+            </Button>
           </TableCaption>
         </Table>
       </>

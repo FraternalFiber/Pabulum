@@ -3,7 +3,7 @@ import {Button} from "@/components/ui/button.tsx";
 import {cn} from "@/lib/utils.ts";
 import {Link} from "react-router-dom";
 
-interface RecipeResultCardProps {
+type RecipeResultCardProps = {
   id: number
   title: string
   imageUrl?: string
@@ -14,13 +14,13 @@ interface RecipeResultCardProps {
 export function RecipeResultCard({id, title, imageUrl, className}: RecipeResultCardProps) {
   return (
       <Link to={`/recipe/${id}`}>
-        <Card className={cn(className, 'w-100 hover:bg-secondary')}>
+        <Card className={cn(className, 'w-full hover:bg-secondary')}>
           <CardHeader>
             <CardTitle>{title}</CardTitle>
           </CardHeader>
           <CardContent>
             {/*<AspectRatio ratio={3 / 2}>*/}
-              <div style={{backgroundImage: `url(${imageUrl})`}} className={'w-100 h-52 bg-no-repeat bg-cover bg-center rounded-sm'}></div>
+              <div style={{backgroundImage: `url(${imageUrl})`}} className={'w-full h-52 bg-no-repeat bg-cover bg-center rounded-sm'}></div>
               {/*<img src={imageUrl} alt={title} className={'rounded-sm w-100 h-auto'}/>*/}
             {/*</AspectRatio>*/}
           </CardContent>

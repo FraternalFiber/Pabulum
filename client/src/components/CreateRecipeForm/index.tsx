@@ -5,19 +5,34 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {Input} from "@/components/ui/input.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
-import {IngredientsTable} from "./IngredientsTable.tsx";
-import {StepsTable} from "@/components/CreateRecipeForm/StepsTable.tsx";
+import {IngredientsDynamicList} from "./IngredientsDynamicList.tsx";
+import {StepsDynamicList} from "@/components/CreateRecipeForm/StepsDynamicList.tsx";
 import styled from "styled-components";
 import {dietItems} from "@/components/SearchForm/searchFormFilterItems.ts";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
+import {Minus, Plus} from "lucide-react";
+import {
+  MAX_INGREDIENT_NAME_LEN, MAX_INGREDIENT_QUANTITY_LEN,
+  MAX_PREPARATION_TIME,
+  MAX_RECIPE_DESCRIPTION_LEN,
+  MAX_RECIPE_TITLE_LEN,
+  MAX_SERVINGS_NUMBER,
+  MAX_STEP_INSTRUCTION_LEN
+} from "@/helpers/constants.ts";
+
+// type for AddButton and SubtractButton
+type OperationButtonProps = {
+  fieldName: 'preparationTime' | 'servingsNumber'
+  step?: number
+}
 
 // Schema for a single ingredient
 const ingredientSchema = z.object({
   name: z.string()
       .min(1, {message: 'Enter an ingredient name'})
-      .max(80, {message: 'Enter no more than 80 characters'}),
+      .max(MAX_INGREDIENT_NAME_LEN, {message: `Enter no more than ${MAX_INGREDIENT_NAME_LEN} characters`}),
   quantity: z.string().min(0)
-      .max(30, {message: 'Enter no more than 30 characters'})
+      .max(30, {message: `Enter no more than ${MAX_INGREDIENT_QUANTITY_LEN} characters`})
   // amount: z.number().min(1).max(10000),
   // unit: z.string().min(0).max(20)
 })
@@ -25,21 +40,23 @@ const ingredientSchema = z.object({
 // Schema for a single recipe step
 const stepSchema = z.object({
   // number: z.coerce.number().int().positive(),
-  instruction: z.string().min(2).max(1000)
+  instruction: z.string()
+      .min(1, {message: 'Enter a step'})
+      .max(MAX_STEP_INSTRUCTION_LEN, {message: `Enter no more than ${MAX_STEP_INSTRUCTION_LEN} characters`})
 })
 
 // Zod schema object, used to define a form schema for validation
 const formSchema = z.object({
   title: z.string().trim()
-      .min(2, {message: 'Enter at least 2 characters'})
-      .max(80, {message: 'Enter no more than 80 characters'}),
+      .min(1, {message: 'Enter a recipe title'})
+      .max(MAX_RECIPE_TITLE_LEN, {message: `Enter no more than ${MAX_RECIPE_TITLE_LEN} characters`}),
   preparationTime: z.coerce.number().int().nonnegative()
-      .max(1440, {message: 'Max time is 1440 minutes'}),
+      .max(MAX_PREPARATION_TIME, {message: `Max time is ${MAX_PREPARATION_TIME} minutes`}),
   servingsNumber: z.coerce.number().int().positive()
-      .max(1000, {message: 'Max number of servings is 1000'}),
+      .max(MAX_SERVINGS_NUMBER, {message: `Max number of servings is ${MAX_SERVINGS_NUMBER}`}),
   description: z.string().trim()
       .min(0)
-      .max(2000, {message: 'Enter no more than 2000 characters'}),
+      .max(MAX_RECIPE_DESCRIPTION_LEN, {message: `Enter no more than ${MAX_RECIPE_DESCRIPTION_LEN} characters`}),
   diets: z.array(z.string()),
   ingredients: z.array(ingredientSchema),
   steps: z.array(stepSchema)
@@ -49,6 +66,7 @@ const FormLabelStyled = styled(FormLabel).attrs({
   className: 'text-2xl'
 })``
 
+// Form to create a new recipe
 export function CreateRecipeForm() {
   // Code executed after submitting a form
   async function handleSubmit(values: z.infer<typeof formSchema>) {
@@ -79,10 +97,51 @@ export function CreateRecipeForm() {
     }
   })
 
+  // Button to decrease the number of minutes or portions
+  function SubtractButton({fieldName, step = 1}: OperationButtonProps) {
+    function subtract() {
+      const oldValue = Number(form.getValues(fieldName))
+
+      if(oldValue > 0) {
+        const remainder = oldValue % step
+        let newValue = 0
+
+        // if oldValue is indivisible by step -> set newValue to oldValue rounded down to nearest multiple of step (e.g. 32 -> 30, not 27 if step is 5)
+        if(remainder != 0) {
+          newValue = oldValue - remainder
+        }
+        else {
+          newValue = oldValue - step
+        }
+
+        form.setValue(fieldName, newValue)
+      }
+    }
+
+    return (
+        <Button type={'button'} className={'h-9 p-2 rounded-full'} onClick={subtract}>
+          <Minus size={20}/>
+        </Button>
+    )
+  }
+
+  // Button to increase the number of minutes or portions
+  function AddButton({fieldName, step = 1}: OperationButtonProps) {
+    function add() {
+      form.setValue(fieldName, Number(form.getValues(fieldName)) + step)
+    }
+
+    return (
+        <Button type={'button'} className={'h-9 p-2 rounded-full'} onClick={add}>
+          <Plus size={20}/>
+        </Button>
+    )
+  }
+
   return (
       <>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className={'flex flex-col gap-y-5'}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className={'flex flex-col gap-y-5 max-w-[40rem]'}>
             {/*#region Title input*/}
             <FormField
                 name={'title'}
@@ -106,9 +165,13 @@ export function CreateRecipeForm() {
                   render={({field}) => (
                       <FormItem>
                         <FormLabelStyled>Prep time</FormLabelStyled>
-                        <FormControl>
-                          <Input type={'number'} className={'w-16'} placeholder={'20'} {...field}/>
-                        </FormControl>
+                        <div className={'flex gap-x-2 items-center'}>
+                          <SubtractButton fieldName={'preparationTime'} step={5}/>
+                          <FormControl>
+                            <Input type={'text'} className={'w-14'} placeholder={'20'} {...field}/>
+                          </FormControl>
+                          <AddButton fieldName={'preparationTime'} step={5}/>
+                        </div>
                         <FormMessage/>
                       </FormItem>
                   )}
@@ -119,9 +182,13 @@ export function CreateRecipeForm() {
                   render={({field}) => (
                       <FormItem>
                         <FormLabelStyled>Servings</FormLabelStyled>
-                        <FormControl>
-                          <Input type={'number'} className={'w-16'} placeholder={'20'} {...field}/>
-                        </FormControl>
+                        <div className={'flex gap-x-2 items-center'}>
+                          <SubtractButton fieldName={'servingsNumber'}/>
+                          <FormControl>
+                            <Input type={'text'} className={'w-14'} placeholder={'4'} {...field}/>
+                          </FormControl>
+                          <AddButton fieldName={'servingsNumber'}/>
+                        </div>
                         <FormMessage/>
                       </FormItem>
                   )}
@@ -175,12 +242,8 @@ export function CreateRecipeForm() {
               ))}
             </div>
             {/*#endregion*/}
-            {/*#region Ingredients dynamic list */}
-            <IngredientsTable form={form}/>
-            {/*#endregion*/}
-            {/*#region Steps dynamic list*/}
-            <StepsTable form={form}/>
-            {/*#endregion*/}
+            <IngredientsDynamicList form={form}/>
+            <StepsDynamicList form={form}/>
             <Button type={'submit'} className={'mt-5'}>Create</Button>
           </form>
         </Form>
