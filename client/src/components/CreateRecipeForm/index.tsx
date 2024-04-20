@@ -10,21 +10,16 @@ import {StepsDynamicList} from "@/components/CreateRecipeForm/StepsDynamicList.t
 import styled from "styled-components";
 import {dietItems} from "@/components/SearchForm/searchFormFilterItems.ts";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
-import {Minus, Plus} from "lucide-react";
 import {
   MAX_INGREDIENT_NAME_LEN, MAX_INGREDIENT_QUANTITY_LEN,
-  MAX_PREPARATION_TIME,
+  MAX_PREP_TIME,
   MAX_RECIPE_DESCRIPTION_LEN,
   MAX_RECIPE_TITLE_LEN,
   MAX_SERVINGS_NUMBER,
-  MAX_STEP_INSTRUCTION_LEN
+  MAX_STEP_INSTRUCTION_LEN, MIN_PREP_TIME, MIN_SERVINGS_NUMBER, PREP_TIME_STEP, SERVINGS_NUMBER_STEP
 } from "@/helpers/constants.ts";
-
-// type for AddButton and SubtractButton
-type OperationButtonProps = {
-  fieldName: 'preparationTime' | 'servingsNumber'
-  step?: number
-}
+import {SubtractButton} from "@/components/CreateRecipeForm/SubtractButton.tsx";
+import {AddButton} from "@/components/CreateRecipeForm/AddButton.tsx";
 
 // Schema for a single ingredient
 const ingredientSchema = z.object({
@@ -50,9 +45,14 @@ const formSchema = z.object({
   title: z.string().trim()
       .min(1, {message: 'Enter a recipe title'})
       .max(MAX_RECIPE_TITLE_LEN, {message: `Enter no more than ${MAX_RECIPE_TITLE_LEN} characters`}),
-  preparationTime: z.coerce.number().int().nonnegative()
-      .max(MAX_PREPARATION_TIME, {message: `Max time is ${MAX_PREPARATION_TIME} minutes`}),
-  servingsNumber: z.coerce.number().int().positive()
+  preparationTime: z.coerce
+      .number({invalid_type_error: 'Enter a number'})
+      .min(MIN_PREP_TIME, {message: `Min time is ${MIN_PREP_TIME} minutes`})
+      .max(MAX_PREP_TIME, {message: `Max time is ${MAX_PREP_TIME} minutes`}),
+  servingsNumber: z.coerce
+      .number({invalid_type_error: 'Enter a number'})
+      .int({message: 'Enter an integer number'})
+      .min(MIN_SERVINGS_NUMBER, {message: `Min number of servings is ${MIN_SERVINGS_NUMBER}`})
       .max(MAX_SERVINGS_NUMBER, {message: `Max number of servings is ${MAX_SERVINGS_NUMBER}`}),
   description: z.string().trim()
       .min(0)
@@ -97,47 +97,6 @@ export function CreateRecipeForm() {
     }
   })
 
-  // Button to decrease the number of minutes or portions
-  function SubtractButton({fieldName, step = 1}: OperationButtonProps) {
-    function subtract() {
-      const oldValue = Number(form.getValues(fieldName))
-
-      if(oldValue > 0) {
-        const remainder = oldValue % step
-        let newValue = 0
-
-        // if oldValue is indivisible by step -> set newValue to oldValue rounded down to nearest multiple of step (e.g. 32 -> 30, not 27 if step is 5)
-        if(remainder != 0) {
-          newValue = oldValue - remainder
-        }
-        else {
-          newValue = oldValue - step
-        }
-
-        form.setValue(fieldName, newValue)
-      }
-    }
-
-    return (
-        <Button type={'button'} className={'h-9 p-2 rounded-full'} onClick={subtract}>
-          <Minus size={20}/>
-        </Button>
-    )
-  }
-
-  // Button to increase the number of minutes or portions
-  function AddButton({fieldName, step = 1}: OperationButtonProps) {
-    function add() {
-      form.setValue(fieldName, Number(form.getValues(fieldName)) + step)
-    }
-
-    return (
-        <Button type={'button'} className={'h-9 p-2 rounded-full'} onClick={add}>
-          <Plus size={20}/>
-        </Button>
-    )
-  }
-
   return (
       <>
         <Form {...form}>
@@ -166,11 +125,11 @@ export function CreateRecipeForm() {
                       <FormItem>
                         <FormLabelStyled>Prep time</FormLabelStyled>
                         <div className={'flex gap-x-2 items-center'}>
-                          <SubtractButton fieldName={'preparationTime'} step={5}/>
+                          <SubtractButton form={form} fieldName={'preparationTime'} step={PREP_TIME_STEP}/>
                           <FormControl>
                             <Input type={'text'} className={'w-14'} placeholder={'20'} {...field}/>
                           </FormControl>
-                          <AddButton fieldName={'preparationTime'} step={5}/>
+                          <AddButton form={form} fieldName={'preparationTime'} step={PREP_TIME_STEP} maxValue={MAX_PREP_TIME}/>
                         </div>
                         <FormMessage/>
                       </FormItem>
@@ -183,11 +142,11 @@ export function CreateRecipeForm() {
                       <FormItem>
                         <FormLabelStyled>Servings</FormLabelStyled>
                         <div className={'flex gap-x-2 items-center'}>
-                          <SubtractButton fieldName={'servingsNumber'}/>
+                          <SubtractButton form={form} fieldName={'servingsNumber'} minValue={MIN_SERVINGS_NUMBER} step={SERVINGS_NUMBER_STEP}/>
                           <FormControl>
                             <Input type={'text'} className={'w-14'} placeholder={'4'} {...field}/>
                           </FormControl>
-                          <AddButton fieldName={'servingsNumber'}/>
+                          <AddButton form={form} fieldName={'servingsNumber'}  step={SERVINGS_NUMBER_STEP}/>
                         </div>
                         <FormMessage/>
                       </FormItem>

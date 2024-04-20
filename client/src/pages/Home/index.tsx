@@ -9,6 +9,7 @@ import {Form, FormControl, FormField, FormItem} from "@/components/ui/form.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {createSearchParams, useNavigate} from "react-router-dom";
+import {MAX_SEARCH_QUERY_LEN} from "@/helpers/constants.ts";
 
 // Zod schema object, used to define a form schema for validation
 const formSchema = z.object({
@@ -16,7 +17,7 @@ const formSchema = z.object({
       .string()
       .trim()
       .min(1, {message: "Enter a search term"})
-      .max(50, {message: "Enter no more than 50 characters."}),
+      .max(MAX_SEARCH_QUERY_LEN, {message: `Enter no more than ${MAX_SEARCH_QUERY_LEN} characters.`}),
 })
 
 export function Home() {
