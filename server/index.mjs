@@ -2,6 +2,8 @@ import "dotenv/config.js";
 import express from 'express';
 import cors from 'cors';
 
+import {db} from './firebase/firebase.mjs';
+
 const app = express();
 const hostname = '127.0.0.1';
 const port = 42069;
@@ -17,15 +19,9 @@ app.get('/', (req, res) => {
    res.json({'status': 'Server is working properly'});
 });
 
-var counter = 0
-
-//response for search result
+//response for search result - list of recipes
 app.get('/search', async (req, res) => {
     const data = req.query
-
-    counter += 1
-    console.log(`q ${counter}: ${data.q}`)
-    console.log(data)
 
     // add search params to url only if they are not undefined
     const searchParams = Object.assign({},
@@ -44,7 +40,6 @@ app.get('/search', async (req, res) => {
     fetch(url)
         .then((response) => response.json())
         .then((data) => {
-            // console.log(data.toString());
             res.json(data);
         })
         .catch((error) => {
@@ -79,12 +74,74 @@ app.get('/recipe/:id', async (req, res) => {
             })
             .catch((error) => {
                 console.error('Error fetching data from external API: ', error);
+                res.status(500).json({ error: 'An error occurred while fetching data' });
             })
     }
     catch (error)
     {
         console.error('Error fetching data from external API:', error);
         res.status(500).json({ error: 'An error occurred while fetching data' });
+    }
+});
+
+app.post('/addrecipe', async (req, res) => {
+    try {
+        const data = req.body;
+
+        const addRecipe = Object.assign({},
+            data.title === undefined ? null : {title: data.title},
+            data.prepTime === undefined ? null : {prepTime: data.prepTime},
+            data.servings === undefined ? null : {servings: data.servings},
+            data.description === undefined ? null : {description: data.description}
+        )
+
+        /*addRecipe.title = "pancake";
+        addRecipe.prepTime = 3;
+        addRecipe.servings = 5;
+        addRecipe.description = "best pancakes";*/
+
+        // add a recipe data
+        const recipeRef = db.collection('recipes').doc();
+        await recipeRef.set(addRecipe);
+
+        /*data.diets = ["v","S","3"];
+        data.ingredients = [{name: "123", quantity: 5}];
+        data.step = ["step1", "step2"];*/
+
+        // add all diets data to recipe
+        for(let diet in data.diets)
+        {
+            const addDiet = Object.assign({},
+                diet === undefined ? null : {name: diet}
+            )
+            await recipeRef.collection('diets').doc().set(addDiet);
+        }
+
+        // add all ingredients to recipe
+        for(let ingredient in data.ingredients)
+        {
+            const addIngredient = Object.assign({},
+                ingredient.name === undefined ? null : {name: data.name},
+                ingredient.quantity === undefined ? null : {quantity: data.quantity}
+            )
+            await recipeRef.collection('ingredients').doc().set(addIngredient);
+        }
+
+        // add all steps to recipe
+        for(let step in data.steps)
+        {
+            const addStep = Object.assign({},
+                step === undefined ? null : {content: step}
+            )
+            await recipeRef.collection('steps').doc().set(addStep);
+        }
+
+
+        // Send a response back to the frontend
+        res.status(200).send({ success: true, message: 'Data added successfully', id: recipeRef.id });
+    } catch (error) {
+        console.error('Error adding : ', error);
+        res.status(500).send({ success: false, message: 'An error occurred while adding data' });
     }
 });
 
