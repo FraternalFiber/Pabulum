@@ -6,7 +6,7 @@ import {Input} from "@/components/ui/input.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {useEffect, useState} from "react";
 import {SearchResults} from "@/components/SearchResults";
-import {cuisineItems, dietItems, mealTypeItems} from './searchFormFilterItems.ts'
+import {availableCuisineItems, availableDietItems, availableMealTypeItems} from '@/helpers/searchFormFilterItems.ts'
 import {SearchFormFilter} from "@/components/SearchForm/SearchFormFilter.tsx";
 import {useSearchParams} from "react-router-dom";
 import {TRecipeSearchParams} from "@/types/TRecipeSearchParams.ts";
@@ -92,11 +92,11 @@ export function SearchForm() {
             </div>
             <div className={'mt-3 flex gap-x-3'}>
               {/* Diet filter */}
-              <SearchFormFilter title={'Diet'} name={'diet'} items={dietItems} form={form}/>
+              <SearchFormFilter title={'Diet'} name={'diet'} items={availableDietItems} form={form}/>
               {/* Cuisine filter */}
-              <SearchFormFilter title={'Cuisine'} name={'cuisine'} items={cuisineItems} form={form}/>
+              <SearchFormFilter title={'Cuisine'} name={'cuisine'} items={availableCuisineItems} form={form}/>
               {/* Meal type filter */}
-              <SearchFormFilter title={'Meal type'} name={'mealType'} items={mealTypeItems} form={form}/>
+              <SearchFormFilter title={'Meal type'} name={'mealType'} items={availableMealTypeItems} form={form}/>
             </div>
           </form>
         </Form>

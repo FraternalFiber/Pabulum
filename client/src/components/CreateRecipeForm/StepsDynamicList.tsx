@@ -61,7 +61,7 @@ export function StepsDynamicList({form}: StepsTableProps) {
         </div>
         {/* Button to add a row with a new step */}
         <div className={'flex justify-center mt-2'}>
-          <Button type={'button'} onClick={() => append({name: '', quantity: ''})}>
+          <Button type={'button'} onClick={() => append({instruction: ''})}>
             <Plus/>
           </Button>
         </div>

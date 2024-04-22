@@ -1,4 +1,4 @@
-const dietItems = [
+const availableDietItems = [
   {
     id: 'vegetarian',
     label: 'Vegetarian'
@@ -17,7 +17,7 @@ const dietItems = [
   },
 ]
 
-const cuisineItems = [
+const availableCuisineItems = [
   {
     id: 'asian',
     label: 'Asian'
@@ -48,7 +48,7 @@ const cuisineItems = [
   }
 ]
 
-const mealTypeItems = [
+const availableMealTypeItems = [
   {
     id: 'main course',
     label: 'Main course'
@@ -107,4 +107,4 @@ const mealTypeItems = [
   },
 ]
 
-export {dietItems, cuisineItems, mealTypeItems}
+export {availableDietItems, availableCuisineItems, availableMealTypeItems}

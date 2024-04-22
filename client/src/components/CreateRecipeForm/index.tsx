@@ -8,7 +8,7 @@ import {Textarea} from "@/components/ui/textarea.tsx";
 import {IngredientsDynamicList} from "./IngredientsDynamicList.tsx";
 import {StepsDynamicList} from "@/components/CreateRecipeForm/StepsDynamicList.tsx";
 import styled from "styled-components";
-import {dietItems} from "@/components/SearchForm/searchFormFilterItems.ts";
+import {availableDietItems} from "@/helpers/searchFormFilterItems.ts";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {
   MAX_INGREDIENT_NAME_LEN, MAX_INGREDIENT_QUANTITY_LEN,
@@ -23,21 +23,27 @@ import {AddButton} from "@/components/CreateRecipeForm/AddButton.tsx";
 
 // Schema for a single ingredient
 const ingredientSchema = z.object({
-  name: z.string()
+  name: z.string().trim()
       .min(1, {message: 'Enter an ingredient name'})
       .max(MAX_INGREDIENT_NAME_LEN, {message: `Enter no more than ${MAX_INGREDIENT_NAME_LEN} characters`}),
-  quantity: z.string().min(0)
+  quantity: z.string().trim()
       .max(30, {message: `Enter no more than ${MAX_INGREDIENT_QUANTITY_LEN} characters`})
-  // amount: z.number().min(1).max(10000),
-  // unit: z.string().min(0).max(20)
+      .optional()
 })
 
 // Schema for a single recipe step
 const stepSchema = z.object({
-  // number: z.coerce.number().int().positive(),
-  instruction: z.string()
+  instruction: z.string().trim()
       .min(1, {message: 'Enter a step'})
       .max(MAX_STEP_INSTRUCTION_LEN, {message: `Enter no more than ${MAX_STEP_INSTRUCTION_LEN} characters`})
+})
+
+// List of available diets for validation (only IDs)
+const availableDiets = availableDietItems.map(diet => diet.id)
+
+// Schema for a single diet, checks if diet is in a list of available diets
+const dietSchema = z.string().refine(diet => availableDiets.includes(diet),{
+  message: 'Invalid diet, must be one of: ' + availableDiets.join(', ')
 })
 
 // Zod schema object, used to define a form schema for validation
@@ -57,9 +63,15 @@ const formSchema = z.object({
   description: z.string().trim()
       .min(0)
       .max(MAX_RECIPE_DESCRIPTION_LEN, {message: `Enter no more than ${MAX_RECIPE_DESCRIPTION_LEN} characters`}),
-  diets: z.array(z.string()),
+  diets: z.array(dietSchema),
   ingredients: z.array(ingredientSchema),
-  steps: z.array(stepSchema)
+  steps: z.array(stepSchema).transform((steps) => {
+    // add indexes to steps to make sure they are in correct order
+    return steps.map((step, index) => ({
+      ...step,
+      number: index + 1
+    }))
+  })
 })
 
 const FormLabelStyled = styled(FormLabel).attrs({
@@ -69,7 +81,7 @@ const FormLabelStyled = styled(FormLabel).attrs({
 // Form to create a new recipe
 export function CreateRecipeForm() {
   // Code executed after submitting a form
-  async function handleSubmit(values: z.infer<typeof formSchema>) {
+  function handleSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
   }
 
@@ -172,7 +184,7 @@ export function CreateRecipeForm() {
             {/*#region Diet checkboxes*/}
             <FormLabelStyled>Diets</FormLabelStyled>
             <div className={'flex flex-wrap gap-5'}>
-              {dietItems.map((diet) => (
+              {availableDietItems.map((diet) => (
                 <FormField
                     key={diet.id}
                     name={'diets'}
