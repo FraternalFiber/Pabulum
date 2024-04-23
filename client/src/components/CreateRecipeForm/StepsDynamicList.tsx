@@ -3,6 +3,7 @@ import {Plus, Trash2} from "lucide-react";
 import {useFieldArray} from "react-hook-form";
 import {FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
+import {TStep} from "@/types/TStep.ts";
 
 type StepsTableProps = {
   form: any
@@ -25,6 +26,42 @@ export function StepsDynamicList({form}: StepsTableProps) {
     }
   }
 
+  // returns true if step instruction is empty
+  function isEmptyStep(step: TStep): boolean {
+    return !step.instruction
+  }
+
+  // returns index of first empty step after the current step or -1 if such not found
+  function getNextEmptyStepIndex(stepFields: TStep[], currentIndex: number): number {
+    for(let index = currentIndex + 1; index < stepFields.length; index++) {
+      if(isEmptyStep(stepFields[index])) {
+        return index
+      }
+    }
+
+    return -1
+  }
+
+  // Add new step row when Enter is pressed inside textarea
+  function handleKeyDown(e: any, currentRowIndex: number) {
+    if(e.key == 'Enter') {
+      const stepFields = form.watch('steps')
+      const nextEmptyRowIndex: number = getNextEmptyStepIndex(stepFields, currentRowIndex)
+
+      // set focus on next empty step if found
+      if(nextEmptyRowIndex >= 0) {
+        form.setFocus(`steps.${nextEmptyRowIndex}.instruction`, {shouldSelect: true})
+      }
+      // else add a new step
+      else {
+        append({instruction: ''})
+      }
+
+      // prevent form from submitting after clicking Enter
+      e.preventDefault()
+    }
+  }
+
   return (
       <div className={'flex flex-col mt-5 gap-y-6'}>
         <div className={'text-2xl font-semibold'}>Steps</div>
@@ -43,7 +80,10 @@ export function StepsDynamicList({form}: StepsTableProps) {
                     render={({field}) => (
                         <FormItem>
                           <FormControl>
-                            <Textarea {...field} placeholder={index == 0 ? 'Mix the yeast with the water...' : ''}/>
+                            <Textarea {...field}
+                              placeholder={index == 0 ? 'Mix the yeast with the water...' : ''}
+                              onKeyDown={(e) => handleKeyDown(e, index)}
+                              className={'h-16 min-h-16'}/>
                           </FormControl>
                           <FormMessage/>
                         </FormItem>
