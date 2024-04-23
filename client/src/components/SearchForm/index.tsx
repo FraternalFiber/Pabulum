@@ -31,7 +31,7 @@ export function SearchForm() {
   const [searchParams, setSearchParams] = useState<TRecipeSearchParams>()
 
   // Code executed after submitting a form
-  async function handleSubmit(values: z.infer<typeof formSchema>) {
+  function handleSubmit(values: z.infer<typeof formSchema>) {
     setURLSearchParams(values)
     setIsSubmitted(true)
     // setSearchParams(values)
