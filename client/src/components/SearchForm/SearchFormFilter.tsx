@@ -2,8 +2,7 @@ import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.t
 import {Button} from "@/components/ui/button.tsx";
 import {FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
-import {ISearchFormFilterInterface} from "@/types/ISearchFormFilter.ts";
-// import {FieldValues, UseFormReturn} from "react-hook-form";
+import {TSearchFormFilter} from "@/types/TSearchFormFilter.ts";
 
 // interface FormValues {
 //   searchTerm: string,
@@ -11,10 +10,10 @@ import {ISearchFormFilterInterface} from "@/types/ISearchFormFilter.ts";
 //   cuisineItems: string[]
 // }
 
-interface SearchFormFilterProps {
+type SearchFormFilterProps = {
   title: string
   name: string
-  items: Array<ISearchFormFilterInterface>
+  items: Array<TSearchFormFilter>
   form: any
 }
 

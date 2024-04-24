@@ -1,4 +1,4 @@
-export interface IRecipeSearchParams {
+export type TRecipeSearchParams = {
   q: string
   diet: Array<string>
   cuisine: Array<string>

@@ -1,7 +1,7 @@
 import { Menu } from "@/components/Menu";
 import { Main } from "@/components/Main";
 import {useEffect} from "react";
-import Heading from "@/components/Heading";
+import {Heading} from "@/components/Heading";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
@@ -9,17 +9,18 @@ import {Form, FormControl, FormField, FormItem} from "@/components/ui/form.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {createSearchParams, useNavigate} from "react-router-dom";
+import {MAX_SEARCH_QUERY_LEN} from "@/helpers/constants.ts";
 
 // Zod schema object, used to define a form schema for validation
 const formSchema = z.object({
   q: z
       .string()
       .trim()
-      .min(2, {message: "Enter at least 2 characters"})
-      .max(50, {message: "Enter no more than 50 characters."}),
+      .min(1, {message: "Enter a search term"})
+      .max(MAX_SEARCH_QUERY_LEN, {message: `Enter no more than ${MAX_SEARCH_QUERY_LEN} characters.`}),
 })
 
-export default function Home() {
+export function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,8 +48,8 @@ export default function Home() {
       <>
         <Menu/>
         <Main>
-          <div>
-            <Heading text={'Pabulum - savor the flavor, master the meal!'}/>
+          <div className={'w-full mt-10 flex flex-col justify-center items-center'}>
+            <Heading content={'Pabulum - savor the flavor, master the meal!'}/>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)}>
                 <div className={'flex gap-x-2'}>
@@ -64,6 +65,7 @@ export default function Home() {
                           </FormItem>
                       )}
                   />
+                  {/* Submit button*/}
                   <Button type={'submit'} className={'p-6'}>Search</Button>
                 </div>
               </form>
