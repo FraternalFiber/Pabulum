@@ -2,9 +2,10 @@ import { Menu } from "@/components/Menu";
 import { Main } from "@/components/Main";
 import { useEffect } from "react";
 import { SearchForm } from "@/components/SearchForm";
-import Heading from "@/components/Heading";
+import { Heading } from "@/components/Heading";
 
-export default function Search() {
+// Page to search for recipes
+export function Search() {
   useEffect(() => {
     document.title = "Search recipes - Pabulum"
   })
@@ -13,7 +14,7 @@ export default function Search() {
       <>
         <Menu/>
         <Main>
-          <Heading text={'Find your favourite recipes'}/>
+          <Heading content={'Find your favourite recipes'}/>
           <SearchForm/>
         </Main>
       </>

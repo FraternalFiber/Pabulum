@@ -1,7 +1,7 @@
 import React from "react";
 import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
 
-interface MainProps {
+type MainProps = {
   children?: React.ReactNode
 }
 

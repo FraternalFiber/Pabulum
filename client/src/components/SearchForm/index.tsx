@@ -6,10 +6,11 @@ import {Input} from "@/components/ui/input.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {useEffect, useState} from "react";
 import {SearchResults} from "@/components/SearchResults";
-import {cuisineItems, dietItems, mealTypeItems} from './searchFormFilterItems.ts'
+import {availableCuisineItems, availableDietItems, availableMealTypeItems} from '@/helpers/searchFormFilterItems.ts'
 import {SearchFormFilter} from "@/components/SearchForm/SearchFormFilter.tsx";
 import {useSearchParams} from "react-router-dom";
-import {IRecipeSearchParams} from "@/types/IRecipeSearchParams.ts";
+import {TRecipeSearchParams} from "@/types/TRecipeSearchParams.ts";
+import {MAX_SEARCH_QUERY_LEN} from "@/helpers/constants.ts";
 
 // Zod schema object, used to define a form schema for validation
 const formSchema = z.object({
@@ -17,7 +18,7 @@ const formSchema = z.object({
       .string()
       .trim()
       .min(2, {message: "Enter at least 2 characters"})
-      .max(50, {message: "Enter no more than 50 characters."}),
+      .max(MAX_SEARCH_QUERY_LEN, {message: `Enter no more than ${MAX_SEARCH_QUERY_LEN} characters.`}),
   diet: z.array(z.string()),
   cuisine: z.array(z.string()),
   mealType: z.array(z.string())
@@ -27,10 +28,10 @@ export function SearchForm() {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false)
   const [URLSearchParams, setURLSearchParams] = useSearchParams()
   // const [searchParams, setSearchParams] = useState<IRecipeSearchParams>()
-  const [searchParams, setSearchParams] = useState<IRecipeSearchParams>()
+  const [searchParams, setSearchParams] = useState<TRecipeSearchParams>()
 
   // Code executed after submitting a form
-  async function handleSubmit(values: z.infer<typeof formSchema>) {
+  function handleSubmit(values: z.infer<typeof formSchema>) {
     setURLSearchParams(values)
     setIsSubmitted(true)
     // setSearchParams(values)
@@ -58,7 +59,7 @@ export function SearchForm() {
       console.log(URLSearchParams)
       console.log(URLSearchParams.get('q'))
 
-      const values : IRecipeSearchParams = {
+      const values : TRecipeSearchParams = {
         q: URLSearchParams.get('q') ?? '', //assign an empty string if equals null
         diet: URLSearchParams.getAll('diet') ?? [],
         cuisine: URLSearchParams.getAll('cuisine') ?? [],
@@ -77,8 +78,8 @@ export function SearchForm() {
             <div className={'flex gap-x-2'}>
               {/* Main search field */}
               <FormField
-                  control={form.control}
                   name={'q'}
+                  control={form.control}
                   render={({field}) => (
                       <FormItem>
                         <FormControl>
@@ -91,11 +92,11 @@ export function SearchForm() {
             </div>
             <div className={'mt-3 flex gap-x-3'}>
               {/* Diet filter */}
-              <SearchFormFilter title={'Diet'} name={'diet'} items={dietItems} form={form}/>
+              <SearchFormFilter title={'Diet'} name={'diet'} items={availableDietItems} form={form}/>
               {/* Cuisine filter */}
-              <SearchFormFilter title={'Cuisine'} name={'cuisine'} items={cuisineItems} form={form}/>
+              <SearchFormFilter title={'Cuisine'} name={'cuisine'} items={availableCuisineItems} form={form}/>
               {/* Meal type filter */}
-              <SearchFormFilter title={'Meal type'} name={'mealType'} items={mealTypeItems} form={form}/>
+              <SearchFormFilter title={'Meal type'} name={'mealType'} items={availableMealTypeItems} form={form}/>
             </div>
           </form>
         </Form>

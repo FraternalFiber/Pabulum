@@ -1,8 +1,10 @@
 import { Menu } from "@/components/Menu";
 import { Main } from "@/components/Main";
 import {useEffect} from "react";
+import {Heading} from "@/components/Heading";
+import {CreateRecipeForm} from "@/components/CreateRecipeForm";
 
-export default function CreateRecipe() {
+export function CreateRecipe() {
   useEffect(() => {
     document.title = "Create recipe - Pabulum"
   })
@@ -10,7 +12,10 @@ export default function CreateRecipe() {
   return (
       <>
         <Menu/>
-        <Main/>
+        <Main>
+          <Heading content={'Create recipe'}/>
+          <CreateRecipeForm/>
+        </Main>
       </>
   )
 }
