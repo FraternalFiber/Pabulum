@@ -30,9 +30,10 @@ function MenuButton({title, path, icon}: MenuButtonProps) {
 function MenuContent() {
   return (
       <>
-        <Link to={'/'} className={'flex flex-row items-center mt-4 ml-3 select-none'}>
-          <img src={'/logo_main.svg'} alt={'logo'} className={'w-14'} draggable={'false'}/>
-          <h1 className={'text-2xl ml-2 font-bold tracking-wide'}>Pabulum</h1>
+        <Link to={'/'} className={'flex flex-row items-center mt-4 ml-3 mr-2 select-none'}>
+          {/*<img src={'/logo_main.svg'} alt={'logo'} className={'w-14'} draggable={'false'}/>*/}
+          {/*<h1 className={'text-2xl ml-2 font-bold tracking-wide'}>Pabulum</h1>*/}
+          <img src={'/logo_with_text.svg'} alt={'Pabulum logo'} className={'w-full'}/>
         </Link>
         <div className={'flex flex-col justify-between grow mt-5 mb-2 pr-2 pl-2 min-h-100'}>
           <div className={'flex flex-col gap-y-2'}>
@@ -52,7 +53,7 @@ function Menu() {
   return (
       <>
         {/* Fixed menu */}
-        <nav className={'hidden sm:flex flex-col min-w-60 h-100 bg-secondary border-r border-gray-300'}>
+        <nav className={'hidden sm:flex flex-col w-60 min-w-60 h-100 bg-secondary border-r border-gray-300'}>
           <MenuContent/>
         </nav>
         {/* Collapsable menu */}
