@@ -1,6 +1,8 @@
 import "dotenv/config.js";
 import express from 'express';
 import cors from 'cors';
+import {validateRequest} from 'zod-express-middleware';
+import {z} from 'zod';
 
 import {db} from './firebase/firebase.mjs';
 
@@ -19,8 +21,18 @@ app.get('/', (req, res) => {
    res.json({'status': 'Server is working properly'});
 });
 
+//schema for validation of search
+const searchSchema = z.object({
+    q: z.string(),
+    diet: z.string().optional(),
+    cuisine: z.string().optional(),
+    mealType: z.string().optional(),
+});
+
 //response for search result - list of recipes
-app.get('/search', async (req, res) => {
+app.get('/search', validateRequest({
+    query: searchSchema
+    }), async (req, res) => {
     const data = req.query
 
     // add search params to url only if they are not undefined
@@ -84,7 +96,28 @@ app.get('/recipe/:id', async (req, res) => {
     }
 });
 
-app.post('/addrecipe', async (req, res) => {
+//schema for validation of recipes in form
+const recipeSchema = z.object({
+    title: z.string().trim(),
+    prepTime: z.number().int().positive().optional()
+        .nullable(),
+    servings: z.number().int().positive().min(1),
+    description: z.string().optional().nullable(),
+    diets: z.array(z.string()).nullable().optional(),
+    ingredients: z.array(z.object({
+        name: z.string(),
+        quantity: z.string().optional()
+    })),
+    steps: z.array(z.object({
+        number: z.number().int().positive(),
+        content: z.string()
+    }))
+});
+
+//adding recipes to database from form
+app.post('/addrecipe', validateRequest({
+        body: recipeSchema
+    }), async (req, res) => {
     try {
         const data = req.body;
 
@@ -95,44 +128,40 @@ app.post('/addrecipe', async (req, res) => {
             data.description === undefined ? null : {description: data.description}
         )
 
-        /*addRecipe.title = "pancake";
-        addRecipe.prepTime = 3;
-        addRecipe.servings = 5;
-        addRecipe.description = "best pancakes";*/
-
         // add a recipe data
         const recipeRef = db.collection('recipes').doc();
         await recipeRef.set(addRecipe);
 
-        /*data.diets = ["v","S","3"];
-        data.ingredients = [{name: "123", quantity: 5}];
-        data.step = ["step1", "step2"];*/
 
         // add all diets data to recipe
-        for(let diet in data.diets)
+        for(let diet of data.diets)
         {
             const addDiet = Object.assign({},
                 diet === undefined ? null : {name: diet}
             )
+
             await recipeRef.collection('diets').doc().set(addDiet);
         }
 
         // add all ingredients to recipe
-        for(let ingredient in data.ingredients)
+        for(let ingredient of data.ingredients)
         {
             const addIngredient = Object.assign({},
-                ingredient.name === undefined ? null : {name: data.name},
-                ingredient.quantity === undefined ? null : {quantity: data.quantity}
+                ingredient.name === undefined ? null : {name: ingredient.name},
+                ingredient.quantity === undefined ? null : {quantity: ingredient.quantity}
             )
+
             await recipeRef.collection('ingredients').doc().set(addIngredient);
         }
 
         // add all steps to recipe
-        for(let step in data.steps)
+        for(let step of data.steps)
         {
             const addStep = Object.assign({},
-                step === undefined ? null : {content: step}
+                step.number === undefined ? null : {number: step.number},
+                step.content === undefined ? null : {content: step.content}
             )
+
             await recipeRef.collection('steps').doc().set(addStep);
         }
 
