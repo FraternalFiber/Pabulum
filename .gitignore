@@ -1,4 +1,4 @@
 /server/node_modules/
 /server/.env
-/.idea
-client/README.md
+/server/firebase/creds.json
+/client/

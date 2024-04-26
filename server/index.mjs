@@ -23,11 +23,12 @@ app.get('/', (req, res) => {
 
 //schema for validation of search
 const searchSchema = z.object({
-    q: z.string(),
-    diet: z.string().optional(),
-    cuisine: z.string().optional(),
-    mealType: z.string().optional(),
+    q: z.string().optional(),
+    diet: z.union([z.array(z.string()), z.string()]).optional(),
+    cuisine: z.union([z.array(z.string()), z.string()]).optional(),
+    mealType: z.union([z.array(z.string()), z.string()]).optional(),
 });
+
 
 //response for search result - list of recipes
 app.get('/search', validateRequest({
@@ -35,13 +36,17 @@ app.get('/search', validateRequest({
     }), async (req, res) => {
     const data = req.query
 
+    console.log(data.diet)
     // add search params to url only if they are not undefined
     const searchParams = Object.assign({},
         data.q === undefined ? null : {query: data.q},
-        data.diet === undefined ? null : {diet: data.diet},
-        data.cuisine === undefined ? null : {cuisine: data.cuisine},
-        data.mealType === undefined ? null : {type: data.mealType}
-    )
+        data.diet === undefined ? null : {diet: Array.isArray(data.diet) ? data.diet.join(',') : data.diet},
+        data.cuisine === undefined ? null : {cuisine: Array.isArray(data.cuisine) ? data.cuisine.join(',') : data.cuisine},
+        data.mealType === undefined ? null : {type: Array.isArray(data.mealType) ? data.mealType.join(',') : data.mealType}
+    );
+
+
+    console.log(searchParams.diet)
 
     const url = 'https://api.spoonacular.com/recipes/complexSearch?' + new URLSearchParams({
       apiKey: SPOONACULAR_APIKEY,
