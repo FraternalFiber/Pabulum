@@ -82,9 +82,10 @@ app.get('/recipe/:id', async (req, res) => {
 
                 // change weird values of ingredient amount
                 data.extendedIngredients.map((ingredient) => {
-                    if (ingredient.amount == 0.6666667) {
+                    if (ingredient.amount > (1/3 - 0.001) && ingredient.amount < (1/3 + 0.001))
+                        ingredient.amount = '⅓';
+                    else if (ingredient.amount > (2/3 - 0.001) && ingredient.amount < (2/3 + 0.001))
                         ingredient.amount = '⅔';
-                    }
                 })
 
                 res.json(data);
@@ -167,6 +168,7 @@ app.post('/addrecipe', validateRequest({
                 step.content === undefined ? null : {content: step.content}
             )
 
+            // send data to database
             await recipeRef.collection('steps').doc().set(addStep);
         }
 
