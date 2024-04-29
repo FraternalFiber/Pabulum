@@ -1,8 +1,8 @@
-import {useQuery} from "@tanstack/react-query";
+import {QueryClient, useQuery, useQueryClient} from "@tanstack/react-query";
 import {TRecipeResult} from "@/types/TRecipeResult.ts";
 import {TRecipeSearchParams} from "@/types/TRecipeSearchParams.ts";
 
-export const getRecipes = async (searchParams : TRecipeSearchParams) => {
+export const getRecipes = async (searchParams: TRecipeSearchParams, queryClient: QueryClient) => {
   const url = new URL('http://127.0.0.1:42069/search?')
   const params = new URLSearchParams({q: searchParams.q})
 
@@ -14,7 +14,11 @@ export const getRecipes = async (searchParams : TRecipeSearchParams) => {
 
   return fetch(url)
       .then(res => res.json())
-      .then(res => res.results)
+      .then(res => {
+        // update the cache manually
+        queryClient.setQueryData(['searchResults', searchParams.q], res.results);
+        return res.results
+      })
       .catch((error) => {
         throw ('Backend API connection error: ' + error)
       })
@@ -22,12 +26,15 @@ export const getRecipes = async (searchParams : TRecipeSearchParams) => {
 
 // service used for fetching recipes data from backend
 export const useRecipes = (searchParams : TRecipeSearchParams) => {
+  const queryClient = useQueryClient()
   return useQuery<TRecipeResult[]>({
-    queryKey: ['recipesSearchResults'],
-    queryFn: () => getRecipes(searchParams),
+    queryKey: ['searchResults', searchParams.q],
+    queryFn: () => getRecipes(searchParams, queryClient),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    gcTime: 60 * 60 * 1000 //garbage collect after 60 minutes
+    staleTime: Infinity, //keep data fresh for infinity until user refreshes the page
+    gcTime: Infinity, //don't garbage collect
+    // refetchInterval: false, //disable background refetching (not working)
   })
 }
