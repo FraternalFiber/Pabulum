@@ -34,9 +34,7 @@ export function SearchForm() {
   function handleSubmit(values: z.infer<typeof formSchema>) {
     setURLSearchParams(values)
     setIsSubmitted(true)
-    // setSearchParams(values)
     setSearchParams(values)
-    // console.log(searchParams)
   }
 
   // Form definition using a Zod schema for validation. "z.infer" infers a TypeScript type from a Zod schema.
@@ -56,8 +54,6 @@ export function SearchForm() {
   useEffect(() => {
     if(URLSearchParams.size > 0) {
       setIsSubmitted(true)
-      console.log(URLSearchParams)
-      console.log(URLSearchParams.get('q'))
 
       const values : TRecipeSearchParams = {
         q: URLSearchParams.get('q') ?? '', //assign an empty string if equals null
@@ -66,9 +62,27 @@ export function SearchForm() {
         mealType: URLSearchParams.getAll('mealType') ?? [],
       }
 
+      // set values in input and filters
+      form.setValue('q', values.q)
+      form.setValue('diet', values.diet)
+      form.setValue('cuisine', values.cuisine)
+      form.setValue('mealType', values.mealType)
+
       setSearchParams(values)
     }
   }, [URLSearchParams])
+
+  // watch for changes in filters values
+  // const watchFilters = form.watch(['diet', 'cuisine', 'mealType'])
+  //
+  // useEffect(() => {
+  //   console.log(watchFilters)
+  //
+  //   if(form.watch('diet').length > 0) {
+  //
+  //   }
+  //
+  // }, [watchFilters]);
 
   return (
       <>
