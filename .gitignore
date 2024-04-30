@@ -2,3 +2,4 @@
 /server/.env
 /.idea
 client/README.md
+server/firebase/creds.json
