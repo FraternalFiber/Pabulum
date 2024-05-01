@@ -11,15 +11,23 @@ import styled from "styled-components";
 import {availableDietItems} from "@/helpers/searchFormFilterItems.ts";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {
-  MAX_INGREDIENT_NAME_LEN, MAX_INGREDIENT_QUANTITY_LEN,
+  MAX_INGREDIENT_NAME_LEN,
+  MAX_INGREDIENT_QUANTITY_LEN,
   MAX_PREP_TIME,
   MAX_RECIPE_DESCRIPTION_LEN,
   MAX_RECIPE_TITLE_LEN,
   MAX_SERVINGS_NUMBER,
-  MAX_STEP_INSTRUCTION_LEN, MIN_PREP_TIME, MIN_SERVINGS_NUMBER, PREP_TIME_STEP, SERVINGS_NUMBER_STEP
+  MAX_STEP_INSTRUCTION_LEN,
+  MIN_PREP_TIME,
+  MIN_SERVINGS_NUMBER,
+  POST_RECIPE_ERROR_MESSAGE, POST_RECIPE_SUCCESS_MESSAGE,
+  PREP_TIME_STEP,
+  SERVINGS_NUMBER_STEP
 } from "@/helpers/constants.ts";
 import {SubtractButton} from "@/components/CreateRecipeForm/SubtractButton.tsx";
 import {AddButton} from "@/components/CreateRecipeForm/AddButton.tsx";
+import {postRecipe} from "@/services/postRecipe.ts";
+import {toast} from "sonner";
 
 // Schema for a single ingredient
 const ingredientSchema = z.object({
@@ -51,7 +59,7 @@ const formSchema = z.object({
   title: z.string().trim()
       .min(1, {message: 'Enter a recipe title'})
       .max(MAX_RECIPE_TITLE_LEN, {message: `Enter no more than ${MAX_RECIPE_TITLE_LEN} characters`}),
-  preparationTime: z.coerce
+  prepTime: z.coerce
       .number({invalid_type_error: 'Enter a number'})
       .min(MIN_PREP_TIME, {message: `Min time is ${MIN_PREP_TIME} minutes`})
       .max(MAX_PREP_TIME, {message: `Max time is ${MAX_PREP_TIME} minutes`}),
@@ -81,8 +89,37 @@ const FormLabelStyled = styled(FormLabel).attrs({
 // Form to create a new recipe
 export function CreateRecipeForm() {
   // Code executed after submitting a form
-  function handleSubmit(values: z.infer<typeof formSchema>) {
+  async function handleSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
+
+    // show a loading toast
+    const loadingToastId = toast.loading('Creating a recipe...')
+
+    try {
+      // post a recipe data to database
+      const response = await postRecipe(values)
+
+      if(response.success) {
+        // dismiss a loading toast and show a success toast
+        toast.dismiss(loadingToastId)
+        toast.success(POST_RECIPE_SUCCESS_MESSAGE)
+        console.log(response.message)
+
+        // REDIRECT TO NEWLY CREATED RECIPE HERE
+      }
+      else {
+        // dismiss a loading toast and show an error toast
+        toast.dismiss(loadingToastId)
+        toast.error(POST_RECIPE_ERROR_MESSAGE)
+        console.error(response.message)
+      }
+    }
+    catch(error) {
+      // dismiss a loading toast and show an error toast
+      toast.dismiss(loadingToastId)
+      toast.error(POST_RECIPE_ERROR_MESSAGE)
+      console.error(`${POST_RECIPE_ERROR_MESSAGE}: ${error}`)
+    }
   }
 
   // React Hook Form definition
@@ -91,7 +128,7 @@ export function CreateRecipeForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
-      preparationTime: 0,
+      prepTime: 0,
       servingsNumber: 1,
       description: '',
       diets: [],
@@ -131,17 +168,17 @@ export function CreateRecipeForm() {
             {/*#region Preparation time and servings number inputs */}
             <div className={'flex gap-x-5'}>
               <FormField
-                  name={'preparationTime'}
+                  name={'prepTime'}
                   control={form.control}
                   render={({field}) => (
                       <FormItem>
                         <FormLabelStyled>Prep time</FormLabelStyled>
                         <div className={'flex gap-x-2 items-center'}>
-                          <SubtractButton form={form} fieldName={'preparationTime'} step={PREP_TIME_STEP}/>
+                          <SubtractButton form={form} fieldName={'prepTime'} step={PREP_TIME_STEP}/>
                           <FormControl>
                             <Input type={'text'} className={'w-14'} placeholder={'20'} {...field}/>
                           </FormControl>
-                          <AddButton form={form} fieldName={'preparationTime'} step={PREP_TIME_STEP} maxValue={MAX_PREP_TIME}/>
+                          <AddButton form={form} fieldName={'prepTime'} step={PREP_TIME_STEP} maxValue={MAX_PREP_TIME}/>
                         </div>
                         <FormMessage/>
                       </FormItem>
