@@ -96,7 +96,7 @@ export function CreateRecipeForm() {
     const loadingToastId = toast.loading('Creating a recipe...')
 
     try {
-      // post a recipe data to database
+      // post recipe data to database
       const response = await postRecipe(values)
 
       if(response.success) {
@@ -166,7 +166,7 @@ export function CreateRecipeForm() {
             />
             {/*#endregion*/}
             {/*#region Preparation time and servings number inputs */}
-            <div className={'flex gap-x-5'}>
+            <div className={'flex gap-x-8'}>
               <FormField
                   name={'prepTime'}
                   control={form.control}
@@ -176,8 +176,9 @@ export function CreateRecipeForm() {
                         <div className={'flex gap-x-2 items-center'}>
                           <SubtractButton form={form} fieldName={'prepTime'} step={PREP_TIME_STEP}/>
                           <FormControl>
-                            <Input type={'text'} className={'w-14'} placeholder={'20'} {...field}/>
+                            <Input type={'text'} className={'w-12'} placeholder={'20'} {...field}/>
                           </FormControl>
+                          <div>min</div>
                           <AddButton form={form} fieldName={'prepTime'} step={PREP_TIME_STEP} maxValue={MAX_PREP_TIME}/>
                         </div>
                         <FormMessage/>
@@ -193,9 +194,9 @@ export function CreateRecipeForm() {
                         <div className={'flex gap-x-2 items-center'}>
                           <SubtractButton form={form} fieldName={'servingsNumber'} minValue={MIN_SERVINGS_NUMBER} step={SERVINGS_NUMBER_STEP}/>
                           <FormControl>
-                            <Input type={'text'} className={'w-14'} placeholder={'4'} {...field}/>
+                            <Input type={'text'} className={'w-12'} placeholder={'4'} {...field}/>
                           </FormControl>
-                          <AddButton form={form} fieldName={'servingsNumber'}  step={SERVINGS_NUMBER_STEP}/>
+                          <AddButton form={form} fieldName={'servingsNumber'} step={SERVINGS_NUMBER_STEP} maxValue={MAX_SERVINGS_NUMBER}/>
                         </div>
                         <FormMessage/>
                       </FormItem>
