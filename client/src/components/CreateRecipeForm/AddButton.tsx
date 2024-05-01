@@ -3,7 +3,7 @@ import {Plus} from "lucide-react";
 
 type AddButtonProps = {
   form: any
-  fieldName: 'preparationTime' | 'servingsNumber'
+  fieldName: 'prepTime' | 'servingsNumber'
   step?: number
   maxValue?: number
 }

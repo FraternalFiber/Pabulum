@@ -13,3 +13,10 @@ export const MAX_INGREDIENT_QUANTITY_LEN = 30
 
 // SearchForm
 export const MAX_SEARCH_QUERY_LEN = 80
+
+// URL
+export const BACKEND_SERVER_URL = 'http://127.0.0.1:42069'
+
+// Messages
+export const POST_RECIPE_SUCCESS_MESSAGE = 'Recipe has been added!'
+export const POST_RECIPE_ERROR_MESSAGE = 'An error occurred while creating a recipe'
