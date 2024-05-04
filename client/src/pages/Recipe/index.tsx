@@ -70,9 +70,9 @@ export function Recipe() {
                     <div className={'text-2xl font-medium mb-6 mt-2'}>Instructions:</div>
                     <div>
                       {instructions?.map((step: any) => (
-                          <div key={step.number}>
+                          <div>
                             <div className={'font-bold'}>Step {step.number}</div>
-                            <p>{step.step}</p>
+                            <p key={step.number}>{step.step}</p>
                             <Separator className={'mt-4 mb-4'}/>
                           </div>
                       ))}
