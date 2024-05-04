@@ -24,6 +24,7 @@ app.get('/', (req, res) => {
 //schema for validation of search
 const searchSchema = z.object({
     q: z.string().optional(),
+    //union used in order to be able to accept either string or array of string due to frontend sending single string if array has just one element
     diet: z.union([z.array(z.string()), z.string()]).optional(),
     cuisine: z.union([z.array(z.string()), z.string()]).optional(),
     mealType: z.union([z.array(z.string()), z.string()]).optional(),
@@ -40,6 +41,7 @@ app.get('/search', validateRequest({
     // add search params to url only if they are not undefined
     const searchParams = Object.assign({},
         data.q === undefined ? null : {query: data.q},
+        //check if value is undefined / array / string - array needs to be printed with commas in between
         data.diet === undefined ? null : {diet: Array.isArray(data.diet) ? data.diet.join(',') : data.diet},
         data.cuisine === undefined ? null : {cuisine: Array.isArray(data.cuisine) ? data.cuisine.join(',') : data.cuisine},
         data.mealType === undefined ? null : {type: Array.isArray(data.mealType) ? data.mealType.join(',') : data.mealType}
@@ -50,10 +52,13 @@ app.get('/search', validateRequest({
 
     const url = 'https://api.spoonacular.com/recipes/complexSearch?' + new URLSearchParams({
       apiKey: SPOONACULAR_APIKEY,
-      // instructionsRequired: true,
+        //to make sure api gives only recipes that include whole instructions list
+      instructionsRequired: true,
       ...searchParams
     })
-    console.log(url)
+
+    console.log("url: " + url)
+
     fetch(url)
         .then((response) => response.json())
         .then((data) => {
