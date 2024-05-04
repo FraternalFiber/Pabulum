@@ -23,11 +23,13 @@ app.get('/', (req, res) => {
 
 //schema for validation of search
 const searchSchema = z.object({
-    q: z.string(),
-    diet: z.string().optional(),
-    cuisine: z.string().optional(),
-    mealType: z.string().optional(),
+    q: z.string().optional(),
+    //union used in order to be able to accept either string or array of string due to frontend sending single string if array has just one element
+    diet: z.union([z.array(z.string()), z.string()]).optional(),
+    cuisine: z.union([z.array(z.string()), z.string()]).optional(),
+    mealType: z.union([z.array(z.string()), z.string()]).optional(),
 });
+
 
 //response for search result - list of recipes
 app.get('/search', validateRequest({
@@ -35,20 +37,28 @@ app.get('/search', validateRequest({
     }), async (req, res) => {
     const data = req.query
 
+    console.log(data.diet)
     // add search params to url only if they are not undefined
     const searchParams = Object.assign({},
         data.q === undefined ? null : {query: data.q},
-        data.diet === undefined ? null : {diet: data.diet},
-        data.cuisine === undefined ? null : {cuisine: data.cuisine},
-        data.mealType === undefined ? null : {type: data.mealType}
-    )
+        //check if value is undefined / array / string - array needs to be printed with commas in between
+        data.diet === undefined ? null : {diet: Array.isArray(data.diet) ? data.diet.join(',') : data.diet},
+        data.cuisine === undefined ? null : {cuisine: Array.isArray(data.cuisine) ? data.cuisine.join(',') : data.cuisine},
+        data.mealType === undefined ? null : {type: Array.isArray(data.mealType) ? data.mealType.join(',') : data.mealType}
+    );
+
+
+    console.log(searchParams.diet)
 
     const url = 'https://api.spoonacular.com/recipes/complexSearch?' + new URLSearchParams({
       apiKey: SPOONACULAR_APIKEY,
-      // instructionsRequired: true,
+        //to make sure api gives only recipes that include whole instructions list
+      instructionsRequired: true,
       ...searchParams
     })
-    console.log(url)
+
+    console.log("url: " + url)
+
     fetch(url)
         .then((response) => response.json())
         .then((data) => {
@@ -77,9 +87,10 @@ app.get('/recipe/:id', async (req, res) => {
 
                 // change weird values of ingredient amount
                 data.extendedIngredients.map((ingredient) => {
-                    if (ingredient.amount == 0.6666667) {
+                    if (ingredient.amount > (1/3 - 0.001) && ingredient.amount < (1/3 + 0.001))
+                        ingredient.amount = '⅓';
+                    else if (ingredient.amount > (2/3 - 0.001) && ingredient.amount < (2/3 + 0.001))
                         ingredient.amount = '⅔';
-                    }
                 })
 
                 res.json(data);
@@ -180,6 +191,37 @@ app.post('/recipe/add', validateRequest({
             console.error('Error adding : ', error);
             res.status(500).send({ success: false, message: 'An error occurred while adding data' });
         }
+
+        // add all ingredients to recipe
+        for(let ingredient of data.ingredients)
+        {
+            const addIngredient = Object.assign({},
+                ingredient.name === undefined ? null : {name: ingredient.name},
+                ingredient.quantity === undefined ? null : {quantity: ingredient.quantity}
+            )
+
+            await recipeRef.collection('ingredients').doc().set(addIngredient);
+        }
+
+        // add all steps to recipe
+        for(let step of data.steps)
+        {
+            const addStep = Object.assign({},
+                step.number === undefined ? null : {number: step.number},
+                step.content === undefined ? null : {content: step.content}
+            )
+
+            // send data to database
+            await recipeRef.collection('steps').doc().set(addStep);
+        }
+
+
+        // Send a response back to the frontend
+        res.status(200).send({ success: true, message: 'Data added successfully', id: recipeRef.id });
+    } catch (error) {
+        console.error('Error adding : ', error);
+        res.status(500).send({ success: false, message: 'An error occurred while adding data' });
+
     }
 );
 
