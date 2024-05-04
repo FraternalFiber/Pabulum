@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-   res.json({'status': 'Server is working properly'});
+    res.json({'status': 'Server is working properly'});
 });
 
 //schema for validation of search
@@ -34,7 +34,7 @@ const searchSchema = z.object({
 //response for search result - list of recipes
 app.get('/search', validateRequest({
     query: searchSchema
-    }), async (req, res) => {
+}), async (req, res) => {
     const data = req.query
 
     console.log(data.diet)
@@ -51,10 +51,10 @@ app.get('/search', validateRequest({
     console.log(searchParams.diet)
 
     const url = 'https://api.spoonacular.com/recipes/complexSearch?' + new URLSearchParams({
-      apiKey: SPOONACULAR_APIKEY,
+        apiKey: SPOONACULAR_APIKEY,
         //to make sure api gives only recipes that include whole instructions list
-      instructionsRequired: true,
-      ...searchParams
+        instructionsRequired: true,
+        ...searchParams
     })
 
     console.log("url: " + url)
@@ -127,8 +127,9 @@ const recipeSchema = z.object({
 
 //adding recipes to database from form
 app.post('/addrecipe', validateRequest({
-        body: recipeSchema
-    }), async (req, res) => {
+    body: recipeSchema
+}), async (req, res) => {
+
     try {
         const data = req.body;
 
