@@ -110,8 +110,9 @@ app.get('/recipe/:id', async (req, res) => {
 //schema for validation of recipes in form
 const recipeSchema = z.object({
     title: z.string().trim(),
-    prepTime: z.number().int().nonnegative().optional(),
-    servingsNumber: z.number().int().positive().min(1),
+    prepTime: z.number().int().positive().optional()
+        .nullable(),
+    servings: z.number().int().positive().min(1),
     description: z.string().optional().nullable(),
     diets: z.array(z.string()).nullable().optional(),
     ingredients: z.array(z.object({
@@ -120,76 +121,37 @@ const recipeSchema = z.object({
     })),
     steps: z.array(z.object({
         number: z.number().int().positive(),
-        instruction: z.string()
+        content: z.string()
     }))
 });
 
-// // FOR TESTING
-// app.post('/recipe/add', async (req, res) => {
-//     setTimeout(() => {
-//         res.status(200).send({ success: true, message: 'Data added successfully'});
-//         // res.status(500).send({ success: false, message: 'An error occurred while adding data'});
-//     }, 2000)
-// })
-
 //adding recipes to database from form
-app.post('/recipe/add', validateRequest({
+app.post('/addrecipe', validateRequest({
         body: recipeSchema
-    }),
-    async (req, res) => {
-        try {
-            const data = req.body;
+    }), async (req, res) => {
+    try {
+        const data = req.body;
 
-            const addRecipe = Object.assign({},
-                data.title === undefined ? null : {title: data.title},
-                data.prepTime === undefined ? null : {prepTime: data.prepTime},
-                data.servingsNumber === undefined ? null : {servingsNumber: data.servingsNumber},
-                data.description === undefined ? null : {description: data.description}
+        const addRecipe = Object.assign({},
+            data.title === undefined ? null : {title: data.title},
+            data.prepTime === undefined ? null : {prepTime: data.prepTime},
+            data.servings === undefined ? null : {servings: data.servings},
+            data.description === undefined ? null : {description: data.description}
+        )
+
+        // add a recipe data
+        const recipeRef = db.collection('recipes').doc();
+        await recipeRef.set(addRecipe);
+
+
+        // add all diets data to recipe
+        for(let diet of data.diets)
+        {
+            const addDiet = Object.assign({},
+                diet === undefined ? null : {name: diet}
             )
 
-            // add a recipe data
-            const recipeRef = db.collection('recipes').doc();
-            await recipeRef.set(addRecipe);
-
-
-            // add all diets data to recipe
-            for(let diet of data.diets)
-            {
-                const addDiet = Object.assign({},
-                    diet === undefined ? null : {name: diet}
-                )
-
-                await recipeRef.collection('diets').doc().set(addDiet);
-            }
-
-            // add all ingredients to recipe
-            for(let ingredient of data.ingredients)
-            {
-                const addIngredient = Object.assign({},
-                    ingredient.name === undefined ? null : {name: ingredient.name},
-                    ingredient.quantity === undefined ? null : {quantity: ingredient.quantity}
-                )
-
-                await recipeRef.collection('ingredients').doc().set(addIngredient);
-            }
-
-            // add all steps to recipe
-            for(let step of data.steps)
-            {
-                const addStep = Object.assign({},
-                    step.number === undefined ? null : {number: step.number},
-                    step.instruction === undefined ? null : {instruction: step.instruction}
-                )
-
-                await recipeRef.collection('steps').doc().set(addStep);
-            }
-
-
-            // Send a response back to the frontend
-            res.status(200).send({ success: true, message: 'Data added successfully', id: recipeRef.id });
-        } catch (error) {
-            console.error('Error adding : ', error);
-            res.status(500).send({ success: false, message: 'An error occurred while adding data' });
+            await recipeRef.collection('diets').doc().set(addDiet);
         }
 
         // add all ingredients to recipe
@@ -221,9 +183,8 @@ app.post('/recipe/add', validateRequest({
     } catch (error) {
         console.error('Error adding : ', error);
         res.status(500).send({ success: false, message: 'An error occurred while adding data' });
-
     }
-);
+});
 
 app.listen(port, hostname, () => {
     console.log(`Listening on ${hostname}:${port}`);

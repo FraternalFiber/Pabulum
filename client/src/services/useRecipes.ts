@@ -1,10 +1,9 @@
 import {useQuery} from "@tanstack/react-query";
 import {TRecipeResult} from "@/types/TRecipeResult.ts";
 import {TRecipeSearchParams} from "@/types/TRecipeSearchParams.ts";
-import {BACKEND_SERVER_URL} from "@/helpers/constants.ts";
 
 export const getRecipes = async (searchParams : TRecipeSearchParams) => {
-  const url = new URL(`${BACKEND_SERVER_URL}/search?`)
+  const url = new URL('http://127.0.0.1:42069/search?')
   const params = new URLSearchParams({q: searchParams.q})
 
   // Add an array of filters to url.search params
