@@ -18,47 +18,37 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-   res.json({'status': 'Server is working properly'});
+    res.json({'status': 'Server is working properly'});
 });
 
 //schema for validation of search
 const searchSchema = z.object({
-    q: z.string().optional(),
-    //union used in order to be able to accept either string or array of string due to frontend sending single string if array has just one element
-    diet: z.union([z.array(z.string()), z.string()]).optional(),
-    cuisine: z.union([z.array(z.string()), z.string()]).optional(),
-    mealType: z.union([z.array(z.string()), z.string()]).optional(),
+    q: z.string(),
+    diet: z.string().optional(),
+    cuisine: z.string().optional(),
+    mealType: z.string().optional(),
 });
-
 
 //response for search result - list of recipes
 app.get('/search', validateRequest({
     query: searchSchema
-    }), async (req, res) => {
+}), async (req, res) => {
     const data = req.query
 
-    console.log(data.diet)
     // add search params to url only if they are not undefined
     const searchParams = Object.assign({},
         data.q === undefined ? null : {query: data.q},
-        //check if value is undefined / array / string - array needs to be printed with commas in between
-        data.diet === undefined ? null : {diet: Array.isArray(data.diet) ? data.diet.join(',') : data.diet},
-        data.cuisine === undefined ? null : {cuisine: Array.isArray(data.cuisine) ? data.cuisine.join(',') : data.cuisine},
-        data.mealType === undefined ? null : {type: Array.isArray(data.mealType) ? data.mealType.join(',') : data.mealType}
-    );
-
-
-    console.log(searchParams.diet)
+        data.diet === undefined ? null : {diet: data.diet},
+        data.cuisine === undefined ? null : {cuisine: data.cuisine},
+        data.mealType === undefined ? null : {type: data.mealType}
+    )
 
     const url = 'https://api.spoonacular.com/recipes/complexSearch?' + new URLSearchParams({
-      apiKey: SPOONACULAR_APIKEY,
-        //to make sure api gives only recipes that include whole instructions list
-      instructionsRequired: true,
-      ...searchParams
+        apiKey: SPOONACULAR_APIKEY,
+        // instructionsRequired: true,
+        ...searchParams
     })
-
-    console.log("url: " + url)
-
+    console.log(url)
     fetch(url)
         .then((response) => response.json())
         .then((data) => {
@@ -87,10 +77,9 @@ app.get('/recipe/:id', async (req, res) => {
 
                 // change weird values of ingredient amount
                 data.extendedIngredients.map((ingredient) => {
-                    if (ingredient.amount > (1/3 - 0.001) && ingredient.amount < (1/3 + 0.001))
-                        ingredient.amount = '⅓';
-                    else if (ingredient.amount > (2/3 - 0.001) && ingredient.amount < (2/3 + 0.001))
+                    if (ingredient.amount == 0.6666667) {
                         ingredient.amount = '⅔';
+                    }
                 })
 
                 res.json(data);
@@ -110,8 +99,9 @@ app.get('/recipe/:id', async (req, res) => {
 //schema for validation of recipes in form
 const recipeSchema = z.object({
     title: z.string().trim(),
-    prepTime: z.number().int().nonnegative().optional(),
-    servingsNumber: z.number().int().positive().min(1),
+    prepTime: z.number().int().positive().optional()
+        .nullable(),
+    servings: z.number().int().positive().min(1),
     description: z.string().optional().nullable(),
     diets: z.array(z.string()).nullable().optional(),
     ingredients: z.array(z.object({
@@ -120,76 +110,37 @@ const recipeSchema = z.object({
     })),
     steps: z.array(z.object({
         number: z.number().int().positive(),
-        instruction: z.string()
+        content: z.string()
     }))
 });
 
-// // FOR TESTING
-// app.post('/recipe/add', async (req, res) => {
-//     setTimeout(() => {
-//         res.status(200).send({ success: true, message: 'Data added successfully'});
-//         // res.status(500).send({ success: false, message: 'An error occurred while adding data'});
-//     }, 2000)
-// })
-
 //adding recipes to database from form
-app.post('/recipe/add', validateRequest({
-        body: recipeSchema
-    }),
-    async (req, res) => {
-        try {
-            const data = req.body;
+app.post('/addrecipe', validateRequest({
+    body: recipeSchema
+}), async (req, res) => {
+    try {
+        const data = req.body;
 
-            const addRecipe = Object.assign({},
-                data.title === undefined ? null : {title: data.title},
-                data.prepTime === undefined ? null : {prepTime: data.prepTime},
-                data.servingsNumber === undefined ? null : {servingsNumber: data.servingsNumber},
-                data.description === undefined ? null : {description: data.description}
+        const addRecipe = Object.assign({},
+            data.title === undefined ? null : {title: data.title},
+            data.prepTime === undefined ? null : {prepTime: data.prepTime},
+            data.servings === undefined ? null : {servings: data.servings},
+            data.description === undefined ? null : {description: data.description}
+        )
+
+        // add a recipe data
+        const recipeRef = db.collection('recipes').doc();
+        await recipeRef.set(addRecipe);
+
+
+        // add all diets data to recipe
+        for(let diet of data.diets)
+        {
+            const addDiet = Object.assign({},
+                diet === undefined ? null : {name: diet}
             )
 
-            // add a recipe data
-            const recipeRef = db.collection('recipes').doc();
-            await recipeRef.set(addRecipe);
-
-
-            // add all diets data to recipe
-            for(let diet of data.diets)
-            {
-                const addDiet = Object.assign({},
-                    diet === undefined ? null : {name: diet}
-                )
-
-                await recipeRef.collection('diets').doc().set(addDiet);
-            }
-
-            // add all ingredients to recipe
-            for(let ingredient of data.ingredients)
-            {
-                const addIngredient = Object.assign({},
-                    ingredient.name === undefined ? null : {name: ingredient.name},
-                    ingredient.quantity === undefined ? null : {quantity: ingredient.quantity}
-                )
-
-                await recipeRef.collection('ingredients').doc().set(addIngredient);
-            }
-
-            // add all steps to recipe
-            for(let step of data.steps)
-            {
-                const addStep = Object.assign({},
-                    step.number === undefined ? null : {number: step.number},
-                    step.instruction === undefined ? null : {instruction: step.instruction}
-                )
-
-                await recipeRef.collection('steps').doc().set(addStep);
-            }
-
-
-            // Send a response back to the frontend
-            res.status(200).send({ success: true, message: 'Data added successfully', id: recipeRef.id });
-        } catch (error) {
-            console.error('Error adding : ', error);
-            res.status(500).send({ success: false, message: 'An error occurred while adding data' });
+            await recipeRef.collection('diets').doc().set(addDiet);
         }
 
         // add all ingredients to recipe
@@ -211,7 +162,6 @@ app.post('/recipe/add', validateRequest({
                 step.content === undefined ? null : {content: step.content}
             )
 
-            // send data to database
             await recipeRef.collection('steps').doc().set(addStep);
         }
 
@@ -221,9 +171,8 @@ app.post('/recipe/add', validateRequest({
     } catch (error) {
         console.error('Error adding : ', error);
         res.status(500).send({ success: false, message: 'An error occurred while adding data' });
-
     }
-);
+});
 
 app.listen(port, hostname, () => {
     console.log(`Listening on ${hostname}:${port}`);
