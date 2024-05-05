@@ -1,5 +1,6 @@
 /server/node_modules/
 /server/.env
 /server/firebase/creds.json
-/client/
-
+/.idea
+client/README.md
+client/node_modules
