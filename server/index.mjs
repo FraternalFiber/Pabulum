@@ -5,6 +5,7 @@ import {validateRequest} from 'zod-express-middleware';
 import {z} from 'zod';
 
 import {db} from './firebase/firebase.mjs';
+import {RECIPE} from "./constraints.mjs";
 
 const app = express();
 const hostname = '127.0.0.1';
@@ -18,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-   res.json({'status': 'Server is working properly'});
+    res.json({'status': 'Server is working properly'});
 });
 
 //schema for validation of search
@@ -34,7 +35,7 @@ const searchSchema = z.object({
 //response for search result - list of recipes
 app.get('/search', validateRequest({
     query: searchSchema
-    }), async (req, res) => {
+}), async (req, res) => {
     const data = req.query
 
     console.log(data.diet)
@@ -51,10 +52,10 @@ app.get('/search', validateRequest({
     console.log(searchParams.diet)
 
     const url = 'https://api.spoonacular.com/recipes/complexSearch?' + new URLSearchParams({
-      apiKey: SPOONACULAR_APIKEY,
+        apiKey: SPOONACULAR_APIKEY,
         //to make sure api gives only recipes that include whole instructions list
-      instructionsRequired: true,
-      ...searchParams
+        instructionsRequired: true,
+        ...searchParams
     })
 
     console.log("url: " + url)
@@ -109,18 +110,32 @@ app.get('/recipe/:id', async (req, res) => {
 
 //schema for validation of recipes in form
 const recipeSchema = z.object({
-    title: z.string().trim(),
-    prepTime: z.number().int().nonnegative().optional(),
-    servingsNumber: z.number().int().positive().min(1),
-    description: z.string().optional().nullable(),
-    diets: z.array(z.string()).nullable().optional(),
+    title: z.string().trim()
+        .min(1, {message: 'Title missing'})
+        .max(RECIPE.MAX_RECIPE_TITLE_LEN, {message: 'Title too long'}),
+    prepTime: z.coerce.number().int()
+        .min(RECIPE.MIN_PREP_TIME, {message: 'Time too short'})
+        .max(RECIPE.MAX_PREP_TIME, {message: 'Time too long'}),
+    servingsNumber: z.coerce.number().int()
+        .min(RECIPE.MIN_SERVINGS_NUMBER, {message: 'Too little servings'})
+        .max(RECIPE.MAX_SERVINGS_NUMBER, {message: 'Too many servings'}),
+    description: z.string().trim()
+        .min(0)
+        .max(RECIPE.MAX_RECIPE_DESCRIPTION_LEN, {message: 'Description too long'}),
+    diets: z.array(z.string()).optional(),
     ingredients: z.array(z.object({
-        name: z.string(),
-        quantity: z.string().optional()
+        name: z.string().trim()
+            .min(1, {message: 'Ingredient name missing'})
+            .max(RECIPE.MAX_INGREDIENT_NAME_LEN, {message: 'Ingredient name too long'}),
+        quantity: z.string().trim()
+            .max(30, {message: 'Ingredient quantity too large'})
+            .optional()
     })),
     steps: z.array(z.object({
         number: z.number().int().positive(),
-        instruction: z.string()
+        instruction: z.string().trim()
+            .min(1, {message: 'Instruction missing'})
+            .max(RECIPE.MAX_STEP_INSTRUCTION_LEN, {message: 'Instruction too long'})
     }))
 });
 
@@ -153,8 +168,7 @@ app.post('/recipe/add', validateRequest({
 
 
             // add all diets data to recipe
-            for(let diet of data.diets)
-            {
+            for (let diet of data.diets) {
                 const addDiet = Object.assign({},
                     diet === undefined ? null : {name: diet}
                 )
@@ -163,8 +177,7 @@ app.post('/recipe/add', validateRequest({
             }
 
             // add all ingredients to recipe
-            for(let ingredient of data.ingredients)
-            {
+            for (let ingredient of data.ingredients) {
                 const addIngredient = Object.assign({},
                     ingredient.name === undefined ? null : {name: ingredient.name},
                     ingredient.quantity === undefined ? null : {quantity: ingredient.quantity}
@@ -174,8 +187,7 @@ app.post('/recipe/add', validateRequest({
             }
 
             // add all steps to recipe
-            for(let step of data.steps)
-            {
+            for (let step of data.steps) {
                 const addStep = Object.assign({},
                     step.number === undefined ? null : {number: step.number},
                     step.instruction === undefined ? null : {instruction: step.instruction}
@@ -186,44 +198,12 @@ app.post('/recipe/add', validateRequest({
 
 
             // Send a response back to the frontend
-            res.status(200).send({ success: true, message: 'Data added successfully', id: recipeRef.id });
+            res.status(200).send({success: true, message: 'Data added successfully', id: recipeRef.id});
         } catch (error) {
             console.error('Error adding : ', error);
-            res.status(500).send({ success: false, message: 'An error occurred while adding data' });
+            res.status(500).send({success: false, message: 'An error occurred while adding data'});
         }
-
-        // add all ingredients to recipe
-        for(let ingredient of data.ingredients)
-        {
-            const addIngredient = Object.assign({},
-                ingredient.name === undefined ? null : {name: ingredient.name},
-                ingredient.quantity === undefined ? null : {quantity: ingredient.quantity}
-            )
-
-            await recipeRef.collection('ingredients').doc().set(addIngredient);
-        }
-
-        // add all steps to recipe
-        for(let step of data.steps)
-        {
-            const addStep = Object.assign({},
-                step.number === undefined ? null : {number: step.number},
-                step.content === undefined ? null : {content: step.content}
-            )
-
-            // send data to database
-            await recipeRef.collection('steps').doc().set(addStep);
-        }
-
-
-        // Send a response back to the frontend
-        res.status(200).send({ success: true, message: 'Data added successfully', id: recipeRef.id });
-    } catch (error) {
-        console.error('Error adding : ', error);
-        res.status(500).send({ success: false, message: 'An error occurred while adding data' });
-
-    }
-);
+    });
 
 app.listen(port, hostname, () => {
     console.log(`Listening on ${hostname}:${port}`);
