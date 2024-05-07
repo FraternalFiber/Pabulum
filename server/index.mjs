@@ -153,8 +153,7 @@ app.post('/recipe/add', validateRequest({
 
 
             // add all diets data to recipe
-            for(let diet of data.diets)
-            {
+            for (let diet of data.diets) {
                 const addDiet = Object.assign({},
                     diet === undefined ? null : {name: diet}
                 )
@@ -163,8 +162,7 @@ app.post('/recipe/add', validateRequest({
             }
 
             // add all ingredients to recipe
-            for(let ingredient of data.ingredients)
-            {
+            for (let ingredient of data.ingredients) {
                 const addIngredient = Object.assign({},
                     ingredient.name === undefined ? null : {name: ingredient.name},
                     ingredient.quantity === undefined ? null : {quantity: ingredient.quantity}
@@ -174,8 +172,7 @@ app.post('/recipe/add', validateRequest({
             }
 
             // add all steps to recipe
-            for(let step of data.steps)
-            {
+            for (let step of data.steps) {
                 const addStep = Object.assign({},
                     step.number === undefined ? null : {number: step.number},
                     step.instruction === undefined ? null : {instruction: step.instruction}
@@ -186,44 +183,12 @@ app.post('/recipe/add', validateRequest({
 
 
             // Send a response back to the frontend
-            res.status(200).send({ success: true, message: 'Data added successfully', id: recipeRef.id });
+            res.status(200).send({success: true, message: 'Data added successfully', id: recipeRef.id});
         } catch (error) {
             console.error('Error adding : ', error);
-            res.status(500).send({ success: false, message: 'An error occurred while adding data' });
+            res.status(500).send({success: false, message: 'An error occurred while adding data'});
         }
-
-        // add all ingredients to recipe
-        for(let ingredient of data.ingredients)
-        {
-            const addIngredient = Object.assign({},
-                ingredient.name === undefined ? null : {name: ingredient.name},
-                ingredient.quantity === undefined ? null : {quantity: ingredient.quantity}
-            )
-
-            await recipeRef.collection('ingredients').doc().set(addIngredient);
-        }
-
-        // add all steps to recipe
-        for(let step of data.steps)
-        {
-            const addStep = Object.assign({},
-                step.number === undefined ? null : {number: step.number},
-                step.content === undefined ? null : {content: step.content}
-            )
-
-            // send data to database
-            await recipeRef.collection('steps').doc().set(addStep);
-        }
-
-
-        // Send a response back to the frontend
-        res.status(200).send({ success: true, message: 'Data added successfully', id: recipeRef.id });
-    } catch (error) {
-        console.error('Error adding : ', error);
-        res.status(500).send({ success: false, message: 'An error occurred while adding data' });
-
-    }
-);
+    });
 
 app.listen(port, hostname, () => {
     console.log(`Listening on ${hostname}:${port}`);
