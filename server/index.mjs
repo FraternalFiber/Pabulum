@@ -38,7 +38,6 @@ app.get('/search', validateRequest({
 }), async (req, res) => {
     const data = req.query
 
-    console.log(data.diet)
     // add search params to url only if they are not undefined
     const searchParams = Object.assign({},
         data.q === undefined ? null : {query: data.q},
@@ -47,9 +46,6 @@ app.get('/search', validateRequest({
         data.cuisine === undefined ? null : {cuisine: Array.isArray(data.cuisine) ? data.cuisine.join(',') : data.cuisine},
         data.mealType === undefined ? null : {type: Array.isArray(data.mealType) ? data.mealType.join(',') : data.mealType}
     );
-
-
-    console.log(searchParams.diet)
 
     const url = 'https://api.spoonacular.com/recipes/complexSearch?' + new URLSearchParams({
         apiKey: SPOONACULAR_APIKEY,
