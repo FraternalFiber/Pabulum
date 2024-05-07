@@ -1,28 +1,12 @@
-// import {useEffect, useState} from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {routes} from "@/helpers/routes.tsx";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
+import {Toaster} from "sonner";
 
 const queryClient = new QueryClient()
 
 function App() {
-  // const [serverStatus, setServerStatus] = useState<string>('Server is not working');
-
-  // useEffect(() => {
-  //   // Set tab title
-  //   document.title = "Pabulum";
-  //   // Connect to backend API at return server status
-  //   fetch('http://127.0.0.1:42069/')
-  //       .then(res => res.json())
-  //       .then((res) => {
-  //         setServerStatus(res.status);
-  //         console.log(serverStatus);
-  //       })
-  //       .catch((error) => {
-  //           console.error('Backend API connection error: ', error);
-  //       })
-  // }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
@@ -36,6 +20,10 @@ function App() {
           ))}
         </Routes>
       </BrowserRouter>
+      {/* Component for displaying toasts */}
+      <Toaster richColors/>
+      {/* Dev tools */}
+      <ReactQueryDevtools initialIsOpen={false} buttonPosition={'bottom-left'}/>
     </QueryClientProvider>
   )
 }

@@ -3,7 +3,7 @@ import {Minus} from "lucide-react";
 
 type SubtractButtonProps = {
   form: any
-  fieldName: 'preparationTime' | 'servingsNumber'
+  fieldName: 'prepTime' | 'servingsNumber'
   step?: number
   minValue?: number
 }
