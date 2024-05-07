@@ -16,6 +16,7 @@ export const useRecipe = (id: string) => {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    gcTime: 60 * 60 * 1000 //garbage collect after 60 minutes
+    staleTime: Infinity, // keep data fresh for infinity until user refreshes the page
+    gcTime: Infinity // don't garbage collect
   })
 }
