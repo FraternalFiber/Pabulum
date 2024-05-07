@@ -1,7 +1,8 @@
 import {useQuery} from "@tanstack/react-query";
+import {BACKEND_SERVER_URL} from "@/helpers/constants.ts";
 
 export const getRecipe = async (id: string) => {
-  return fetch(`http://127.0.0.1:42069/recipe/${id}`)
+  return fetch(`${BACKEND_SERVER_URL}/recipe/${id}`)
       .then(res => res.json())
       .catch((error) => {
         throw ('Backend API connection error: ' + error)

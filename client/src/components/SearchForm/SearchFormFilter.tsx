@@ -7,12 +7,6 @@ import {useEffect, useState} from "react";
 import {Badge} from "@/components/ui/badge.tsx";
 import {cn} from "@/lib/utils.ts";
 
-// interface FormValues {
-//   searchTerm: string,
-//   dietItems: string[],
-//   cuisineItems: string[]
-// }
-
 type SearchFormFilterProps = {
   title: string
   name: string
@@ -49,7 +43,8 @@ export function SearchFormFilter({title, name, items, form}: SearchFormFilterPro
           <FilterBadge optionsNumber={watchFilter.length}/>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className={'w-auto pr-6'}>
+      {/* Show a scrollbar when popover is higher than max available height between the button and the bottom of the screen */}
+      <PopoverContent className={'w-auto overflow-y-auto max-h-[length:var(--radix-popover-content-available-height)]'}>
         <FormField
             control={form.control}
             name={name}
