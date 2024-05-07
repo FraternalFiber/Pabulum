@@ -33,23 +33,12 @@ function FilterBadge({optionsNumber}: FilterBadgeProps) {
 
 // Search form filter, consists of a button that opens a popover with a list of checkboxes
 export function SearchFormFilter({title, name, items, form}: SearchFormFilterProps) {
-  const [filterChecked, setFilterChecked] = useState<boolean>(false)
   const watchFilter = form.watch(name)
-
-  // change the filter button appearance when any checkboxes inside checked (badge with number later)
-  useEffect(() => {
-    if(watchFilter.length > 0) {
-      setFilterChecked(true)
-    }
-    else {
-      setFilterChecked(false)
-    }
-  }, [watchFilter]);
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant={'outline'} className={cn('relative', filterChecked ? 'border-primary' : '')}>
+        <Button variant={'outline'} className={cn('relative', watchFilter.length > 0 ? 'border-primary' : '')}>
           {title}
           <FilterBadge optionsNumber={watchFilter.length}/>
         </Button>
