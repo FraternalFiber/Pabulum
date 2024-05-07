@@ -5,6 +5,7 @@ import {validateRequest} from 'zod-express-middleware';
 import {z} from 'zod';
 
 import {db} from './firebase/firebase.mjs';
+import {RECIPE} from "./constraints.mjs";
 
 const app = express();
 const hostname = '127.0.0.1';
@@ -18,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-   res.json({'status': 'Server is working properly'});
+    res.json({'status': 'Server is working properly'});
 });
 
 //schema for validation of search
@@ -34,10 +35,9 @@ const searchSchema = z.object({
 //response for search result - list of recipes
 app.get('/search', validateRequest({
     query: searchSchema
-    }), async (req, res) => {
+}), async (req, res) => {
     const data = req.query
 
-    console.log(data.diet)
     // add search params to url only if they are not undefined
     const searchParams = Object.assign({},
         data.q === undefined ? null : {query: data.q},
@@ -47,14 +47,11 @@ app.get('/search', validateRequest({
         data.mealType === undefined ? null : {type: Array.isArray(data.mealType) ? data.mealType.join(',') : data.mealType}
     );
 
-
-    console.log(searchParams.diet)
-
     const url = 'https://api.spoonacular.com/recipes/complexSearch?' + new URLSearchParams({
-      apiKey: SPOONACULAR_APIKEY,
+        apiKey: SPOONACULAR_APIKEY,
         //to make sure api gives only recipes that include whole instructions list
-      instructionsRequired: true,
-      ...searchParams
+        instructionsRequired: true,
+        ...searchParams
     })
 
     console.log("url: " + url)
@@ -109,18 +106,32 @@ app.get('/recipe/:id', async (req, res) => {
 
 //schema for validation of recipes in form
 const recipeSchema = z.object({
-    title: z.string().trim(),
-    prepTime: z.number().int().nonnegative().optional(),
-    servingsNumber: z.number().int().positive().min(1),
-    description: z.string().optional().nullable(),
-    diets: z.array(z.string()).nullable().optional(),
+    title: z.string().trim()
+        .min(1, {message: 'Title missing'})
+        .max(RECIPE.MAX_RECIPE_TITLE_LEN, {message: 'Title too long'}),
+    prepTime: z.coerce.number().int()
+        .min(RECIPE.MIN_PREP_TIME, {message: 'Time too short'})
+        .max(RECIPE.MAX_PREP_TIME, {message: 'Time too long'}),
+    servingsNumber: z.coerce.number().int()
+        .min(RECIPE.MIN_SERVINGS_NUMBER, {message: 'Too little servings'})
+        .max(RECIPE.MAX_SERVINGS_NUMBER, {message: 'Too many servings'}),
+    description: z.string().trim()
+        .min(0)
+        .max(RECIPE.MAX_RECIPE_DESCRIPTION_LEN, {message: 'Description too long'}),
+    diets: z.array(z.string()).optional(),
     ingredients: z.array(z.object({
-        name: z.string(),
-        quantity: z.string().optional()
+        name: z.string().trim()
+            .min(1, {message: 'Ingredient name missing'})
+            .max(RECIPE.MAX_INGREDIENT_NAME_LEN, {message: 'Ingredient name too long'}),
+        quantity: z.string().trim()
+            .max(30, {message: 'Ingredient quantity too large'})
+            .optional()
     })),
     steps: z.array(z.object({
         number: z.number().int().positive(),
-        instruction: z.string()
+        instruction: z.string().trim()
+            .min(1, {message: 'Instruction missing'})
+            .max(RECIPE.MAX_STEP_INSTRUCTION_LEN, {message: 'Instruction too long'})
     }))
 });
 
