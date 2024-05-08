@@ -21,7 +21,7 @@ export function RecipeResultCard({id, title, imageUrl = noImagePlaceholder, clas
             <CardTitle>{title}</CardTitle>
           </CardHeader>
           <CardContent>
-              <div style={{backgroundImage: `url(${imageUrl})`}} className={'w-full h-52 bg-no-repeat bg-cover bg-center rounded-sm'}></div>
+              <div style={{backgroundImage: `url(${imageUrl}), url(${noImagePlaceholder})`}} className={'w-full h-52 bg-no-repeat bg-cover bg-center rounded-sm'}></div>
           </CardContent>
           <CardFooter className={'mt-5'}>
             <Button type={'button'} className={'block'}>Show</Button>

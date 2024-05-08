@@ -6,6 +6,7 @@ import {Clock as ClockIcon, UsersRound as UsersRoundIcon} from "lucide-react";
 import {useEffect, useState} from "react";
 import {Separator} from "@/components/ui/separator.tsx";
 import {BackButton} from "@/components/BackButton";
+import {cn} from "@/lib/utils.ts";
 
 export function Recipe() {
   const { id } = useParams<{id?: string}>() || {}
@@ -16,11 +17,18 @@ export function Recipe() {
   } = useRecipe(id || '')
   const [ingredients, setIngredients] = useState<Array<object>>()
   const [instructions, setInstructions] = useState<Array<object>>()
+  const [showImage, setShowImage] = useState<boolean>(false)
 
+  // get ingredients and steps instructions from recipe and set to state variables
   useEffect(() => {
     setIngredients(recipe?.extendedIngredients)
     setInstructions(recipe?.analyzedInstructions[0].steps)
   }, [recipe]);
+
+  // show image when it's loaded correctly
+  const handleImageLoad = () => {
+    setShowImage(true)
+  }
 
   return (
       <>
@@ -33,8 +41,13 @@ export function Recipe() {
                 <div className={'flex flex-col gap-y-5'}>
                   {/* Back button */}
                   <BackButton/>
-                  {/* Main photo - show if recipe contains an image */}
-                  {recipe.image && (<img src={recipe.image} alt={recipe.title} className={'rounded-sm max-w-[28rem]'}/>)}
+                  {/* Main photo - show only if recipe contains an image and image is loaded correctly */}
+                  {recipe.image && (
+                      <img src={recipe.image}
+                           onLoad={handleImageLoad}
+                           alt={recipe.title}
+                           className={cn('rounded-sm max-w-[28rem]', showImage ? 'block' : 'hidden')}/>
+                  )}
                   {/* Title */}
                   <h1 className={'text-3xl font-bold'}>{recipe.title}</h1>
                   <div className={'flex gap-x-6'}>
