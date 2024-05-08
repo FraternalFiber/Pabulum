@@ -33,8 +33,8 @@ export function Recipe() {
                 <div className={'flex flex-col gap-y-5'}>
                   {/* Back button */}
                   <BackButton/>
-                  {/* Main photo */}
-                  <img src={recipe.image} alt={recipe.title} className={'rounded-sm max-w-[28rem]'}/>
+                  {/* Main photo - show if recipe contains an image */}
+                  {recipe.image && (<img src={recipe.image} alt={recipe.title} className={'rounded-sm max-w-[28rem]'}/>)}
                   {/* Title */}
                   <h1 className={'text-3xl font-bold'}>{recipe.title}</h1>
                   <div className={'flex gap-x-6'}>
