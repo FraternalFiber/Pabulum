@@ -3,7 +3,6 @@ import {Button} from "@/components/ui/button.tsx";
 import {FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {TSearchFormFilter} from "@/types/TSearchFormFilter.ts";
-import {useEffect, useState} from "react";
 import {Badge} from "@/components/ui/badge.tsx";
 import {cn} from "@/lib/utils.ts";
 
@@ -44,7 +43,7 @@ export function SearchFormFilter({title, name, items, form}: SearchFormFilterPro
         </Button>
       </PopoverTrigger>
       {/* Show a scrollbar when popover is higher than max available height between the button and the bottom of the screen */}
-      <PopoverContent className={'w-auto overflow-y-auto max-h-[length:var(--radix-popover-content-available-height)]'}>
+      <PopoverContent className={'w-auto overflow-y-auto max-h-[var(--radix-popover-content-available-height)]'}>
         <FormField
             control={form.control}
             name={name}
