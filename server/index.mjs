@@ -54,7 +54,7 @@ app.get('/search', validateRequest({
         ...searchParams
     })
 
-    console.log("url: " + url)
+    console.log("search url: ", url)
 
     fetch(url)
         .then((response) => response.json())
@@ -88,11 +88,13 @@ app.get('/search', validateRequest({
 app.get('/recipe/:id', async (req, res) => {
     const id = req.params.id;
 
+    const url = `https://api.spoonacular.com/recipes/${id}/information?apiKey=${SPOONACULAR_APIKEY}&instructionsRequired=true`
+    console.log("recipe url: ", url);
     try
     {
-        fetch(`https://api.spoonacular.com/recipes/${id}/information?apiKey=${SPOONACULAR_APIKEY}&instructionsRequired=true`)
+        fetch(url)
             .then((response) => response.json())
-            .then((data) => {
+            .then(async (data) => {
                 // remove ingredients that don't exist in API's database anymore from given list
                 data.extendedIngredients = data.extendedIngredients.filter(object => object.id !== -1);
 
@@ -106,6 +108,19 @@ app.get('/recipe/:id', async (req, res) => {
                     else if (ingredient.amount > (2/3 - 0.001) && ingredient.amount < (2/3 + 0.001))
                         ingredient.amount = '⅔';
                 })
+
+                try {
+                    const imageResponse = await fetch(data.image);
+                    // If the image URL returns a 404, delete the image property from result
+                    if (!imageResponse.ok) {
+                        delete data.image;
+                        delete data.imageType;
+                    }
+                } catch (error) {
+                    console.error('Error fetching image: ', error);
+                    delete data.image;
+                    delete data.imageType;
+                }
 
                 res.json(data);
             })
