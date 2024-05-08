@@ -54,28 +54,11 @@ app.get('/search', validateRequest({
         ...searchParams
     })
 
-    console.log("search url: ", url)
+    console.log("url: " + url)
 
     fetch(url)
         .then((response) => response.json())
-        .then(async (data) => {
-            // Check each image URL and conditionally delete the 'image' property
-            const checkedResults = await Promise.all(data.results.map(async (item) => {
-                try {
-                    const imageResponse = await fetch(item.image);
-                    // If the image URL returns a 404, delete the image property from results
-                    if (!imageResponse.ok) {
-                        delete item.image;
-                        delete item.imageType;
-                    }
-                } catch (error) {
-                    console.error('Error fetching image: ', error);
-                    delete item.image;
-                    delete item.imageType;
-                }
-                return item;
-            }));
-            data.results = checkedResults;
+        .then((data) => {
             res.json(data);
         })
         .catch((error) => {
@@ -88,13 +71,11 @@ app.get('/search', validateRequest({
 app.get('/recipe/:id', async (req, res) => {
     const id = req.params.id;
 
-    const url = `https://api.spoonacular.com/recipes/${id}/information?apiKey=${SPOONACULAR_APIKEY}&instructionsRequired=true`
-    console.log("recipe url: ", url);
     try
     {
-        fetch(url)
+        fetch(`https://api.spoonacular.com/recipes/${id}/information?apiKey=${SPOONACULAR_APIKEY}&instructionsRequired=true`)
             .then((response) => response.json())
-            .then(async (data) => {
+            .then((data) => {
                 // remove ingredients that don't exist in API's database anymore from given list
                 data.extendedIngredients = data.extendedIngredients.filter(object => object.id !== -1);
 
@@ -108,19 +89,6 @@ app.get('/recipe/:id', async (req, res) => {
                     else if (ingredient.amount > (2/3 - 0.001) && ingredient.amount < (2/3 + 0.001))
                         ingredient.amount = '⅔';
                 })
-
-                try {
-                    const imageResponse = await fetch(data.image);
-                    // If the image URL returns a 404, delete the image property from result
-                    if (!imageResponse.ok) {
-                        delete data.image;
-                        delete data.imageType;
-                    }
-                } catch (error) {
-                    console.error('Error fetching image: ', error);
-                    delete data.image;
-                    delete data.imageType;
-                }
 
                 res.json(data);
             })
