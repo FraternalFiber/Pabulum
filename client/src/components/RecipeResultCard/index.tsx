@@ -12,7 +12,7 @@ type RecipeResultCardProps = {
 }
 
 // Small card with brief information about a recipe shown in the search results page.
-// Show no image placeholder when imageUrl is not given
+// Show no-image placeholder when imageUrl is not given
 export function RecipeResultCard({id, title, imageUrl = noImagePlaceholder, className}: RecipeResultCardProps) {
   return (
       <Link to={`/recipe/${id}`}>
