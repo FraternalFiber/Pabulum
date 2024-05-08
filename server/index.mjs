@@ -5,7 +5,7 @@ import {validateRequest} from 'zod-express-middleware';
 import {z} from 'zod';
 
 import {db} from './firebase/firebase.mjs';
-import {RECIPE} from "./constraints.mjs";
+import {RECIPE} from "./constants.mjs";
 
 const app = express();
 const hostname = '127.0.0.1';
