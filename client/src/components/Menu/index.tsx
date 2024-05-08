@@ -2,6 +2,7 @@ import {Link, NavLink} from "react-router-dom";
 import React from "react";
 import {Compass as CompassIcon, PlusCircle as PlusCircleIcon, Refrigerator as RefrigeratorIcon, ScrollText as ScrollTextIcon, Search as SearchIcon, User as UserIcon, Menu as MenuIcon} from 'lucide-react';
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet.tsx";
+import pabulumLogoWithText from "@/assets/images/logo_with_text.svg"
 
 type MenuButtonProps = {
   path: string
@@ -31,9 +32,7 @@ function MenuContent() {
   return (
       <>
         <Link to={'/'} className={'flex flex-row items-center mt-4 ml-3 mr-2 select-none'}>
-          {/*<img src={'/logo_main.svg'} alt={'logo'} className={'w-14'} draggable={'false'}/>*/}
-          {/*<h1 className={'text-2xl ml-2 font-bold tracking-wide'}>Pabulum</h1>*/}
-          <img src={'/logo_with_text.svg'} alt={'Pabulum logo'} className={'w-full'}/>
+          <img src={pabulumLogoWithText} alt={'Pabulum logo'} className={'w-full'}/>
         </Link>
         <div className={'flex flex-col justify-between grow mt-5 mb-2 pr-2 pl-2 min-h-100'}>
           <div className={'flex flex-col gap-y-2'}>
