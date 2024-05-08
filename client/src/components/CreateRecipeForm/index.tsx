@@ -11,10 +11,11 @@ import styled from "styled-components";
 import {availableDietItems} from "@/helpers/searchFormFilterItems.ts";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {
+  ACCEPTED_IMAGE_TYPES,
   MAX_INGREDIENT_NAME_LEN,
   MAX_INGREDIENT_QUANTITY_LEN,
   MAX_PREP_TIME,
-  MAX_RECIPE_DESCRIPTION_LEN,
+  MAX_RECIPE_DESCRIPTION_LEN, MAX_RECIPE_PHOTO_SIZE,
   MAX_RECIPE_TITLE_LEN,
   MAX_SERVINGS_NUMBER,
   MAX_STEP_INSTRUCTION_LEN,
@@ -28,6 +29,7 @@ import {SubtractButton} from "@/components/CreateRecipeForm/SubtractButton.tsx";
 import {AddButton} from "@/components/CreateRecipeForm/AddButton.tsx";
 import {postRecipe} from "@/services/postRecipe.ts";
 import {toast} from "sonner";
+import {useState} from "react";
 
 // Schema for a single ingredient
 const ingredientSchema = z.object({
@@ -41,7 +43,9 @@ const ingredientSchema = z.object({
 
 // Schema for a single recipe step
 const stepSchema = z.object({
-  instruction: z.string().trim()
+  instruction: z
+      .string()
+      .trim()
       .min(1, {message: 'Enter a step'})
       .max(MAX_STEP_INSTRUCTION_LEN, {message: `Enter no more than ${MAX_STEP_INSTRUCTION_LEN} characters`})
 })
@@ -56,19 +60,28 @@ const dietSchema = z.string().refine(diet => availableDiets.includes(diet),{
 
 // Zod schema object, used to define a form schema for validation
 const formSchema = z.object({
-  title: z.string().trim()
+  title: z
+      .string()
+      .trim()
       .min(1, {message: 'Enter a recipe title'})
       .max(MAX_RECIPE_TITLE_LEN, {message: `Enter no more than ${MAX_RECIPE_TITLE_LEN} characters`}),
-  prepTime: z.coerce
-      .number({invalid_type_error: 'Enter a number'})
+  photo: z
+      .custom<File>((file) => file instanceof File, {message: 'Expected a file'})
+      .refine((file) => file.size <= MAX_RECIPE_PHOTO_SIZE, 'Max file size is 5 MB')
+      .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), 'File type not supported. Use one of .jpg, .jpeg, .png, .pjp, .pjpeg and .jfif.')
+      .optional(),
+  prepTime: z
+      .coerce.number({invalid_type_error: 'Enter a number'})
       .min(MIN_PREP_TIME, {message: `Min time is ${MIN_PREP_TIME} minutes`})
       .max(MAX_PREP_TIME, {message: `Max time is ${MAX_PREP_TIME} minutes`}),
-  servingsNumber: z.coerce
-      .number({invalid_type_error: 'Enter a number'})
+  servingsNumber: z
+      .coerce.number({invalid_type_error: 'Enter a number'})
       .int({message: 'Enter an integer number'})
       .min(MIN_SERVINGS_NUMBER, {message: `Min number of servings is ${MIN_SERVINGS_NUMBER}`})
       .max(MAX_SERVINGS_NUMBER, {message: `Max number of servings is ${MAX_SERVINGS_NUMBER}`}),
-  description: z.string().trim()
+  description: z
+      .string()
+      .trim()
       .min(0)
       .max(MAX_RECIPE_DESCRIPTION_LEN, {message: `Enter no more than ${MAX_RECIPE_DESCRIPTION_LEN} characters`}),
   diets: z.array(dietSchema),
@@ -88,6 +101,9 @@ const FormLabelStyled = styled(FormLabel).attrs({
 
 // Form to create a new recipe
 export function CreateRecipeForm() {
+  // state used to store value of photo for upload
+  const [fileValue, setFileValue] = useState('')
+
   // Code executed after submitting a form
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
@@ -128,6 +144,7 @@ export function CreateRecipeForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
+      photo: undefined,
       prepTime: 0,
       servingsNumber: 1,
       description: '',
@@ -158,11 +175,35 @@ export function CreateRecipeForm() {
                     <FormItem>
                       <FormLabelStyled>Title</FormLabelStyled>
                       <FormControl>
-                        <Input className={''} placeholder={'Italian pizza...'} {...field}/>
+                        <Input placeholder={'Italian pizza...'} {...field}/>
                       </FormControl>
                       <FormMessage/>
                     </FormItem>
                 )}
+            />
+            {/*#endregion*/}
+            {/*#region Photo
+            */}
+            <FormField
+              name={'photo'}
+              control={form.control}
+              render={({field}) => (
+                  <FormItem>
+                    <FormLabelStyled>Photo</FormLabelStyled>
+                    <FormControl>
+                      <Input
+                          {...field}
+                          type={'file'}
+                          value={fileValue}
+                          accept={ACCEPTED_IMAGE_TYPES.toString()}
+                          onChange={(e) => {
+                            setFileValue(e.target.value)
+                            field.onChange(e.target.files?.[0])
+                          }}/>
+                    </FormControl>
+                    <FormMessage/>
+                  </FormItem>
+              )}
             />
             {/*#endregion*/}
             {/*#region Preparation time and servings number inputs */}
