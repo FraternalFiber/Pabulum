@@ -58,7 +58,24 @@ app.get('/search', validateRequest({
 
     fetch(url)
         .then((response) => response.json())
-        .then((data) => {
+        .then(async (data) => {
+            // Check each image URL and conditionally delete the 'image' property
+            const checkedResults = await Promise.all(data.results.map(async (item) => {
+                try {
+                    const imageResponse = await fetch(item.image);
+                    // If the image URL returns a 404, delete the image property from results
+                    if (!imageResponse.ok) {
+                        delete item.image;
+                        delete item.imageType;
+                    }
+                } catch (error) {
+                    console.error('Error fetching image: ', error);
+                    delete item.image;
+                    delete item.imageType;
+                }
+                return item;
+            }));
+            data.results = checkedResults;
             res.json(data);
         })
         .catch((error) => {
