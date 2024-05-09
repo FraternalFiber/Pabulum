@@ -204,7 +204,7 @@ export function CreateRecipeForm() {
                       <div className={'pt-1'}>
                         {/*Visible label for uploading files to input*/}
                         {!imageFile && (
-                            <Label htmlFor={'imageUploadInput'} className={'block w-full cursor-pointer'}>
+                            <Label htmlFor={'imageUploadInput'} className={'block w-full sm:max-w-96 cursor-pointer'}>
                               <Card>
                                 <CardContent className={'w-full h-full flex justify-center items-center text-lg hover:underline underline-offset-2 decoration-2 p-5'}>
                                   Upload image
