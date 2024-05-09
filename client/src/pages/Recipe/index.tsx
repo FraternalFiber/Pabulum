@@ -41,7 +41,7 @@ export function Recipe() {
                 <div className={'flex flex-col gap-y-5'}>
                   {/* Back button */}
                   <BackButton/>
-                  {/* Main photo - show only if recipe contains an image and image is loaded correctly */}
+                  {/* Dish image - show only if recipe contains an image and image is loaded correctly */}
                   {recipe.image && (
                       <img src={recipe.image}
                            onLoad={handleImageLoad}
