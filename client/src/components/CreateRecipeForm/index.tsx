@@ -31,6 +31,9 @@ import {postRecipe} from "@/services/postRecipe.ts";
 import {toast} from "sonner";
 import {useState} from "react";
 import {ImagePreview} from "@/components/CreateRecipeForm/ImagePreview.tsx";
+import {Label} from "@/components/ui/label.tsx";
+import {Card, CardContent} from "@/components/ui/card.tsx";
+import {AspectRatio} from "@/components/ui/aspect-ratio.tsx";
 
 // Schema for a single ingredient
 const ingredientSchema = z.object({
@@ -198,23 +201,46 @@ export function CreateRecipeForm() {
                   <FormItem>
                     <FormLabelStyled>Image</FormLabelStyled>
                     <FormControl>
-                      <Input
-                          {...field}
-                          type={'file'}
-                          value={imageFileValue}
-                          accept={ACCEPTED_IMAGE_TYPES.toString()}
-                          onChange={(e) => {
-                            setImageFile(e.target.files?.[0])
-                            setImageFileValue(e.target.value)
-                            field.onChange(e.target.files?.[0])
-                          }}/>
+                      <div className={'pt-1'}>
+                        {/*Visible label for uploading files to input*/}
+                        {!imageFile && (
+                            <Label htmlFor={'imageUploadInput'} className={'block w-full cursor-pointer'}>
+                              <Card>
+                                <CardContent className={'w-full h-full flex justify-center items-center text-lg hover:underline underline-offset-2 decoration-2 p-5'}>
+                                  Upload image
+                                </CardContent>
+                              </Card>
+                            </Label>
+                        )}
+
+                        {/*Preview of an image to upload*/}
+                        {imageFile && (
+                            <div className={'w-full max-w-96 mb-2'}>
+                              <AspectRatio ratio={3 / 2}>
+                                <ImagePreview file={imageFile} deleteImage={deleteImage}/>
+                              </AspectRatio>
+                            </div>
+                        )}
+
+                        <Input
+                            {...field}
+                            type={'file'}
+                            id={'imageUploadInput'}
+                            className={'hidden'}
+                            value={imageFileValue}
+                            accept={ACCEPTED_IMAGE_TYPES.toString()}
+                            onChange={(e) => {
+                              setImageFile(e.target.files?.[0])
+                              setImageFileValue(e.target.value)
+                              field.onChange(e.target.files?.[0])
+                            }}/>
+                      </div>
                     </FormControl>
                     <FormMessage/>
                   </FormItem>
               )}
             />
-            {/*Preview of an image to upload*/}
-            {imageFile && <ImagePreview file={imageFile} deleteImage={deleteImage}/>}
+
             {/*#endregion*/}
             {/*#region Preparation time and servings number inputs */}
             <div className={'flex gap-x-8'}>

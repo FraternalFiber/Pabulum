@@ -39,7 +39,7 @@ export function ImagePreview({file, deleteImage}: ImagePreviewProps) {
   }
 
   return (
-      <div className={cn('w-full max-w-96 mb-2 relative', showImage ? 'block' : 'hidden')}>
+      <div className={cn('relative w-full h-full', showImage ? 'block' : 'hidden')}>
         {/* Show image when previewUrl is set */}
         {previewUrl && (
             <>
@@ -47,7 +47,7 @@ export function ImagePreview({file, deleteImage}: ImagePreviewProps) {
                    alt={'Uploaded image preview'}
                    onLoad={handleImageLoad}
                    onError={handleImageError}
-                   className={'rounded-sm'}/>
+                   className={'rounded-sm w-full h-full'}/>
               <Button
                   type={'button'}
                   className={'absolute -top-3 -right-3 pr-2 pl-2 rounded-full bg-secondary hover:bg-destructive'}
