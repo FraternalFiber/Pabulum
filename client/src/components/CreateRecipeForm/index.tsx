@@ -15,7 +15,7 @@ import {
   MAX_INGREDIENT_NAME_LEN,
   MAX_INGREDIENT_QUANTITY_LEN,
   MAX_PREP_TIME,
-  MAX_RECIPE_DESCRIPTION_LEN, MAX_RECIPE_PHOTO_SIZE,
+  MAX_RECIPE_DESCRIPTION_LEN, MAX_RECIPE_IMAGE_SIZE,
   MAX_RECIPE_TITLE_LEN,
   MAX_SERVINGS_NUMBER,
   MAX_STEP_INSTRUCTION_LEN,
@@ -30,6 +30,7 @@ import {AddButton} from "@/components/CreateRecipeForm/AddButton.tsx";
 import {postRecipe} from "@/services/postRecipe.ts";
 import {toast} from "sonner";
 import {useState} from "react";
+import {ImagePreview} from "@/components/CreateRecipeForm/ImagePreview.tsx";
 
 // Schema for a single ingredient
 const ingredientSchema = z.object({
@@ -65,9 +66,9 @@ const formSchema = z.object({
       .trim()
       .min(1, {message: 'Enter a recipe title'})
       .max(MAX_RECIPE_TITLE_LEN, {message: `Enter no more than ${MAX_RECIPE_TITLE_LEN} characters`}),
-  photo: z
+  image: z
       .custom<File>((file) => file instanceof File, {message: 'Expected a file'})
-      .refine((file) => file.size <= MAX_RECIPE_PHOTO_SIZE, 'Max file size is 5 MB')
+      .refine((file) => file.size <= MAX_RECIPE_IMAGE_SIZE, 'Max file size is 5 MB')
       .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), 'File type not supported. Use one of .jpg, .jpeg, .png, .pjp, .pjpeg and .jfif.')
       .optional(),
   prepTime: z
@@ -101,8 +102,9 @@ const FormLabelStyled = styled(FormLabel).attrs({
 
 // Form to create a new recipe
 export function CreateRecipeForm() {
-  // state used to store value of photo for upload
-  const [fileValue, setFileValue] = useState('')
+  // state used to store value of image for upload
+  const [imageFile, setImageFile] = useState<File | undefined>(undefined)
+  const [imageFileValue, setImageFileValue] = useState('')
 
   // Code executed after submitting a form
   async function handleSubmit(values: z.infer<typeof formSchema>) {
@@ -144,7 +146,7 @@ export function CreateRecipeForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
-      photo: undefined,
+      image: undefined,
       prepTime: 0,
       servingsNumber: 1,
       description: '',
@@ -162,6 +164,12 @@ export function CreateRecipeForm() {
       ]
     }
   })
+
+  const deleteImage = () => {
+    setImageFile(undefined)
+    setImageFileValue('')
+    form.setValue('image', undefined)
+  }
 
   return (
       <>
@@ -182,22 +190,22 @@ export function CreateRecipeForm() {
                 )}
             />
             {/*#endregion*/}
-            {/*#region Photo
-            */}
+            {/*#region Image*/}
             <FormField
-              name={'photo'}
+              name={'image'}
               control={form.control}
               render={({field}) => (
                   <FormItem>
-                    <FormLabelStyled>Photo</FormLabelStyled>
+                    <FormLabelStyled>Image</FormLabelStyled>
                     <FormControl>
                       <Input
                           {...field}
                           type={'file'}
-                          value={fileValue}
+                          value={imageFileValue}
                           accept={ACCEPTED_IMAGE_TYPES.toString()}
                           onChange={(e) => {
-                            setFileValue(e.target.value)
+                            setImageFile(e.target.files?.[0])
+                            setImageFileValue(e.target.value)
                             field.onChange(e.target.files?.[0])
                           }}/>
                     </FormControl>
@@ -205,6 +213,8 @@ export function CreateRecipeForm() {
                   </FormItem>
               )}
             />
+            {/*Preview of an image to upload*/}
+            {imageFile && <ImagePreview file={imageFile} deleteImage={deleteImage}/>}
             {/*#endregion*/}
             {/*#region Preparation time and servings number inputs */}
             <div className={'flex gap-x-8'}>

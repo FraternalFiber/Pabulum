@@ -11,7 +11,7 @@ export const MAX_RECIPE_DESCRIPTION_LEN = 2000
 export const MAX_INGREDIENT_NAME_LEN = 80
 export const MAX_INGREDIENT_QUANTITY_LEN = 30
 export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png']
-export const MAX_RECIPE_PHOTO_SIZE = 5242880 // 5 MB
+export const MAX_RECIPE_IMAGE_SIZE = 5242880 // 5 MB
 
 // SearchForm
 export const MAX_SEARCH_QUERY_LEN = 80
