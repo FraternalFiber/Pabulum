@@ -8,7 +8,7 @@ import {Textarea} from "@/components/ui/textarea.tsx";
 import {IngredientsDynamicList} from "./IngredientsDynamicList.tsx";
 import {StepsDynamicList} from "@/components/CreateRecipeForm/StepsDynamicList.tsx";
 import styled from "styled-components";
-import {availableDietItems} from "@/helpers/searchFormFilterItems.ts";
+import {availableDietItems} from "@/components/SearchForm/searchFormFilterItems.ts";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {
   MAX_INGREDIENT_NAME_LEN,

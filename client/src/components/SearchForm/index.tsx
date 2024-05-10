@@ -6,7 +6,7 @@ import {Input} from "@/components/ui/input.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {useEffect, useState} from "react";
 import {SearchResults} from "@/components/SearchResults";
-import {availableCuisineItems, availableDietItems, availableMealTypeItems} from '@/helpers/searchFormFilterItems.ts'
+import {availableCuisineItems, availableDietItems, availableMealTypeItems} from '@/components/SearchForm/searchFormFilterItems.ts'
 import {SearchFormFilter} from "@/components/SearchForm/SearchFormFilter.tsx";
 import {useSearchParams} from "react-router-dom";
 import {TRecipeSearchParams} from "@/types/TRecipeSearchParams.ts";
