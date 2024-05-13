@@ -1,5 +1,13 @@
 import { z } from 'zod';
 import {RECIPE} from "./constants.mjs";
+import _ from 'lodash'
+
+const stepSchema = z.object({
+    number: z.coerce.number().int().positive(),
+    instruction: z.string().trim()
+        .min(1, {message: 'Instruction missing'})
+        .max(RECIPE.MAX_STEP_INSTRUCTION_LEN, {message: 'Instruction too long'})
+})
 
 //schema for validation of recipes in form
 export const recipeAddSchema = z.object({
@@ -7,8 +15,8 @@ export const recipeAddSchema = z.object({
         .min(1, {message: 'Title missing'})
         .max(RECIPE.MAX_RECIPE_TITLE_LEN, {message: 'Title too long'}),
     prepTime: z.coerce.number().int()
-        .min(RECIPE.MIN_PREP_TIME, {message: 'Time too short'})
-        .max(RECIPE.MAX_PREP_TIME, {message: 'Time too long'}),
+        .min(RECIPE.MIN_PREP_TIME, {message: 'Preparation time too short'})
+        .max(RECIPE.MAX_PREP_TIME, {message: 'Preparation time too long'}),
     servingsNumber: z.coerce.number().int()
         .min(RECIPE.MIN_SERVINGS_NUMBER, {message: 'Too little servings'})
         .max(RECIPE.MAX_SERVINGS_NUMBER, {message: 'Too many servings'}),
@@ -24,10 +32,8 @@ export const recipeAddSchema = z.object({
             .max(30, {message: 'Ingredient quantity too large'})
             .optional()
     })),
-    steps: z.array(z.object({
-        number: z.number().int().positive(),
-        instruction: z.string().trim()
-            .min(1, {message: 'Instruction missing'})
-            .max(RECIPE.MAX_STEP_INSTRUCTION_LEN, {message: 'Instruction too long'})
-    }))
+    // check if steps numbers are unique
+    steps: z.array(stepSchema)
+        .refine(steps => _.isEqual(steps, _.uniqBy(steps, 'number')),
+            {message: 'Steps numbers must be unique'})
 });

@@ -19,6 +19,8 @@
     "firebase": "^10.10.0",
     "firebase-admin": "^12.1.0",
     "firebase-functions": "^4.8.2",
+    "lodash": "^4.17.21",
+    "multer": "^1.4.5-lts.1",
     "zod": "^3.23.4",
     "zod-express-middleware": "^1.4.0"
   },
