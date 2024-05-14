@@ -15,6 +15,6 @@ router.get('/:id', recipeDetailController);
 // router.post('/add', validateRequest({ body: recipeAddSchema }), recipeAddController);
 // router.post('/add',  upload.single('image'), recipeAddController);
 // router.post('/add', upload.single('image'), validateData(recipeAddSchema), recipeAddController);
-router.post('/add', uploadFile, validateData(recipeAddSchema), recipeAddController);
+router.post('/add', uploadFile(), validateData(recipeAddSchema), recipeAddController);
 
 export default router;

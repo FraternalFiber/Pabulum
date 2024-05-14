@@ -21,7 +21,7 @@ function App() {
         </Routes>
       </BrowserRouter>
       {/* Component for displaying toasts */}
-      <Toaster richColors/>
+      <Toaster richColors visibleToasts={1}/>
       {/* Dev tools */}
       <ReactQueryDevtools initialIsOpen={false} buttonPosition={'bottom-left'}/>
     </QueryClientProvider>

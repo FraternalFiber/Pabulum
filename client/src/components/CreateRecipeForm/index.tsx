@@ -132,6 +132,7 @@ export function CreateRecipeForm() {
         // dismiss a loading toast and show an error toast
         toast.dismiss(loadingToastId)
         toast.error(POST_RECIPE_ERROR_MESSAGE)
+        console.error(`${POST_RECIPE_ERROR_MESSAGE}: ${response.message}`)
         console.error(response.message)
       }
     }

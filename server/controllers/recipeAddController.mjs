@@ -2,8 +2,9 @@ import {db} from "../firebase/firebase.mjs";
 
 
 export const recipeAddController = async (req, res) => {
-    console.log('recipe add działa bo czemu ma nie działać')
     try {
+        console.log('recipeAddController')
+
         const data = req.body;
         const file = req.file;
 
@@ -59,7 +60,7 @@ export const recipeAddController = async (req, res) => {
         // res.status(200).send({success: true, message: 'Data added successfully', id: recipeRef.id});
         res.status(200).send({success: true, message: 'Data added successfully'});
     } catch (error) {
-        console.error('Error adding : ', error);
+        console.error('Error adding: ', error);
         res.status(500).send({success: false, message: 'An error occurred while adding data'});
     }
 };
