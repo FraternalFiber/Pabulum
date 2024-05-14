@@ -1,34 +1,28 @@
 import {BACKEND_SERVER_URL, POST_RECIPE_ERROR_MESSAGE} from "@/helpers/constants.ts";
 
-// service for posting recipe data to server
+// Service for posting recipe data to server
 export const postRecipe = async (data: any) => {
   try {
     console.log('data', data)
 
+    // Create a formData object to store data from multipart/form-data form
     const formData = new FormData()
-    formData.append('title', data.title)
-    // formData.append('image', data.image)
-    formData.append('prepTime', data.prepTime)
-    formData.append('servingsNumber', data.servingsNumber)
-    formData.append('description', data.description)
-    formData.append('diets', data.diets)
-    formData.append('ingredients', data.ingredients)
-    formData.append('steps', data.steps)
 
-    // formData.append('testName', 'testValue')
+    // Append image to formData without JSON transformation and delete it from data object
+    formData.append('image', data.image)
+    delete data.image
+
+    // Convert every property except image to JSON string format
+    for (const key in data) {
+      formData.append(key, JSON.stringify(data[key]))
+    }
 
     const response = await fetch(`${BACKEND_SERVER_URL}/recipe/add`, {
       method: 'POST',
-      // headers: {
-      //   'Content-Type': 'application/json'
-      // },
-      // body: JSON.stringify(data)
       body: formData
     })
 
-    console.log(response.json())
-
-    return await response.json()
+    return response.json()
   }
   catch (error) {
     console.error(`${POST_RECIPE_ERROR_MESSAGE}: ${error}`)
