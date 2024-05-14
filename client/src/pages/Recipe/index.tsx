@@ -117,8 +117,10 @@ export function Recipe() {
                     <div className={'mt-4'}>
                       {recipe.steps.map((step: TRecipeStep) => (
                           <div key={step.number}>
-                            <div className={'font-bold'}>Step {step.number}</div>
-                            <p>{step.instruction}</p>
+                            <div className={'flex gap-x-2'}>
+                              <div className={'h-fit font-bold bg-primary rounded-full pr-2 pl-2'}>{step.number}</div>
+                              <p>{step.instruction}</p>
+                            </div>
                             <Separator className={'mt-4 mb-4'}/>
                           </div>
                       ))}
