@@ -3,6 +3,9 @@ import {useRecipes} from "@/services/useRecipes.ts";
 import {useEffect} from "react";
 import {TRecipeSearchParams} from "@/types/TRecipeSearchParams.ts";
 import {useSearchParams} from "react-router-dom";
+import {LoadingSkeletons} from "@/components/SearchResults/LoadingSkeletons.tsx";
+import {FetchingError} from "@/components/SearchResults/FetchingError.tsx";
+import {NoResults} from "@/components/SearchResults/NoResults.tsx";
 
 // Container with recipes result cards shown after submitting a SearchForm
 export function SearchResults(searchParams: TRecipeSearchParams) {
@@ -15,14 +18,16 @@ export function SearchResults(searchParams: TRecipeSearchParams) {
     }, [URLSearchParams])
 
     if(isLoading) {
-        return <p>Loading...</p>
+        return (
+            <LoadingSkeletons/>
+        )
     }
 
-    if(isError) {
-        return <p>An error occurred while fetching recipes</p>
+    if (isError) {
+        return (
+            <FetchingError/>
+        )
     }
-
-    // console.log(recipes)
 
     return (
         <>
@@ -36,7 +41,7 @@ export function SearchResults(searchParams: TRecipeSearchParams) {
                 )
                 : (
                     <div>
-                        <p>No results</p>
+                        <NoResults query={searchParams.q}/>
                     </div>
                 )
             }
