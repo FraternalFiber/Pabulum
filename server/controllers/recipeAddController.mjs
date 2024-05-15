@@ -1,9 +1,10 @@
-import {db} from "../firebase/firebase.mjs";
+import {bucket, db} from "../firebase/firebase.mjs";
 
 export const recipeAddController = async (req, res) => {
     try {
         const data = req.body;
         const file = req.file;
+
 
         console.log('data', data)
         console.log('file', file)
@@ -15,9 +16,38 @@ export const recipeAddController = async (req, res) => {
             data.description === undefined ? null : {description: data.description}
         )
 
-        // add a recipe data
         const recipeRef = db.collection('recipes').doc();
-        await recipeRef.set(addRecipe);
+
+        // Create a new blob in the bucket and upload the file data.
+        const upload = new Promise((resolve, reject) => {
+            const blob = bucket.file(`recipeImages/${req.file.originalname}`);
+            const blobStream = blob.createWriteStream();
+
+            blobStream.on('error', (err) => {
+                reject(`(Error while uploading image) :${err.message}`);
+            });
+
+            blobStream.on('finish', () => {
+                const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+                console.log(`public url to image: ${publicUrl}`);
+                addRecipe.image = publicUrl;
+                resolve();
+            });
+
+            blobStream.end(req.file.buffer);
+        });
+
+        // Use the Promise
+        //called in a promise so image first uploads and it's link is ready to send
+        upload.then(async () => {
+            // add a recipe data to database
+            await recipeRef.set(addRecipe);
+        }).catch((error) => {
+            throw new Error(error);
+        });
+
+
+
 
         // add all diets data to recipe
         for (let diet of data.diets) {
