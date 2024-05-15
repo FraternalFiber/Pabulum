@@ -2,6 +2,8 @@ import { z } from 'zod';
 import {RECIPE} from "./constants.mjs";
 import _ from 'lodash'
 
+const AVAILABLE_DIETS = ['vegetarian', 'vegan', 'gluten free', 'ketogenic', 'dairy free']
+
 const stepSchema = z.object({
     number: z.coerce.number().int().positive(),
     instruction: z.string().trim()
@@ -9,7 +11,12 @@ const stepSchema = z.object({
         .max(RECIPE.MAX_STEP_INSTRUCTION_LEN, {message: 'Instruction too long'})
 })
 
-//schema for validation of recipes in form
+// Schema for a single diet, checks if diet is in a list of available diets
+const dietSchema = z.string().refine(diet => AVAILABLE_DIETS.includes(diet),{
+    message: 'Invalid diet, must be one of: ' + AVAILABLE_DIETS.join(', ')
+})
+
+// Schema for validation of recipes in form
 export const recipeAddSchema = z.object({
     title: z.string().trim()
         .min(1, {message: 'Title missing'})
@@ -23,7 +30,7 @@ export const recipeAddSchema = z.object({
     description: z.string().trim()
         .min(0)
         .max(RECIPE.MAX_RECIPE_DESCRIPTION_LEN, {message: 'Description too long'}),
-    diets: z.array(z.string()).optional(),
+    diets: z.array(dietSchema).optional(),
     ingredients: z.array(z.object({
         name: z.string().trim()
             .min(1, {message: 'Ingredient name missing'})
