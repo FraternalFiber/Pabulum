@@ -1,4 +1,4 @@
-export type TRecipeStep = {
+export type TStep = {
   number: number
   instruction: string
 }

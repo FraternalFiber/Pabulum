@@ -1,5 +1,6 @@
 import {useQuery} from "@tanstack/react-query";
 import {BACKEND_SERVER_URL} from "@/helpers/constants.ts";
+import {TRecipeDetails} from "@/types/TRecipeDetails.ts";
 
 export const getRecipe = async (id: string) => {
   return fetch(`${BACKEND_SERVER_URL}/recipe/${id}`)
@@ -10,7 +11,8 @@ export const getRecipe = async (id: string) => {
 }
 
 export const useRecipe = (id: string) => {
-  return useQuery({
+  console.log(id)
+  return useQuery<TRecipeDetails>({
     queryKey: ['recipe', id],
     queryFn: () => getRecipe(id),
     refetchOnMount: false,

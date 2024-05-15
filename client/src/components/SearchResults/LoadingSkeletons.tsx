@@ -10,7 +10,7 @@ export function LoadingSkeletons() {
 
     for(let i = 0; i < SKELETONS_NUMBER; i++) {
       content.push(
-          <Skeleton>
+          <Skeleton key={i}>
             <Card className={'w-full h-96 border-secondary'}>
               <CardHeader>
                 <CardTitle>
