@@ -37,7 +37,7 @@ export function ImagePreview({file, deleteImage, handleImageError}: ImagePreview
   }
 
   return (
-      <div className={cn('relative w-full h-full')}>
+      <div className={'relative w-full h-full'}>
         {/* Show image when previewUrl is set */}
         {previewUrl && (
             <>
