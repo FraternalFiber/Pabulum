@@ -15,6 +15,7 @@ export const searchController = async (req, res) => {
     const url = 'https://api.spoonacular.com/recipes/complexSearch?' + new URLSearchParams({
         apiKey: SPOONACULAR_APIKEY,
         //to make sure api gives only recipes that include whole instructions list
+        number: 9,
         instructionsRequired: true,
         ...searchParams
     })

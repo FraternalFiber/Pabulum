@@ -5,7 +5,6 @@ const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png']
 
 export function uploadFile() {
     const upload = multer({
-        dest: '/data/uploads/',
         limits: {
             fileSize: MAX_RECIPE_IMAGE_SIZE
         },
