@@ -6,23 +6,24 @@ import {Button} from "@/components/ui/button.tsx";
 type ImagePreviewProps = {
   file: File
   deleteImage: () => void
+  handleImageError: () => void
 }
 
 // Preview of an image to upload
-export function ImagePreview({file, deleteImage}: ImagePreviewProps) {
+export function ImagePreview({file, deleteImage, handleImageError}: ImagePreviewProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [showImage, setShowImage] = useState<boolean>(false)
 
   useEffect(() => {
-    // return nothing when there is no file
+    // Return nothing when there is no file
     if(!file) {
       return
     }
 
-    // create a URL object to be used as src of image preview
+    // Create a URL object to be used as src of image preview
     setPreviewUrl(URL.createObjectURL(file))
 
-    // revoke object URL on unmount or file change to prevent memory leaks
+    // Revoke object URL on unmount or file change to prevent memory leaks
     return () => {
       if(previewUrl) {
         URL.revokeObjectURL(previewUrl)
@@ -32,14 +33,11 @@ export function ImagePreview({file, deleteImage}: ImagePreviewProps) {
 
   const handleImageLoad = () => {
     setShowImage(true)
-  }
-
-  const handleImageError = () => {
-    setShowImage(false)
+    console.log('image loaded')
   }
 
   return (
-      <div className={cn('relative w-full h-full', showImage ? 'block' : 'hidden')}>
+      <div className={cn('relative w-full h-full')}>
         {/* Show image when previewUrl is set */}
         {previewUrl && (
             <>
@@ -47,7 +45,7 @@ export function ImagePreview({file, deleteImage}: ImagePreviewProps) {
                    alt={'Uploaded image preview'}
                    onLoad={handleImageLoad}
                    onError={handleImageError}
-                   className={'rounded-sm w-full h-full'}/>
+                   className={cn('rounded-sm w-full h-full', showImage ? 'block' : 'hidden')}/>
               <Button
                   type={'button'}
                   className={'absolute -top-3 -right-3 pr-2 pl-2 rounded-full bg-secondary hover:bg-destructive'}

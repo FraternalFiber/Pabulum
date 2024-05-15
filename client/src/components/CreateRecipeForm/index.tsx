@@ -72,7 +72,7 @@ const formSchema = z.object({
   image: z
       .custom<File>((file) => file instanceof File, {message: 'Expected a file'})
       .refine((file) => file.size <= MAX_RECIPE_IMAGE_SIZE, 'Max file size is 5 MB')
-      .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), 'File type not supported. Use one of .jpg, .jpeg, .png, .pjp, .pjpeg and .jfif.')
+      .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), 'File type not supported. Use one of .jpg, .jpeg, .png and .jfif.')
       .optional(),
   prepTime: z
       .coerce.number({invalid_type_error: 'Enter a number'})
@@ -170,9 +170,16 @@ export function CreateRecipeForm() {
   })
 
   const deleteImage = () => {
-    setImageFile(undefined)
-    setImageFileValue('')
-    form.setValue('image', undefined)
+    // form.trigger('image').then(() => {
+      setImageFile(undefined)
+      setImageFileValue('')
+      form.setValue('image', undefined)
+    // })
+  }
+
+  const handleImageError = () => {
+    form.setError('image', {type: 'custom', message: "File couldn't be loaded correctly"})
+    deleteImage()
   }
 
   return (
@@ -214,11 +221,11 @@ export function CreateRecipeForm() {
                             </Label>
                         )}
 
-                        {/*Preview of an image to upload*/}
+                        {/*Preview of an image to upload - show when file is set*/}
                         {imageFile && (
                             <div className={'w-full max-w-96 mb-2'}>
                               <AspectRatio ratio={3 / 2}>
-                                <ImagePreview file={imageFile} deleteImage={deleteImage}/>
+                                <ImagePreview file={imageFile} deleteImage={deleteImage} handleImageError={handleImageError}/>
                               </AspectRatio>
                             </div>
                         )}
@@ -231,9 +238,20 @@ export function CreateRecipeForm() {
                             value={imageFileValue}
                             accept={ACCEPTED_IMAGE_TYPES.toString()}
                             onChange={(e) => {
-                              setImageFile(e.target.files?.[0])
                               setImageFileValue(e.target.value)
-                              field.onChange(e.target.files?.[0])
+                              form.setValue('image', e.target.files?.[0])
+
+                              // Trigger field validation
+                              form.trigger('image').then((valid) => {
+                                if(valid) {
+                                  // Set image file if it's valid
+                                  setImageFile(e.target.files?.[0])
+                                }
+                                else {
+                                  // Delete image file if it's not valid
+                                  deleteImage()
+                                }
+                              })
                             }}/>
                       </div>
                     </FormControl>
