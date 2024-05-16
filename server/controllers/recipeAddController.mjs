@@ -5,7 +5,6 @@ export const recipeAddController = async (req, res) => {
         const data = req.body;
         const file = req.file;
 
-
         console.log('data', data)
         console.log('file', file)
 
@@ -38,18 +37,15 @@ export const recipeAddController = async (req, res) => {
         });
 
         // Use the Promise
-        //called in a promise so image first uploads and it's link is ready to send
+        // Called in a promise so image first uploads and it's link is ready to send
         upload.then(async () => {
-            // add a recipe data to database
+            // Add a recipe data to database
             await recipeRef.set(addRecipe);
         }).catch((error) => {
             throw new Error(error);
         });
 
-
-
-
-        // add all diets data to recipe
+        // Add all diets data to recipe
         for (let diet of data.diets) {
             const addDiet = Object.assign({},
                 diet === undefined ? null : {name: diet}
@@ -58,7 +54,7 @@ export const recipeAddController = async (req, res) => {
             await recipeRef.collection('diets').doc().set(addDiet);
         }
 
-        // add all ingredients to recipe
+        // Add all ingredients to recipe
         for (let ingredient of data.ingredients) {
             const addIngredient = Object.assign({},
                 ingredient.name === undefined ? null : {name: ingredient.name},
@@ -68,7 +64,7 @@ export const recipeAddController = async (req, res) => {
             await recipeRef.collection('ingredients').doc().set(addIngredient);
         }
 
-        // add all steps to recipe
+        // Add all steps to recipe
         for (let step of data.steps) {
             const addStep = Object.assign({},
                 step.number === undefined ? null : {number: step.number},
