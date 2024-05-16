@@ -23,7 +23,7 @@ function App() {
       {/* Component for displaying toasts */}
       <Toaster richColors visibleToasts={1}/>
       {/* Dev tools */}
-      {/*<ReactQueryDevtools initialIsOpen={false} buttonPosition={'bottom-left'}/>*/}
+      <ReactQueryDevtools initialIsOpen={false} buttonPosition={'bottom-left'}/>
     </QueryClientProvider>
   )
 }

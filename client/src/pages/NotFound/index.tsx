@@ -1,7 +1,8 @@
 import {Menu} from "@/components/Menu";
 import {Main} from "@/components/Main";
 import {Heading} from "@/components/Heading";
-import {BackButton} from "@/components/BackButton";
+import {Button} from "@/components/ui/button.tsx";
+import {Link} from "react-router-dom";
 
 // Error 404 page
 export function NotFound() {
@@ -9,11 +10,15 @@ export function NotFound() {
       <>
         <Menu/>
         <Main>
-          <div className={'flex justify-center items-center'}>
+          <div className={'flex justify-center items-center mt-4'}>
             <div className={'flex flex-col items-center'}>
               <Heading content={'Oops! This page doesn\'t exist'}/>
-              <p>404 page not found</p>
-              <BackButton className={'mt-7'} text={'Go back'} type={'button'}/>
+              <p className={'text-xl'}>404 - page not found</p>
+              <div className={'flex gap-x-4 mt-8'}>
+                <Link to={'/'}>
+                  <Button type={'button'}>Take me home</Button>
+                </Link>
+              </div>
             </div>
           </div>
         </Main>
