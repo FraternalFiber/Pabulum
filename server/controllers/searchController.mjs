@@ -1,9 +1,9 @@
-const SPOONACULAR_APIKEY = process.env.SPOONACULAR_APIKEY;
+import {SPOONACULAR_APIKEY} from "../constants.js";
 
 export const searchController = async (req, res) => {
     const data = req.query
 
-    // add search params to url only if they are not undefined
+    // Add search params to url only if they are not undefined
     const searchParams = Object.assign({},
         data.q === undefined ? null : {query: data.q},
         //check if value is undefined / array / string - array needs to be printed with commas in between
@@ -14,7 +14,9 @@ export const searchController = async (req, res) => {
 
     const url = 'https://api.spoonacular.com/recipes/complexSearch?' + new URLSearchParams({
         apiKey: SPOONACULAR_APIKEY,
-        //to make sure api gives only recipes that include whole instructions list
+        // Number of results to be returned
+        number: 9,
+        // To make sure api gives only recipes that include whole instructions list
         instructionsRequired: true,
         ...searchParams
     })

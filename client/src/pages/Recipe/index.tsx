@@ -13,7 +13,6 @@ export function Recipe() {
         <Menu/>
         <Main>
           <div className={'mt-2'}>
-            {/* Back button */}
             <BackButton className={'mb-8'}/>
             <RecipeDetails recipeId={id}/>
           </div>
