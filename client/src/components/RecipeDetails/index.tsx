@@ -25,7 +25,6 @@ type RecipeDetailsProps = {
 }
 
 export function RecipeDetails({recipeId}: RecipeDetailsProps) {
-  // const { id } = useParams<{id?: string}>() || {}
   const { data: recipe, isLoading, isError} = useRecipe(recipeId)
   const [showImage, setShowImage] = useState<boolean>(false)
   const [imageError, setImageError] = useState<boolean>(false)
