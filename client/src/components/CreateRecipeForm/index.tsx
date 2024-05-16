@@ -11,10 +11,11 @@ import styled from "styled-components";
 import {availableDietItems} from "@/components/SearchForm/searchFormFilterItems.ts";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {
+  ACCEPTED_IMAGE_TYPES,
   MAX_INGREDIENT_NAME_LEN,
   MAX_INGREDIENT_QUANTITY_LEN,
   MAX_PREP_TIME,
-  MAX_RECIPE_DESCRIPTION_LEN,
+  MAX_RECIPE_DESCRIPTION_LEN, MAX_RECIPE_IMAGE_SIZE,
   MAX_RECIPE_TITLE_LEN,
   MAX_SERVINGS_NUMBER,
   MAX_STEP_INSTRUCTION_LEN,
@@ -28,6 +29,11 @@ import {SubtractButton} from "@/components/CreateRecipeForm/SubtractButton.tsx";
 import {AddButton} from "@/components/CreateRecipeForm/AddButton.tsx";
 import {postRecipe} from "@/services/postRecipe.ts";
 import {toast} from "sonner";
+import {useState} from "react";
+import {ImagePreview} from "@/components/CreateRecipeForm/ImagePreview.tsx";
+import {Label} from "@/components/ui/label.tsx";
+import {Card, CardContent} from "@/components/ui/card.tsx";
+import {AspectRatio} from "@/components/ui/aspect-ratio.tsx";
 
 // Schema for a single ingredient
 const ingredientSchema = z.object({
@@ -41,7 +47,9 @@ const ingredientSchema = z.object({
 
 // Schema for a single recipe step
 const stepSchema = z.object({
-  instruction: z.string().trim()
+  instruction: z
+      .string()
+      .trim()
       .min(1, {message: 'Enter a step'})
       .max(MAX_STEP_INSTRUCTION_LEN, {message: `Enter no more than ${MAX_STEP_INSTRUCTION_LEN} characters`})
 })
@@ -56,19 +64,28 @@ const dietSchema = z.string().refine(diet => availableDiets.includes(diet),{
 
 // Zod schema object, used to define a form schema for validation
 const formSchema = z.object({
-  title: z.string().trim()
+  title: z
+      .string()
+      .trim()
       .min(1, {message: 'Enter a recipe title'})
       .max(MAX_RECIPE_TITLE_LEN, {message: `Enter no more than ${MAX_RECIPE_TITLE_LEN} characters`}),
-  prepTime: z.coerce
-      .number({invalid_type_error: 'Enter a number'})
+  image: z
+      .custom<File>((file) => file instanceof File, {message: 'Expected a file'})
+      .refine((file) => file.size <= MAX_RECIPE_IMAGE_SIZE, 'Max file size is 5 MB')
+      .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), 'File type not supported. Use one of .jpg, .jpeg, .png and .jfif.')
+      .optional(),
+  prepTime: z
+      .coerce.number({invalid_type_error: 'Enter a number'})
       .min(MIN_PREP_TIME, {message: `Min time is ${MIN_PREP_TIME} minutes`})
       .max(MAX_PREP_TIME, {message: `Max time is ${MAX_PREP_TIME} minutes`}),
-  servingsNumber: z.coerce
-      .number({invalid_type_error: 'Enter a number'})
+  servingsNumber: z
+      .coerce.number({invalid_type_error: 'Enter a number'})
       .int({message: 'Enter an integer number'})
       .min(MIN_SERVINGS_NUMBER, {message: `Min number of servings is ${MIN_SERVINGS_NUMBER}`})
       .max(MAX_SERVINGS_NUMBER, {message: `Max number of servings is ${MAX_SERVINGS_NUMBER}`}),
-  description: z.string().trim()
+  description: z
+      .string()
+      .trim()
       .min(0)
       .max(MAX_RECIPE_DESCRIPTION_LEN, {message: `Enter no more than ${MAX_RECIPE_DESCRIPTION_LEN} characters`}),
   diets: z.array(dietSchema),
@@ -88,6 +105,10 @@ const FormLabelStyled = styled(FormLabel).attrs({
 
 // Form to create a new recipe
 export function CreateRecipeForm() {
+  // state used to store value of image for upload
+  const [imageFile, setImageFile] = useState<File | undefined>(undefined)
+  const [imageFileValue, setImageFileValue] = useState('')
+
   // Code executed after submitting a form
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
@@ -111,6 +132,7 @@ export function CreateRecipeForm() {
         // dismiss a loading toast and show an error toast
         toast.dismiss(loadingToastId)
         toast.error(POST_RECIPE_ERROR_MESSAGE)
+        console.error(`${POST_RECIPE_ERROR_MESSAGE}: ${response.message}`)
         console.error(response.message)
       }
     }
@@ -128,6 +150,7 @@ export function CreateRecipeForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
+      image: undefined,
       prepTime: 0,
       servingsNumber: 1,
       description: '',
@@ -146,6 +169,19 @@ export function CreateRecipeForm() {
     }
   })
 
+  const deleteImage = () => {
+    // form.trigger('image').then(() => {
+      setImageFile(undefined)
+      setImageFileValue('')
+      form.setValue('image', undefined)
+    // })
+  }
+
+  const handleImageError = () => {
+    form.setError('image', {type: 'custom', message: "File couldn't be loaded correctly"})
+    deleteImage()
+  }
+
   return (
       <>
         <Form {...form}>
@@ -158,12 +194,72 @@ export function CreateRecipeForm() {
                     <FormItem>
                       <FormLabelStyled>Title</FormLabelStyled>
                       <FormControl>
-                        <Input className={''} placeholder={'Italian pizza...'} {...field}/>
+                        <Input placeholder={'Italian pizza...'} {...field}/>
                       </FormControl>
                       <FormMessage/>
                     </FormItem>
                 )}
             />
+            {/*#endregion*/}
+            {/*#region Image*/}
+            <FormField
+              name={'image'}
+              control={form.control}
+              render={({field}) => (
+                  <FormItem>
+                    <FormLabelStyled>Image</FormLabelStyled>
+                    <FormControl>
+                      <div className={'pt-1'}>
+                        {/*Visible label for uploading files to input*/}
+                        {!imageFile && (
+                            <Label htmlFor={'imageUploadInput'} className={'block w-full sm:max-w-96 cursor-pointer'}>
+                              <Card>
+                                <CardContent className={'w-full h-full flex justify-center items-center text-lg hover:underline underline-offset-2 decoration-2 p-5'}>
+                                  Upload image
+                                </CardContent>
+                              </Card>
+                            </Label>
+                        )}
+
+                        {/*Preview of an image to upload - show when file is set*/}
+                        {imageFile && (
+                            <div className={'w-full max-w-96 mb-2'}>
+                              <AspectRatio ratio={3 / 2}>
+                                <ImagePreview file={imageFile} deleteImage={deleteImage} handleImageError={handleImageError}/>
+                              </AspectRatio>
+                            </div>
+                        )}
+
+                        <Input
+                            {...field}
+                            type={'file'}
+                            id={'imageUploadInput'}
+                            className={'hidden'}
+                            value={imageFileValue}
+                            accept={ACCEPTED_IMAGE_TYPES.toString()}
+                            onChange={(e) => {
+                              setImageFileValue(e.target.value)
+                              form.setValue('image', e.target.files?.[0])
+
+                              // Trigger field validation
+                              form.trigger('image').then((valid) => {
+                                if(valid) {
+                                  // Set image file if it's valid
+                                  setImageFile(e.target.files?.[0])
+                                }
+                                else {
+                                  // Delete image file if it's not valid
+                                  deleteImage()
+                                }
+                              })
+                            }}/>
+                      </div>
+                    </FormControl>
+                    <FormMessage/>
+                  </FormItem>
+              )}
+            />
+
             {/*#endregion*/}
             {/*#region Preparation time and servings number inputs */}
             <div className={'flex gap-x-8'}>

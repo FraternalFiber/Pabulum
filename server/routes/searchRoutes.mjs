@@ -5,7 +5,7 @@ import { searchController } from '../controllers/searchController.mjs';
 
 const router = express.Router();
 
-//response for search result - list of recipes
+// Response for search result - list of recipes
 router.get('/search', validateRequest({ query: searchSchema }), searchController);
 
 export default router;
