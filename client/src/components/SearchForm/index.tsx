@@ -6,7 +6,7 @@ import {Input} from "@/components/ui/input.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {useEffect, useState} from "react";
 import {SearchResults} from "@/components/SearchResults";
-import {availableCuisineItems, availableDietItems, availableMealTypeItems} from '@/helpers/searchFormFilterItems.ts'
+import {availableCuisineItems, availableDietItems, availableMealTypeItems} from '@/components/SearchForm/searchFormFilterItems.ts'
 import {SearchFormFilter} from "@/components/SearchForm/SearchFormFilter.tsx";
 import {useSearchParams} from "react-router-dom";
 import {TRecipeSearchParams} from "@/types/TRecipeSearchParams.ts";
@@ -117,7 +117,7 @@ export function SearchForm() {
         {/* If form submitted and query is not empty show search results */}
         {isSubmitted && searchParams && (
             <div className={'mt-7'}>
-              <SearchResults {...searchParams}/>
+              <SearchResults {...searchParams} />
             </div>
           )
         }
