@@ -15,6 +15,10 @@ const availableDietItems = [
     id: 'ketogenic',
     label: 'Ketogenic'
   },
+  {
+    id: 'dairy free',
+    label: 'Dairy free'
+  }
 ]
 
 const availableCuisineItems = [
