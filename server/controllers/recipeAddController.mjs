@@ -1,9 +1,12 @@
-import {db} from "../firebase/firebase.mjs";
+import {bucket, db} from "../firebase/firebase.mjs";
 
 export const recipeAddController = async (req, res) => {
-    console.log('recipe add działa bo czemu ma nie działać')
     try {
         const data = req.body;
+        const file = req.file;
+
+        console.log('data', data)
+        console.log('file', file)
 
         const addRecipe = Object.assign({},
             data.title === undefined ? null : {title: data.title},
@@ -12,14 +15,37 @@ export const recipeAddController = async (req, res) => {
             data.description === undefined ? null : {description: data.description}
         )
 
-        console.log("add recipe value: ", addRecipe)
-
-        // add a recipe data
         const recipeRef = db.collection('recipes').doc();
-        await recipeRef.set(addRecipe);
 
+        // Create a new blob in the bucket and upload the file data.
+        const upload = new Promise((resolve, reject) => {
+            const blob = bucket.file(`recipeImages/${req.file.originalname}`);
+            const blobStream = blob.createWriteStream();
 
-        // add all diets data to recipe
+            blobStream.on('error', (err) => {
+                reject(`(Error while uploading image) :${err.message}`);
+            });
+
+            blobStream.on('finish', () => {
+                const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+                console.log(`public url to image: ${publicUrl}`);
+                addRecipe.image = publicUrl;
+                resolve();
+            });
+
+            blobStream.end(req.file.buffer);
+        });
+
+        // Use the Promise
+        // Called in a promise so image first uploads and it's link is ready to send
+        upload.then(async () => {
+            // Add a recipe data to database
+            await recipeRef.set(addRecipe);
+        }).catch((error) => {
+            throw new Error(error);
+        });
+
+        // Add all diets data to recipe
         for (let diet of data.diets) {
             const addDiet = Object.assign({},
                 diet === undefined ? null : {name: diet}
@@ -28,7 +54,7 @@ export const recipeAddController = async (req, res) => {
             await recipeRef.collection('diets').doc().set(addDiet);
         }
 
-        // add all ingredients to recipe
+        // Add all ingredients to recipe
         for (let ingredient of data.ingredients) {
             const addIngredient = Object.assign({},
                 ingredient.name === undefined ? null : {name: ingredient.name},
@@ -38,7 +64,7 @@ export const recipeAddController = async (req, res) => {
             await recipeRef.collection('ingredients').doc().set(addIngredient);
         }
 
-        // add all steps to recipe
+        // Add all steps to recipe
         for (let step of data.steps) {
             const addStep = Object.assign({},
                 step.number === undefined ? null : {number: step.number},
@@ -48,11 +74,10 @@ export const recipeAddController = async (req, res) => {
             await recipeRef.collection('steps').doc().set(addStep);
         }
 
-
         // Send a response back to the frontend
         res.status(200).send({success: true, message: 'Data added successfully', id: recipeRef.id});
     } catch (error) {
-        console.error('Error adding : ', error);
+        console.error('Error adding: ', error);
         res.status(500).send({success: false, message: 'An error occurred while adding data'});
     }
 };

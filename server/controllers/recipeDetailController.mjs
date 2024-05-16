@@ -1,4 +1,4 @@
-const SPOONACULAR_APIKEY = process.env.SPOONACULAR_APIKEY;
+import {SPOONACULAR_APIKEY} from "../constants.js";
 
 export const recipeDetailController = async (req, res) => {
     const id = req.params.id;
