@@ -1,8 +1,7 @@
 import { z } from 'zod';
 import {RECIPE} from "./constants.mjs";
 import _ from 'lodash'
-
-const AVAILABLE_DIETS = ['vegetarian', 'vegan', 'gluten free', 'ketogenic', 'dairy free']
+import {AVAILABLE_DIETS} from "../constants.js";
 
 const stepSchema = z.object({
     number: z.coerce.number().int().positive(),
@@ -39,7 +38,7 @@ export const recipeAddSchema = z.object({
             .max(30, {message: 'Ingredient quantity too large'})
             .optional()
     })),
-    // check if steps numbers are unique
+    // Check if steps numbers are unique
     steps: z.array(stepSchema)
         .refine(steps => _.isEqual(steps, _.uniqBy(steps, 'number')),
             {message: 'Steps numbers must be unique'})

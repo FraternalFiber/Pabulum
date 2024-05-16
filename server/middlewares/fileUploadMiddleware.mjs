@@ -1,7 +1,5 @@
 import multer from "multer";
-
-const MAX_RECIPE_IMAGE_SIZE = 5242881 // 5 MB + 1 (multer doesn't accept files with exact max size)
-const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png']
+import {ACCEPTED_IMAGE_TYPES, MAX_RECIPE_IMAGE_SIZE} from "../constants.js";
 
 export function uploadFile() {
     const upload = multer({
