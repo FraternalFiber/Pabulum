@@ -74,7 +74,7 @@ export function RecipeDetails({recipeId}: RecipeDetailsProps) {
           {/* Title */}
           <h1 className={'text-3xl font-bold'}>{recipe.title}</h1>
           <div className={'flex flex-col gap-y-5'}>
-            <div className={'flex gap-x-6'}>
+            <div className={'flex gap-x-6 flex-wrap gap-y-2'}>
               {/* Preparation time */}
               <div className={'flex gap-x-2'}>
                 <ClockIcon/>
@@ -88,7 +88,7 @@ export function RecipeDetails({recipeId}: RecipeDetailsProps) {
             </div>
             {/* Diet badges - show box only when array is not empty */}
             {recipe.diets.length > 0 && (
-                <div className={'flex gap-x-4'}>
+                <div className={'flex gap-x-4 flex-wrap gap-y-2'}>
                   {recipe.diets.map((diet: string, index: number) => (
                       <p key={index}>✅ {diet}</p>
                   ))}

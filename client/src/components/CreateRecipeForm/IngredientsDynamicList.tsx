@@ -77,13 +77,13 @@ export function IngredientsDynamicList({form}: IngredientsTableProps) {
           <TableHeader>
             <TableRow>
               <TableHead className={'text-black'}>Ingredient name</TableHead>
-              <TableHead className={'text-black'} colSpan={2}>Quantity</TableHead>
+              <TableHead className={'text-black pl-0 md:pl-4'} colSpan={2}>Quantity</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {fields.map((item, index) => (
                 <TableRow key={item.id}>
-                  {/* Ingredient name input */}
+                  {/*#region Ingredient name input */}
                   <TableCell>
                     <FormField
                       name={`ingredients.${index}.name`}
@@ -101,8 +101,9 @@ export function IngredientsDynamicList({form}: IngredientsTableProps) {
                       )}
                     />
                   </TableCell>
-                  {/* Ingredient quantity input */}
-                  <TableCell>
+                  {/*#endregion*/}
+                  {/*#region Ingredient quantity input */}
+                  <TableCell className={'pl-0 pr-2 md:pl-4 md:pr-4'}>
                     <FormField
                         name={`ingredients.${index}.quantity`}
                         control={form.control}
@@ -118,21 +119,24 @@ export function IngredientsDynamicList({form}: IngredientsTableProps) {
                         )}
                     />
                   </TableCell>
-                  {/* Button to delete a row with an ingredient */}
-                  <TableCell className={'m-0 p-0'}>
+                  {/*#endregion*/}
+                  {/*#region Button to delete a row with an ingredient */}
+                  <TableCell className={'m-0 p-0 pr-2'}>
                     <Button type={'button'} className={'bg-transparent hover:bg-destructive'} onClick={() => removeIngredient(index)}>
                       <Trash2 color={'black'}/>
                     </Button>
                   </TableCell>
+                  {/*#endregion*/}
                 </TableRow>
             ))}
           </TableBody>
-          {/* Button to add a row with a new ingredient */}
+          {/*#region Button to add a row with a new ingredient */}
           <TableCaption>
             <Button type={'button'} onClick={() => append({name: '', quantity: ''})}>
               <Plus/>
             </Button>
           </TableCaption>
+          {/*#endregion*/}
         </Table>
       </>
   )
