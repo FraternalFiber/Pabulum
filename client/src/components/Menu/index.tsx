@@ -20,7 +20,7 @@ const menuButtons : Array<MenuButtonProps> = [
 
 function MenuButton({title, path, icon}: MenuButtonProps) {
   return (
-    // highlight the button when the corresponding subpage is active
+    // Highlight the button when the corresponding subpage is active
     <NavLink to={path} className={nav => `${nav.isActive ? 'bg-primary' : ''} flex p-4 hover:bg-primary rounded-sm`} end>
       <div className={'flex items-center mr-2'}>{icon}</div>
       <div>{title}</div>
@@ -34,13 +34,13 @@ function MenuContent() {
         <Link to={'/'} className={'flex flex-row items-center mt-4 ml-3 mr-2 select-none'}>
           <img src={pabulumLogoWithText} alt={'Pabulum logo'} className={'w-full'}/>
         </Link>
-        <div className={'flex flex-col justify-between grow mt-5 mb-2 pr-2 pl-2 min-h-100'}>
+        <div className={'flex flex-col justify-between grow mt-5 mb-2 pr-2 pl-2'}>
           <div className={'flex flex-col gap-y-2'}>
             {menuButtons.map((button: MenuButtonProps) => (
                 <MenuButton title={button.title} path={button.path} icon={button.icon} key={button.path}/>
             ))}
           </div>
-          <div className={'flex flex-col mt-2 gap-y-2'}>
+          <div className={'mt-2'}>
             <MenuButton title={'My account'} path={'/account'} icon={<UserIcon size={20}/>} key={'/account'}/>
           </div>
         </div>
@@ -52,22 +52,21 @@ function Menu() {
   return (
       <>
         {/* Fixed menu */}
-        <nav className={'hidden sm:flex flex-col w-60 min-w-60 h-100 bg-secondary border-r border-gray-300'}>
+        <nav className={'hidden sm:flex flex-col w-60 min-w-60 h-full bg-secondary border-r border-gray-300 overflow-y-auto'}>
           <MenuContent/>
         </nav>
         {/* Collapsable menu */}
-        <div className={'sm:hidden fixed flex-col w-screen top-0 pl-3 pt-2 pb-1 bg-white'}>
+        <div className={'sm:hidden fixed flex-col w-screen top-0 pl-3 pt-2 pb-1 bg-white z-50'}>
           <Sheet>
             <SheetTrigger>
               <MenuIcon size={35} className={'p-0 m-0'}/>
             </SheetTrigger>
-            <SheetContent className={'w-60 p-2 pt-5'} side={'left'}>
+            <SheetContent className={'w-60 p-2 pt-5 flex flex-col overflow-y-auto'} side={'left'}>
               <MenuContent/>
             </SheetContent>
           </Sheet>
         </div>
       </>
-
   )
 }
 
