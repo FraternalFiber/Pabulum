@@ -1,5 +1,7 @@
 import {SPOONACULAR_APIKEY} from "../constants.js";
 
+// let test_counter = 0;
+
 export const searchController = async (req, res) => {
     const data = req.query
 
@@ -21,7 +23,9 @@ export const searchController = async (req, res) => {
         ...searchParams
     })
 
-    console.log("url: " + url)
+    // console.log("url: " + url)
+    // test_counter++;
+    // console.log('Search fetch: ' + test_counter)
 
     fetch(url)
         .then((response) => response.json())
