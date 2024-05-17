@@ -1,47 +1,12 @@
 import { Menu } from "@/components/Menu";
 import { Main } from "@/components/Main";
 import {useEffect} from "react";
-import {Heading} from "@/components/Heading";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {z} from "zod";
-import {Form, FormControl, FormField, FormItem} from "@/components/ui/form.tsx";
-import {Input} from "@/components/ui/input.tsx";
-import {Button} from "@/components/ui/button.tsx";
-import {createSearchParams, useNavigate} from "react-router-dom";
-import {MAX_SEARCH_QUERY_LEN} from "@/helpers/constants.ts";
-
-// Zod schema object, used to define a form schema for validation
-const formSchema = z.object({
-  q: z
-      .string()
-      .trim()
-      .min(1, {message: "Enter a search term"})
-      .max(MAX_SEARCH_QUERY_LEN, {message: `Enter no more than ${MAX_SEARCH_QUERY_LEN} characters.`}),
-})
+import {HomeSearchBar} from "@/components/HomeSearchBar";
+import LogoTextOnly from "@/assets/images/logo_text_only.svg"
 
 export function Home() {
-  const navigate = useNavigate();
-
   useEffect(() => {
     document.title = "Pabulum"
-  })
-
-  function handleSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-
-    // redirect to /search subpage with the entered text as a parameter
-    navigate({
-      pathname: '/search',
-      search: createSearchParams(values).toString()
-    });
-  }
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      q: ""
-    }
   })
 
   return (
@@ -49,27 +14,9 @@ export function Home() {
         <Menu/>
         <Main>
           <div className={'w-full mt-10 flex flex-col justify-center items-center'}>
-            <Heading content={'Pabulum - savor the flavor, master the meal!'}/>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleSubmit)}>
-                <div className={'flex gap-x-2'}>
-                  {/* Search field */}
-                  <FormField
-                      control={form.control}
-                      name={'q'}
-                      render={({field}) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input className={'w-72 pt-6 pr-6 pb-6 pl-4'} placeholder={"Search for your favourite dishes..."} {...field}/>
-                            </FormControl>
-                          </FormItem>
-                      )}
-                  />
-                  {/* Submit button*/}
-                  <Button type={'submit'} className={'p-6'}>Search</Button>
-                </div>
-              </form>
-            </Form>
+            <img src={LogoTextOnly} alt={'Pabulum'} className={'w-full max-w-72'}/>
+            <div className={'italic text-xl mt-3'}>Savor the flavor, master the meal!</div>
+            <HomeSearchBar className={'mt-10'}/>
           </div>
         </Main>
       </>
