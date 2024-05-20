@@ -28,9 +28,16 @@ export const recipeAddController = async (req, res) => {
 
             blobStream.on('finish', () => {
                 const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-                console.log(`public url to image: ${publicUrl}`);
-                addRecipe.image = publicUrl;
-                resolve();
+
+                // Make the file public
+                blob.makePublic().then(() => {
+                    console.log(`public url to image: ${publicUrl}`);
+                    addRecipe.image = publicUrl;
+                    resolve();
+                }).catch(err => {
+                    console.error('Error making file public:', err);
+                    reject(err);
+                });
             });
 
             blobStream.end(req.file.buffer);

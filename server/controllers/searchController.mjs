@@ -1,4 +1,4 @@
-import {SPOONACULAR_APIKEY} from "../constants.js";
+import {SPOONACULAR_APIKEY} from "../constants.mjs";
 
 export const searchController = async (req, res) => {
     const data = req.query

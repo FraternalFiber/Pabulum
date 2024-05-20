@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import {RECIPE} from "./constants.mjs";
+import {RECIPE} from "../constants.mjs";
 import _ from 'lodash'
-import {AVAILABLE_DIETS} from "../constants.js";
+import {AVAILABLE_DIETS} from "../constants.mjs";
 
 const stepSchema = z.object({
     number: z.coerce.number().int().positive(),

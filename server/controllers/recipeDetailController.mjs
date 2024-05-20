@@ -1,18 +1,18 @@
 import round from 'lodash.round'
-import {SPOONACULAR_APIKEY} from "../constants.js";
+import {SPOONACULAR_APIKEY} from "../constants.mjs";
 const NUTRIENTS_TO_SHOW = ['Calories', 'Fat', 'Saturated Fat', 'Carbohydrates', 'Sugar', 'Cholesterol', 'Protein']
 
 export const recipeDetailController = async (req, res) => {
     const id = req.params.id;
 
-    // const url = `https://api.spoonacular.com/recipes/${id}/information?` + new URLSearchParams({
-    //     apiKey: SPOONACULAR_APIKEY,
-    //     instructionsRequired: true,
-    //     includeNutrition: true
-    // })
+    const url = `https://api.spoonacular.com/recipes/${id}/information?` + new URLSearchParams({
+        apiKey: SPOONACULAR_APIKEY,
+        instructionsRequired: true,
+        includeNutrition: true
+    })
 
     // url to a test recipe
-    const url = 'http://127.0.0.1:42069/recipe/test'
+    //const url = 'http://127.0.0.1:42069/recipe/test'
 
     console.log("recipe url: ", url);
     try
