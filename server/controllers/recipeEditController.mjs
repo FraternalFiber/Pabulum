@@ -13,7 +13,7 @@ export const recipeEditController = async (req, res) => {
         const oldData = (await recipeRef.get()).data();
 
         // If a new image is uploaded, replace the old one
-        if (file && oldData.image !== file.originalname) {
+        if (file && oldData.image !== `https://storage.googleapis.com/recipeImages/${file.originalname}`) {
             const blob = bucket.file(`recipeImages/${req.file.originalname}`);
             const blobStream = blob.createWriteStream();
 

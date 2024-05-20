@@ -7,6 +7,7 @@ import {validateData} from "../middlewares/validationMiddleware.mjs";
 import {uploadFile} from "../middlewares/fileUploadMiddleware.mjs";
 import {userRecipeDetailController} from "../controllers/userRecipeDetailController.mjs";
 import {recipeEditController} from "../controllers/recipeEditController.mjs";
+import {recipeDeleteController} from "../controllers/recipeDeleteController.mjs";
 
 const router = express.Router();
 
@@ -24,6 +25,9 @@ router.post('/add', uploadFile(), validateData(recipeAddSchema), recipeAddContro
 
 // Editing recipes
 router.put('/edit/:id', uploadFile(), validateData(recipeAddSchema), recipeEditController);
+
+// Delete recipes
+router.delete('/delete/:id', recipeDeleteController);
 
 
 
