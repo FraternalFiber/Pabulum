@@ -6,6 +6,7 @@ import {testRecipeController} from "../controllers/testRecipeController.mjs";
 import {validateData} from "../middlewares/validationMiddleware.mjs";
 import {uploadFile} from "../middlewares/fileUploadMiddleware.mjs";
 import {userRecipeDetailController} from "../controllers/userRecipeDetailController.mjs";
+import {recipeEditController} from "../controllers/recipeEditController.mjs";
 
 const router = express.Router();
 
@@ -20,6 +21,9 @@ router.post('/user/:id', userRecipeDetailController);
 
 // Adding recipes to database from form
 router.post('/add', uploadFile(), validateData(recipeAddSchema), recipeAddController);
+
+// Editing recipes
+router.put('/edit/:id', uploadFile(), validateData(recipeAddSchema), recipeEditController);
 
 
 
