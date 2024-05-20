@@ -9,6 +9,6 @@ const router = express.Router();
 // Response for search result - list of recipes
 router.get('/search', validateRequest({ query: searchSchema }), searchController);
 
-router.get('/userSearch', validateRequest({ query: searchSchema }), userSearchController);
+router.get('/user/Search', validateRequest({ query: searchSchema }), userSearchController);
 
 export default router;
