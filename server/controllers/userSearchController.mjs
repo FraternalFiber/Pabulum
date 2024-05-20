@@ -3,6 +3,8 @@ import {db} from "../firebase/firebase.mjs";
 
 export const userSearchController = async (req, res) => {
     const data = req.query
+    // Limit of recipes
+    const limit = 10;
 
     // Add search params to url only if they are not undefined
     const searchParams = Object.assign({},
@@ -17,7 +19,8 @@ export const userSearchController = async (req, res) => {
     // get recipes with specific name (case insensitive)
     let collectionRef = await db.collection('recipes')
         .where('title', '>=', searchParams.query)
-        .where('title', '<=', searchParams.query + '\uf8ff');
+        .where('title', '<=', searchParams.query + '\uf8ff')
+        .limit(limit);
 
     searchParams.diet.forEach(diet => {
         collectionRef = collectionRef.where('diets', 'array-contains', diet)

@@ -3,12 +3,17 @@ import { validateRequest } from 'zod-express-middleware';
 import { searchSchema } from '../schemas/searchSchema.mjs';
 import { searchController } from '../controllers/searchController.mjs';
 import {userSearchController} from "../controllers/userSearchController.mjs";
+import {userSearchAllController} from "../controllers/userSearchAllController.mjs";
 
 const router = express.Router();
 
-// Response for search result - list of recipes
+// Searching recipes from api
 router.get('/search', validateRequest({ query: searchSchema }), searchController);
 
-router.get('/user/Search', validateRequest({ query: searchSchema }), userSearchController);
+// Searching user's recipes
+router.get('/user/search', validateRequest({ query: searchSchema }), userSearchController);
+
+// Searching all user recipes without any filters
+router.get('/user/search/all', userSearchAllController);
 
 export default router;
