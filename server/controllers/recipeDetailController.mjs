@@ -2,6 +2,8 @@ import round from 'lodash.round'
 import {SPOONACULAR_APIKEY} from "../constants.mjs";
 const NUTRIENTS_TO_SHOW = ['Calories', 'Fat', 'Saturated Fat', 'Carbohydrates', 'Sugar', 'Cholesterol', 'Protein']
 
+// let test_counter = 0;
+
 export const recipeDetailController = async (req, res) => {
     const id = req.params.id;
 
@@ -12,9 +14,12 @@ export const recipeDetailController = async (req, res) => {
     })
 
     // url to a test recipe
-    //const url = 'http://127.0.0.1:42069/recipe/test'
+    // const url = 'http://127.0.0.1:42069/recipe/test'
 
-    console.log("recipe url: ", url);
+    // console.log("recipe url: ", url);
+    // test_counter++;
+    // console.log('Details fetch: ' + test_counter)
+
     try
     {
         fetch(url)
