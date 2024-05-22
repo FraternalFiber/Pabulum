@@ -15,7 +15,7 @@ type RecipeResultCardProps = {
 // Show no-image placeholder when imageUrl is not given
 export function RecipeResultCard({id, title, imageUrl = noImagePlaceholder, className}: RecipeResultCardProps) {
   return (
-      <Link to={`/recipe/${id}`}>
+      <Link to={`/recipes/${id}`}>
         <Card className={cn(className, 'w-full hover:bg-secondary')}>
           <CardHeader>
             <CardTitle>{title}</CardTitle>

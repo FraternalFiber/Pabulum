@@ -11,9 +11,9 @@ const router = express.Router();
 router.get('/test', testRecipeController);
 
 // Searching recipes from api
-router.get('/recipe/search', validateRequest({ query: searchSchema }), searchController);
+router.get('/recipes/search', validateRequest({ query: searchSchema }), searchController);
 
 // Details of specific recipe containing detailed information and instructions
-router.get('/recipe/:id', recipeDetailController);
+router.get('/recipes/:id', recipeDetailController);
 
 export default router;

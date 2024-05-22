@@ -3,7 +3,7 @@ import {BACKEND_SERVER_URL} from "@/helpers/constants.ts";
 import {TRecipeDetails} from "@/types/TRecipeDetails.ts";
 
 export const getRecipe = async (id: string) => {
-  return fetch(`${BACKEND_SERVER_URL}/recipe/${id}`)
+  return fetch(`${BACKEND_SERVER_URL}/recipes/${id}`)
       .then(res => res.json())
       .catch((error) => {
         throw ('Backend API connection error: ' + error)

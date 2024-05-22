@@ -28,15 +28,15 @@ export const routes: Array<RouteElement> = [
     element: <Discover/>
   },
   {
-    path: '/recipe',
+    path: '/recipes',
     element: <MyRecipes/>
   },
   {
-    path: '/recipe/create',
+    path: '/recipes/create',
     element: <CreateRecipe/>
   },
   {
-    path: '/recipe/:id',
+    path: '/recipes/:id',
     element: <Recipe/>
   },
   {

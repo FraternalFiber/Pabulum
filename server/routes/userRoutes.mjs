@@ -14,21 +14,21 @@ import {userSearchAllController} from "../controllers/userSearchAllController.mj
 const router = express.Router();
 
 // Searching all user recipes without any filters
-router.get('/recipe/search/all', userSearchAllController);
+router.get('/recipes/all', userSearchAllController);
 
 // Searching user's recipes
-router.get('/recipe/search', validateRequest({ query: searchSchema }), userSearchController);
+router.get('/recipes/search', validateRequest({ query: searchSchema }), userSearchController);
 
 // Details for specific user recipe
-router.post('/recipe/:id', userRecipeDetailController);
+router.get('/recipes/:id', userRecipeDetailController);
 
 // Adding recipes to database from form
-router.post('/recipe/new', uploadFile(), validateData(recipeAddSchema), recipeAddController);
+router.post('/recipes', uploadFile(), validateData(recipeAddSchema), recipeAddController);
 
 // Editing recipes
-router.put('/recipe/:id', uploadFile(), validateData(recipeAddSchema), recipeEditController);
+router.put('/recipes/:id', uploadFile(), validateData(recipeAddSchema), recipeEditController);
 
 // Delete recipes
-router.delete('/recipe/:id', recipeDeleteController);
+router.delete('/recipes/:id', recipeDeleteController);
 
 export default router;

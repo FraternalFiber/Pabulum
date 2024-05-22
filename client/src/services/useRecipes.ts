@@ -4,7 +4,7 @@ import {TRecipeSearchParams} from "@/types/TRecipeSearchParams.ts";
 import {BACKEND_SERVER_URL} from "@/helpers/constants.ts";
 
 export const getRecipes = async (searchParams: TRecipeSearchParams, queryClient: QueryClient) => {
-  const url = new URL(`${BACKEND_SERVER_URL}/search?`)
+  const url = new URL(`${BACKEND_SERVER_URL}/recipes/search?`)
   const params = new URLSearchParams({q: searchParams.q})
 
   // Add an array of filters to url.search params

@@ -185,7 +185,7 @@ export function CreateRecipeForm() {
   return (
       <>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className={'flex flex-col gap-y-5 max-w-[40rem] overflow-y-hidden'}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className={'flex flex-col gap-y-5 max-w-[40rem]'}>
             {/*#region Title input*/}
             <FormField
                 name={'title'}

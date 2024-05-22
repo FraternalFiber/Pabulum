@@ -17,7 +17,7 @@ export const postRecipe = async (data: any) => {
       formData.append(key, JSON.stringify(data[key]))
     }
 
-    const response = await fetch(`${BACKEND_SERVER_URL}/recipe/add`, {
+    const response = await fetch(`${BACKEND_SERVER_URL}/user/recipes`, {
       method: 'POST',
       body: formData
     })
