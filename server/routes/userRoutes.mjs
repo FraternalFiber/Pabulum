@@ -9,12 +9,11 @@ import {recipeDeleteController} from "../controllers/recipeDeleteController.mjs"
 import {validateRequest} from "zod-express-middleware";
 import {searchSchema} from "../schemas/searchSchema.mjs";
 import {userSearchController} from "../controllers/userSearchController.mjs";
-import {userSearchAllController} from "../controllers/userSearchAllController.mjs";
 
 const router = express.Router();
 
 // Searching all user recipes without any filters
-router.get('/recipes/all', userSearchAllController);
+//router.get('/recipes/all', userSearchAllController);
 
 // Searching user's recipes
 router.get('/recipes/search', validateRequest({ query: searchSchema }), userSearchController);

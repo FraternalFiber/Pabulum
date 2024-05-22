@@ -8,7 +8,7 @@ import {recipeDetailController} from "../controllers/recipeDetailController.mjs"
 const router = express.Router();
 
 // Recipe for testing
-router.get('/test', testRecipeController);
+router.get('/recipe/test', testRecipeController);
 
 // Searching recipes from api
 router.get('/recipes/search', validateRequest({ query: searchSchema }), searchController);
