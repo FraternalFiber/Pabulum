@@ -6,11 +6,17 @@ import {Input} from "@/components/ui/input.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {useEffect, useState} from "react";
 import {SearchResults} from "@/components/SearchResults";
-import {availableCuisineItems, availableDietItems, availableMealTypeItems} from '@/components/SearchForm/searchFormFilterItems.ts'
-import {SearchFormFilter} from "@/components/SearchForm/SearchFormFilter.tsx";
+import {
+  // availableCuisineItems,
+  availableCuisineItemsNew,
+  availableDietItems,
+  availableMealTypeItems
+} from '@/components/SearchForm/searchFormFilterItems.ts'
+// import {SearchFormFilter} from "@/components/SearchForm/SearchFormFilter.tsx";
 import {useSearchParams} from "react-router-dom";
 import {TRecipeSearchParams} from "@/types/TRecipeSearchParams.ts";
 import {MAX_SEARCH_QUERY_LEN} from "@/helpers/constants.ts";
+import {SearchFormFilterNew} from "@/components/SearchForm/SearchFormFilterNew.tsx";
 
 // Zod schema object, used to define a form schema for validation
 const formSchema = z.object({
@@ -104,13 +110,16 @@ export function SearchForm() {
               />
               <Button type={'submit'}>Search</Button>
             </div>
-            <div className={'mt-3 flex gap-x-3'}>
+            <div className={'mt-3 flex gap-x-3 flex-wrap gap-y-3'}>
               {/* Diet filter */}
-              <SearchFormFilter title={'Diet'} name={'diet'} items={availableDietItems} form={form}/>
+              {/*<SearchFormFilter title={'Diet'} name={'diet'} items={availableDietItems} form={form}/>*/}
+              <SearchFormFilterNew title={'Diet'} fieldName={'diet'} items={availableDietItems} form={form}/>
               {/* Cuisine filter */}
-              <SearchFormFilter title={'Cuisine'} name={'cuisine'} items={availableCuisineItems} form={form}/>
+              {/*<SearchFormFilter title={'Cuisine'} name={'cuisine'} items={availableCuisineItems} form={form}/>*/}
+              <SearchFormFilterNew title={'Cuisine'} fieldName={'cuisine'} items={availableCuisineItemsNew} form={form}/>
               {/* Meal type filter */}
-              <SearchFormFilter title={'Meal type'} name={'mealType'} items={availableMealTypeItems} form={form}/>
+              {/*<SearchFormFilter title={'Meal type'} name={'mealType'} items={availableMealTypeItems} form={form}/>*/}
+              <SearchFormFilterNew title={'Meal type'} fieldName={'mealType'} items={availableMealTypeItems} form={form}/>
             </div>
           </form>
         </Form>

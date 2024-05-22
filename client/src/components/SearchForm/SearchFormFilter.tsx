@@ -2,14 +2,14 @@ import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.t
 import {Button} from "@/components/ui/button.tsx";
 import {FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
-import {TSearchFormFilter} from "@/types/TSearchFormFilter.ts";
+import {TSearchFormFilterItem} from "@/types/TSearchFormFilterItem.ts";
 import {Badge} from "@/components/ui/badge.tsx";
 import {cn} from "@/lib/utils.ts";
 
 type SearchFormFilterProps = {
   title: string
   name: string
-  items: Array<TSearchFormFilter>
+  items: Array<TSearchFormFilterItem>
   form: any
 }
 
@@ -43,29 +43,29 @@ export function SearchFormFilter({title, name, items, form}: SearchFormFilterPro
         </Button>
       </PopoverTrigger>
       {/* Show a scrollbar when popover is higher than max available height between the button and the bottom of the screen */}
-      <PopoverContent className={'w-auto overflow-y-auto max-h-[var(--radix-popover-content-available-height)]'}>
-        <FormField
-            control={form.control}
-            name={name}
-            render={() => (
-                <FormItem>
+      <PopoverContent className={'w-auto overflow-y-auto max-h-[var(--radix-popover-content-available-height)] space-y-2'}>
+        {/*<FormField*/}
+        {/*    control={form.control}*/}
+        {/*    name={name}*/}
+        {/*    render={() => (*/}
+        {/*        <FormItem>*/}
                   {items.map((item) => (
                       <FormField
-                          key={item.id}
+                          key={item.value}
                           control={form.control}
                           name={name}
                           render={({field}) => {
                             return (
-                                <FormItem key={item.id} className={'flex items-center space-x-3 space-y-0'}>
+                                <FormItem key={item.value} className={'flex items-center space-x-3 space-y-0'}>
                                   <FormControl>
                                     <Checkbox
-                                        checked={field.value?.includes(item.id)}
+                                        checked={field.value?.includes(item.value)}
                                         onCheckedChange={(checked) => {
                                           return checked
-                                              ? field.onChange([...field.value, item.id])
+                                              ? field.onChange([...field.value, item.value])
                                               : field.onChange(
                                                   field.value?.filter(
-                                                      (value: never) => value !== item.id
+                                                      (value: never) => value !== item.value
                                                   )
                                               )
                                         }}
@@ -79,9 +79,9 @@ export function SearchFormFilter({title, name, items, form}: SearchFormFilterPro
                           }}
                       />
                   ))}
-                </FormItem>
-            )}
-        />
+        {/*        </FormItem>*/}
+        {/*    )}*/}
+        {/*/>*/}
       </PopoverContent>
     </Popover>
   )
