@@ -13,11 +13,17 @@ export const getRecipes = async (searchParams: TRecipeSearchParams, queryClient:
   searchParams.mealType.forEach(mealType => params.append('mealType', mealType))
   url.search = params.toString()
 
+  // If search results are in cache, return them to prevent a refetch
+  const cachedData = queryClient.getQueryData(['searchResults', searchParams])
+  if(cachedData) {
+    return cachedData
+  }
+
   return fetch(url)
       .then(res => res.json())
       .then(res => {
         // update the cache manually
-        queryClient.setQueryData(['searchResults', searchParams.q], res.results);
+        // queryClient.setQueryData(['searchResults', searchParams.q], res.results);
         return res.results
       })
       .catch((error) => {
@@ -26,10 +32,11 @@ export const getRecipes = async (searchParams: TRecipeSearchParams, queryClient:
 }
 
 // service used for fetching recipes data from backend
-export const useRecipes = (searchParams : TRecipeSearchParams) => {
+export const useRecipes = (searchParams: TRecipeSearchParams) => {
   const queryClient = useQueryClient()
+
   return useQuery<TRecipeResult[]>({
-    queryKey: ['searchResults', searchParams.q],
+    queryKey: ['searchResults', searchParams],
     queryFn: () => getRecipes(searchParams, queryClient),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
