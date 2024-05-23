@@ -1,6 +1,5 @@
 import {db} from "../firebase/firebase.mjs";
 
-
 export const userSearchController = async (req, res) => {
     const data = req.query
     const offset = data.offset || 0;
@@ -68,6 +67,7 @@ export const userSearchController = async (req, res) => {
         {
             const recipe = doc.data();
 
+            /*
             // Fetch diets subcollection
             const dietsSnapshot = await doc.ref.collection('diets').get();
             recipe.diets = dietsSnapshot.docs.map(doc => doc.data());
@@ -79,8 +79,16 @@ export const userSearchController = async (req, res) => {
             // Fetch steps subcollection
             const stepsSnapshot = await doc.ref.collection('steps').get();
             recipe.steps = stepsSnapshot.docs.map(doc => doc.data());
+            */
 
-            recipes.push(recipe);
+            const finalRecipe = Object.assign({},
+                {id: doc.id},
+                recipe.title === undefined ? {} : {query: recipe.title},
+                //check if value is undefined / array / string - array needs to be printed with commas in between
+                recipe.image === undefined ? {} : {image: recipe.image}
+            );
+
+            recipes.push(finalRecipe);
         }
 
         //const documents = snapshot.docs.map(doc => doc.data());
