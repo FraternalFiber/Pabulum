@@ -108,6 +108,7 @@ export function CreateRecipeForm() {
   // state used to store value of image for upload
   const [imageFile, setImageFile] = useState<File | undefined>(undefined)
   const [imageFileValue, setImageFileValue] = useState('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   // Code executed after submitting a form
   async function handleSubmit(values: z.infer<typeof formSchema>) {
@@ -115,6 +116,7 @@ export function CreateRecipeForm() {
 
     // show a loading toast
     const loadingToastId = toast.loading('Creating a recipe...')
+    setIsLoading(true)
 
     try {
       // post recipe data to database
@@ -131,6 +133,7 @@ export function CreateRecipeForm() {
       else {
         // dismiss a loading toast and show an error toast
         toast.dismiss(loadingToastId)
+        setIsLoading(false)
         toast.error(POST_RECIPE_ERROR_MESSAGE)
         console.error(`${POST_RECIPE_ERROR_MESSAGE}: ${response.message}`)
         console.error(response.message)
@@ -139,6 +142,7 @@ export function CreateRecipeForm() {
     catch(error) {
       // dismiss a loading toast and show an error toast
       toast.dismiss(loadingToastId)
+      setIsLoading(false)
       toast.error(POST_RECIPE_ERROR_MESSAGE)
       console.error(`${POST_RECIPE_ERROR_MESSAGE}: ${error}`)
     }
@@ -349,7 +353,7 @@ export function CreateRecipeForm() {
             {/*#endregion*/}
             <IngredientsDynamicList form={form}/>
             <StepsDynamicList form={form}/>
-            <Button type={'submit'} className={'mt-5'}>Create</Button>
+            <Button type={'submit'} className={'mt-5 select-none transition'} disabled={isLoading}>Create</Button>
           </form>
         </Form>
       </>

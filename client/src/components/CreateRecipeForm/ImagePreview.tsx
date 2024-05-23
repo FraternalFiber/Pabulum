@@ -45,7 +45,7 @@ export function ImagePreview({file, deleteImage, handleImageError}: ImagePreview
                    alt={'Uploaded image preview'}
                    onLoad={handleImageLoad}
                    onError={handleImageError}
-                   className={cn('rounded-sm w-full h-full', showImage ? 'block' : 'hidden')}/>
+                   className={cn('rounded-sm w-full h-full object-contain object-center bg-secondary', showImage ? 'block' : 'hidden')}/>
               <Button
                   type={'button'}
                   className={'absolute -top-3 -right-3 pr-2 pl-2 rounded-full bg-secondary hover:bg-destructive'}
