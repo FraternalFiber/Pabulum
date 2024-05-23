@@ -83,7 +83,7 @@ export const userSearchController = async (req, res) => {
 
             const finalRecipe = Object.assign({},
                 {id: doc.id},
-                recipe.title === undefined ? {} : {query: recipe.title},
+                recipe.title === undefined ? {} : {title: recipe.title},
                 //check if value is undefined / array / string - array needs to be printed with commas in between
                 recipe.image === undefined ? {} : {image: recipe.image}
             );
