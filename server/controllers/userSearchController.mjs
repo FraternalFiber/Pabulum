@@ -7,58 +7,62 @@ export const userSearchController = async (req, res) => {
     const limit = 9;
     console.log(data);
     console.log(offset);
+
+    const searchAll = data.q === undefined && data.diet === undefined;
+
+    const searchParams = Object.assign({},
+        data.q === undefined ? "" : {query: data.q.toLowerCase()},
+        //check if value is undefined / array / string - array needs to be printed with commas in between
+        data.diet === undefined ? {diet: []} : {diet: Array.isArray(data.diet) ? data.diet: [data.diet]}
+    );
+
+
     try
     {
         let collectionRef;
 
         //query for all recipes
-        if(data.q === undefined && data.diet === undefined)
+        if(searchAll)
         {
-            console.log(1)
             collectionRef = db.collection('recipes').orderBy('title'); // Order the collection by title
+
+            if (offset > 0)
+            {
+                console.log("offset")
+                const snapshot = await collectionRef.limit(offset * limit).get(); // Get the last document of the previous page
+                const lastDoc = snapshot.docs[snapshot.docs.length - 1];
+
+                collectionRef = collectionRef.startAfter(lastDoc).limit(limit); // Start after the last document of the previous page
+            } else
+            {
+                collectionRef = collectionRef.limit(limit); // If there's no offset, just limit the results
+            }
         }
         //query for recipes with filters included
         else
         {
-            console.log(2)
             // Add search params to url only if they are not undefined
-            const searchParams = Object.assign({},
-                data.q === undefined ? "" : {query: data.q.toLowerCase()},
-                //check if value is undefined / array / string - array needs to be printed with commas in between
-                data.diet === undefined ? {diet: []} : {diet: Array.isArray(data.diet) ? data.diet: [data.diet]}
-            );
+
 
             // get recipes with specific name
-            // let collectionRef = db.collection('recipes').where('title', '==', query);
+            // collectionRef = db.collection('recipes').where('title', '==', query);
 
+            // disabled /doesn't work
             // get recipes with specific name (case insensitive)
-            collectionRef = await db.collection('recipes')
+            /*collectionRef = await db.collection('recipes')
                 .where('title', '>=', searchParams.query)
                 .where('title', '<=', searchParams.query + '\uf8ff')
-                .limit(limit);
+                .limit(limit);*/
 
+            //check for names has to be handled later on, since firebase doesn't support case insensitive query
+            collectionRef = await db.collection('recipes');
 
-
+            //check for diets
             searchParams.diet.forEach(diet => {
                 collectionRef = collectionRef.where('diets', 'array-contains', diet)
             });
+
         }
-
-
-        if (offset > 0)
-        {
-            console.log("offset")
-            const snapshot = await collectionRef.limit(offset * limit).get(); // Get the last document of the previous page
-            const lastDoc = snapshot.docs[snapshot.docs.length - 1];
-
-            collectionRef = collectionRef.startAfter(lastDoc).limit(limit); // Start after the last document of the previous page
-        } else
-        {
-            collectionRef = collectionRef.limit(limit); // If there's no offset, just limit the results
-        }
-
-
-
 
         const snapshot = await collectionRef.get();
         let recipes = [];
@@ -80,6 +84,14 @@ export const userSearchController = async (req, res) => {
             const stepsSnapshot = await doc.ref.collection('steps').get();
             recipe.steps = stepsSnapshot.docs.map(doc => doc.data());
             */
+
+            if(!searchAll)
+            {
+                if(!recipe.title.toLowerCase().includes(searchParams.query))
+                {
+                    continue;
+                }
+            }
 
             const finalRecipe = Object.assign({},
                 {id: doc.id},
