@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/popover.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {TSearchFormFilterItem} from "@/types/TSearchFormFilterItem.ts";
+import { Badge } from "@/components/ui/badge.tsx";
 
 type SearchFormFilterNewProps = {
   title: string
@@ -23,23 +24,38 @@ type SearchFormFilterNewProps = {
   form: any
 }
 
+type FilterBadgeProps = {
+  value: number
+}
+
+// Badge that shows a number of selected filters (unless it equals 0)
+function FilterBadge({value}: FilterBadgeProps) {
+  if(value > 0) {
+    return (
+      <>
+        {/*<Badge className={'absolute -top-2 -right-2 pr-2 pl-2 hover:bg-primary text-md font-bold'}>{value}</Badge>*/}
+        <div className={'absolute -top-2 -right-2 bg-primary p-0.5 pl-2 pr-2 rounded-full font-bold'}>{value}</div>
+      </>
+    )
+  }
+
+  return <></>
+}
+
 // Multiple select box, via: https://craft.mxkaske.dev/post/fancy-box
 export function SearchFormFilterNew({title, fieldName, items, form}: SearchFormFilterNewProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [openCombobox, setOpenCombobox] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
-  // const [selectedValues, setSelectedValues] = useState<Array<TSearchFormFilterItem>>(items.filter((item) => form.getValues(fieldName).includes(item.value)));
   const [selectedValues, setSelectedValues] = useState<Array<TSearchFormFilterItem>>([]);
 
   // Set default value on load
   useEffect(() => {
-    // console.log('this')
     setSelectedValues(items.filter((item) => form.getValues(fieldName).includes(item.value)))
   }, []);
 
   // Set form field value when selectedValues changed
   useEffect(() => {
-    // console.log(items.filter((item) => form.getValues(fieldName).includes(item.value)))
     form.setValue(fieldName, selectedValues.map((item) => item.value))
   }, [selectedValues]);
 
@@ -69,17 +85,18 @@ export function SearchFormFilterNew({title, fieldName, items, form}: SearchFormF
             className={cn("relative w-44 justify-between text-foreground", selectedValues.length > 0 ? 'border-primary ' : '')}
           >
             <span className="truncate">
-              {selectedValues.length === 0 && title}
-              {selectedValues.length === 1 && selectedValues[0].label}
-              {selectedValues.length === 2 &&
-                selectedValues.map(({ label }) => label).join(", ")}
-              {selectedValues.length > 2 &&
-                `${selectedValues.length} items selected`}
-              {/*{title}*/}
+              {/*{selectedValues.length === 0 && title}*/}
+              {/*{selectedValues.length === 1 && selectedValues[0].label}*/}
+              {/*{selectedValues.length === 2 &&*/}
+              {/*  selectedValues.map(({ label }) => label).join(", ")}*/}
+              {/*{selectedValues.length > 2 &&*/}
+              {/*  `${selectedValues.length} ${title.toLowerCase()}s`}*/}
+              {title}
             </span>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             {/*Items selected indicator*/}
-            <div className={cn('-top-2 -right-2 bg-primary w-4 h-4 rounded-full', selectedValues.length > 0 ? 'absolute' : 'hidden')}></div>
+            <FilterBadge value={selectedValues.length}/>
+            {/*<div className={cn('-top-2 -right-2 bg-primary pl-1.5 pr-1.5 rounded-full', selectedValues.length > 0 ? 'absolute' : 'hidden')}>{selectedValues.length}</div>*/}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0">
