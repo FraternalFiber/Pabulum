@@ -32,6 +32,12 @@ export const searchController = async (req, res) => {
     fetch(url)
         .then((response) => response.json())
         .then((data) => {
+            // Delete imageType property from results
+            data.results.forEach((result) => {
+                if (result.imageType) {
+                    delete result.imageType
+                }
+            })
             res.json(data);
         })
         .catch((error) => {
