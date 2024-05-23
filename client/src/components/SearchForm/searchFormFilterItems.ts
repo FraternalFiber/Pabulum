@@ -7,37 +7,6 @@ export const availableDietItems = [
 ]
 
 export const availableCuisineItems = [
-  {
-    value: 'asian',
-    label: 'Asian'
-  },
-  {
-    value: 'french',
-    label: 'French'
-  },
-  {
-    value: 'italian',
-    label: 'Italian'
-  },
-  {
-    value: 'korean',
-    label: 'Korean'
-  },
-  {
-    value: 'mexican',
-    label: 'Mexican'
-  },
-  {
-    value: 'spanish',
-    label: 'Spanish'
-  },
-  {
-    value: 'vietnamese',
-    label: 'Vietnamese'
-  }
-]
-
-export const availableCuisineItemsNew = [
   { value: 'african', label: 'African' },
   { value: 'asian', label: 'Asian' },
   { value: 'american', label: 'American' },
@@ -68,60 +37,18 @@ export const availableCuisineItemsNew = [
 ]
 
 export const availableMealTypeItems = [
-  {
-    value: 'main course',
-    label: 'Main course'
-  },
-  {
-    value: 'side dish',
-    label: 'Side dish'
-  },
-  {
-    value: 'dessert',
-    label: 'Dessert'
-  },
-  {
-    value: 'appetizer',
-    label: 'Appetizer'
-  },
-  {
-    value: 'salad',
-    label: 'Salad'
-  },
-  {
-    value: 'bread',
-    label: 'Bread'
-  },
-  {
-    value: 'breakfast',
-    label: 'Breakfast'
-  },
-  {
-    value: 'soup',
-    label: 'Soup'
-  },
-  {
-    value: 'beverage',
-    label: 'Beverage'
-  },
-  {
-    value: 'sauce',
-    label: 'Sauce'
-  },
-  {
-    value: 'marinade',
-    label: 'Marinade'
-  },
-  {
-    value: 'fingerfood',
-    label: 'Finger food'
-  },
-  {
-    value: 'snack',
-    label: 'Snack'
-  },
-  {
-    value: 'drink',
-    label: 'Drink'
-  },
+  { value: 'main course', label: 'Main course' },
+  { value: 'side dish', label: 'Side dish' },
+  { value: 'dessert', label: 'Dessert' },
+  { value: 'appetizer', label: 'Appetizer' },
+  { value: 'salad', label: 'Salad' },
+  { value: 'bread', label: 'Bread' },
+  { value: 'breakfast', label: 'Breakfast' },
+  { value: 'soup', label: 'Soup' },
+  { value: 'beverage', label: 'Beverage' },
+  { value: 'sauce', label: 'Sauce' },
+  { value: 'marinade', label: 'Marinade' },
+  { value: 'fingerfood', label: 'Finger food' },
+  { value: 'snack', label: 'Snack' },
+  { value: 'drink', label: 'Drink' },
 ]
