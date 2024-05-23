@@ -11,6 +11,7 @@ import React, {useState} from "react";
 import {useRecipe} from "@/services/useRecipe.ts";
 import {ErrorAlert} from "@/components/ErrorAlert/ErrorAlert.tsx";
 import {LoadingSkeletons} from "@/components/RecipeDetails/LoadingSkeletons.tsx";
+import { TDataSource } from "@/types/TDataSource.ts";
 
 type RecipeLabelProps = {
   children?: React.ReactNode
@@ -22,10 +23,11 @@ function RecipeLabel({children}: RecipeLabelProps) {
 
 type RecipeDetailsProps = {
   recipeId: string
+  dataSource: TDataSource
 }
 
-export function RecipeDetails({recipeId}: RecipeDetailsProps) {
-  const { data: recipe, isLoading, isError} = useRecipe(recipeId)
+export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
+  const { data: recipe, isLoading, isError} = useRecipe(recipeId, dataSource)
   const [showImage, setShowImage] = useState<boolean>(false)
   const [imageError, setImageError] = useState<boolean>(false)
 
@@ -110,20 +112,22 @@ export function RecipeDetails({recipeId}: RecipeDetailsProps) {
               </Table>
             </div>
             {/* Nutrition facts */}
-            <div>
-              <RecipeLabel>Nutrition facts</RecipeLabel>
-              <Table className={'text-md'}>
-                <TableBody>
-                  {recipe.nutrients.map((nutrient: TNutrient) => (
-                      <TableRow key={nutrient.name}>
-                        <TableCell>{nutrient.name}</TableCell>
-                        <TableCell>{nutrient.quantity}</TableCell>
-                      </TableRow>
-                  ))}
-                </TableBody>
-                <TableCaption>Amount per serving</TableCaption>
-              </Table>
-            </div>
+            {recipe.nutrients && (
+              <div>
+                <RecipeLabel>Nutrition facts</RecipeLabel>
+                <Table className={'text-md'}>
+                  <TableBody>
+                    {recipe.nutrients.map((nutrient: TNutrient) => (
+                        <TableRow key={nutrient.name}>
+                          <TableCell>{nutrient.name}</TableCell>
+                          <TableCell>{nutrient.quantity}</TableCell>
+                        </TableRow>
+                    ))}
+                  </TableBody>
+                  <TableCaption>Amount per serving</TableCaption>
+                </Table>
+              </div>
+            )}
           </div>
           {/* Steps */}
           <div>

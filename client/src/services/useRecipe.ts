@@ -1,20 +1,25 @@
 import {useQuery} from "@tanstack/react-query";
 import {BACKEND_SERVER_URL} from "@/helpers/constants.ts";
 import {TRecipeDetails} from "@/types/TRecipeDetails.ts";
+import { TDataSource } from "@/types/TDataSource.ts";
 
-export const getRecipe = async (id: string) => {
-  return fetch(`${BACKEND_SERVER_URL}/recipes/${id}`)
+export const getRecipe = async (id: string, dataSource: TDataSource) => {
+  // Create a URL for fetch depending on data source (online/user)
+  const url = BACKEND_SERVER_URL.concat(dataSource === 'online'
+    ? `/recipes/${id}`
+    : `/user/recipes/${id}`)
+
+  return fetch(url)
       .then(res => res.json())
       .catch((error) => {
         throw ('Backend API connection error: ' + error)
       })
 }
 
-export const useRecipe = (id: string) => {
-  console.log(id)
+export const useRecipe = (id: string, source: TDataSource) => {
   return useQuery<TRecipeDetails>({
-    queryKey: ['recipe', id],
-    queryFn: () => getRecipe(id),
+    queryKey: ['recipe', source, id],
+    queryFn: () => getRecipe(id, source),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,

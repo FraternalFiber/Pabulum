@@ -37,7 +37,11 @@ export const routes: Array<RouteElement> = [
   },
   {
     path: '/recipes/:id',
-    element: <Recipe/>
+    element: <Recipe dataSource={'online'}/>
+  },
+  {
+    path: '/user/recipes/:id',
+    element: <Recipe dataSource={'user'}/>
   },
   {
     path: '/pantry',

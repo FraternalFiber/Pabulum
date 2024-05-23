@@ -16,7 +16,7 @@ export const userRecipeDetailController = async (req, res) => {
         const data = (await docRef.get()).data();
 
         // Fetch the diets, ingredients, and steps subcollections from the data
-        const diets = (await docRef.collection('diets').get()).docs.map(doc => doc.data());
+        const diets = (await docRef.collection('diets').get()).docs.map(doc => doc.data()).map(diet => diet.name);
         const ingredients = (await docRef.collection('ingredients').get()).docs.map(doc => doc.data());
         const steps = (await docRef.collection('steps').get()).docs.map(doc => doc.data());
 
