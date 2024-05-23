@@ -5,6 +5,8 @@ import {SPOONACULAR_APIKEY} from "../constants.mjs";
 export const searchController = async (req, res) => {
     const data = req.query
 
+    const limit = 9;
+
     // Add search params to url only if they are not undefined
     const searchParams = Object.assign({},
         data.q === undefined ? null : {query: data.q},
@@ -17,7 +19,7 @@ export const searchController = async (req, res) => {
     const url = 'https://api.spoonacular.com/recipes/complexSearch?' + new URLSearchParams({
         apiKey: SPOONACULAR_APIKEY,
         // Number of results to be returned
-        number: 9,
+        number: limit,
         // To make sure api gives only recipes that include whole instructions list
         instructionsRequired: true,
         ...searchParams

@@ -4,7 +4,7 @@ export const userSearchController = async (req, res) => {
     const data = req.query
     const offset = data.offset || 0;
     // Limit of recipes
-    const limit = 10;
+    const limit = 9;
     console.log(data);
     console.log(offset);
     try
