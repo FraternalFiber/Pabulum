@@ -17,40 +17,47 @@ export const recipeAddController = async (req, res) => {
 
         const recipeRef = db.collection('recipes').doc();
 
-        // Create a new blob in the bucket and upload the file data.
-        const upload = new Promise((resolve, reject) => {
-            const blob = bucket.file(`recipeImages/${req.file.originalname}`);
-            const blobStream = blob.createWriteStream();
+        if(file !== undefined)
+        {
+            // Create a new blob in the bucket and upload the file data.
+            const upload = new Promise((resolve, reject) => {
+                const blob = bucket.file(`recipeImages/${req.file.originalname}`);
+                const blobStream = blob.createWriteStream();
 
-            blobStream.on('error', (err) => {
-                reject(`(Error while uploading image) :${err.message}`);
-            });
-
-            blobStream.on('finish', () => {
-                const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-
-                // Make the file public
-                blob.makePublic().then(() => {
-                    console.log(`public url to image: ${publicUrl}`);
-                    addRecipe.image = publicUrl;
-                    resolve();
-                }).catch(err => {
-                    console.error('Error making file public:', err);
-                    reject(err);
+                blobStream.on('error', (err) => {
+                    reject(`(Error while uploading image) :${err.message}`);
                 });
+
+                blobStream.on('finish', () => {
+                    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+
+                    // Make the file public
+                    blob.makePublic().then(() => {
+                        console.log(`public url to image: ${publicUrl}`);
+                        addRecipe.image = publicUrl;
+                        resolve();
+                    }).catch(err => {
+                        console.error('Error making file public:', err);
+                        reject(err);
+                    });
+                });
+
+                blobStream.end(req.file.buffer);
             });
 
-            blobStream.end(req.file.buffer);
-        });
-
-        // Use the Promise
-        // Called in a promise so image first uploads and it's link is ready to send
-        upload.then(async () => {
-            // Add a recipe data to database
+            // Use the Promise
+            // Called in a promise so image first uploads and it's link is ready to send
+            upload.then(async () => {
+                // Add a recipe data to database
+                await recipeRef.set(addRecipe);
+            }).catch((error) => {
+                throw new Error(error);
+            });
+        }
+        else
+        {
             await recipeRef.set(addRecipe);
-        }).catch((error) => {
-            throw new Error(error);
-        });
+        }
 
         // Add all diets data to recipe
         for (let diet of data.diets) {
