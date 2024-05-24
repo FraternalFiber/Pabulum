@@ -1,10 +1,20 @@
 import {ZodError} from "zod";
 
 // Validate request body with a Zod schema. via https://dev.to/osalumense/validating-request-data-in-expressjs-using-zod-a-comprehensive-guide-3a0j
-export function validateData(schema) {
+export function validateData(schemas) {
     return (req, res, next) => {
         try {
-            req.body = schema.parse(req.body);
+            // Perform validation via Zod schema
+            if (schemas.query) {
+                console.log('validate query')
+                req.query = schemas.query.parse(req.query)
+            }
+
+            if (schemas.body) {
+                console.log('validate body')
+                req.body = schemas.body.parse(req.body)
+            }
+
             next();
         }
         catch (error) {

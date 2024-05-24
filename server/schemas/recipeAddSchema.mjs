@@ -1,7 +1,6 @@
 import { z } from 'zod';
-import {RECIPE} from "../constants.mjs";
+import { AVAILABLE_FILTER_ITEMS, RECIPE } from "../constants.mjs";
 import _ from 'lodash'
-import {AVAILABLE_DIETS} from "../constants.mjs";
 
 const ingredientSchema = z.object({
     number: z.coerce.number().int().positive(),
@@ -21,8 +20,8 @@ const stepSchema = z.object({
 })
 
 // Schema for a single diet, checks if diet is in a list of available diets
-const dietSchema = z.string().refine(diet => AVAILABLE_DIETS.includes(diet),{
-    message: 'Invalid diet, must be one of: ' + AVAILABLE_DIETS.join(', ')
+const dietSchema = z.string().refine(diet => AVAILABLE_FILTER_ITEMS.DIETS.includes(diet),{
+    message: 'Invalid diet, must be one of: ' + AVAILABLE_FILTER_ITEMS.DIETS.join(', ')
 })
 
 // Schema for validation of recipes in form

@@ -31,9 +31,9 @@ const stepSchema = z.object({
 const availableDiets = availableDietItems.map(diet => diet.value)
 
 // Schema for a single diet, checks if diet is in a list of available diets
-const dietSchema = z.string().refine(diet => availableDiets.includes(diet),{
-  message: 'Invalid diet, must be one of: ' + availableDiets.join(', ')
-})
+const dietSchema = z
+  .string()
+  .refine(diet => availableDiets.includes(diet),{ message: 'Invalid diet' })
 
 // Zod schema object, used to define a form schema for validation
 export const formSchema = z.object({

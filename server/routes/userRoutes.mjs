@@ -6,7 +6,6 @@ import {uploadFile} from "../middlewares/fileUploadMiddleware.mjs";
 import {userRecipeDetailController} from "../controllers/userRecipeDetailController.mjs";
 import {recipeEditController} from "../controllers/recipeEditController.mjs";
 import {recipeDeleteController} from "../controllers/recipeDeleteController.mjs";
-import {validateRequest} from "zod-express-middleware";
 import {searchSchema} from "../schemas/searchSchema.mjs";
 import {userSearchController} from "../controllers/userSearchController.mjs";
 
@@ -16,16 +15,16 @@ const router = express.Router();
 //router.get('/recipes/all', userSearchAllController);
 
 // Searching user's recipes
-router.get('/recipes/search', validateRequest({ query: searchSchema }), userSearchController);
+router.get('/recipes/search', validateData({ query: searchSchema }), userSearchController);
 
 // Details for specific user recipe
 router.get('/recipes/:id', userRecipeDetailController);
 
 // Adding recipes to database from form
-router.post('/recipes', uploadFile(), validateData(recipeAddSchema), recipeAddController);
+router.post('/recipes', uploadFile(), validateData({body: recipeAddSchema}), recipeAddController);
 
 // Editing recipes
-router.put('/recipes/:id', uploadFile(), validateData(recipeAddSchema), recipeEditController);
+router.put('/recipes/:id', uploadFile(), validateData({body: recipeAddSchema}), recipeEditController);
 
 // Delete recipes
 router.delete('/recipes/:id', recipeDeleteController);
