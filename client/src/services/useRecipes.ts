@@ -31,7 +31,7 @@ export const getRecipes = async (searchParams: TRecipeSearchParams, queryClient:
       })
 }
 
-// service used for fetching recipes data from backend
+// Service used for fetching recipes data from backend
 export const useRecipes = (searchParams: TRecipeSearchParams) => {
   const queryClient = useQueryClient()
 

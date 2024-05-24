@@ -1,4 +1,4 @@
-// Type for a recipe ingredient after adding an ingredient number
+// Type for a recipe ingredient
 export type TIngredient = {
   name: string
   quantity: string

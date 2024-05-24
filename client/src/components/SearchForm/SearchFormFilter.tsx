@@ -16,7 +16,7 @@ import {
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {TSearchFormFilterItem} from "@/types/TSearchFormFilterItem.ts";
 
-type SearchFormFilterNewProps = {
+type SearchFormFilterProps = {
   title: string
   fieldName: string
   items: Array<TSearchFormFilterItem>
@@ -42,7 +42,7 @@ function FilterBadge({value}: FilterBadgeProps) {
 }
 
 // Multiple select box, via: https://craft.mxkaske.dev/post/fancy-box
-export function SearchFormFilter({title, fieldName, items, form}: SearchFormFilterNewProps) {
+export function SearchFormFilter({title, fieldName, items, form}: SearchFormFilterProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [openCombobox, setOpenCombobox] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
