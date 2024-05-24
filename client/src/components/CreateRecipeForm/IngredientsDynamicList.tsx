@@ -4,7 +4,7 @@ import {Plus, Trash2} from "lucide-react";
 import {useFieldArray} from "react-hook-form";
 import {FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form.tsx";
 import {Input} from "@/components/ui/input.tsx";
-import {TIngredient} from "@/types/TIngredient.ts";
+import { TIngredient } from "@/types/TIngredient.ts";
 
 type IngredientsTableProps = {
   form: any

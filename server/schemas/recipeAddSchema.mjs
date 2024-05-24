@@ -3,6 +3,16 @@ import {RECIPE} from "../constants.mjs";
 import _ from 'lodash'
 import {AVAILABLE_DIETS} from "../constants.mjs";
 
+const ingredientSchema = z.object({
+    number: z.coerce.number().int().positive(),
+    name: z.string().trim()
+      .min(1, {message: 'Ingredient name missing'})
+      .max(RECIPE.MAX_INGREDIENT_NAME_LEN, {message: 'Ingredient name too long'}),
+    quantity: z.string().trim()
+      .max(30, {message: 'Ingredient quantity too large'})
+      .optional()
+})
+
 const stepSchema = z.object({
     number: z.coerce.number().int().positive(),
     instruction: z.string().trim()
@@ -30,16 +40,11 @@ export const recipeAddSchema = z.object({
         .min(0)
         .max(RECIPE.MAX_RECIPE_DESCRIPTION_LEN, {message: 'Description too long'}),
     diets: z.array(dietSchema).optional(),
-    ingredients: z.array(z.object({
-        name: z.string().trim()
-            .min(1, {message: 'Ingredient name missing'})
-            .max(RECIPE.MAX_INGREDIENT_NAME_LEN, {message: 'Ingredient name too long'}),
-        quantity: z.string().trim()
-            .max(30, {message: 'Ingredient quantity too large'})
-            .optional()
-    })),
-    // Check if steps numbers are unique
+    ingredients: z.array(ingredientSchema)
+      // Check if ingredients numbers are unique
+      .refine((ingredients) => _.isEqual(ingredients, _.uniqBy(ingredients, 'number'))),
     steps: z.array(stepSchema)
-        .refine(steps => _.isEqual(steps, _.uniqBy(steps, 'number')),
+        // Check if steps numbers are unique
+        .refine((steps) => _.isEqual(steps, _.uniqBy(steps, 'number')),
             {message: 'Steps numbers must be unique'})
 });

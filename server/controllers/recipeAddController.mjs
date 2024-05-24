@@ -71,6 +71,7 @@ export const recipeAddController = async (req, res) => {
         // Add all ingredients to recipe
         for (let ingredient of data.ingredients) {
             const addIngredient = Object.assign({},
+                ingredient.number === undefined ? null : {number: ingredient.number},
                 ingredient.name === undefined ? null : {name: ingredient.name},
                 ingredient.quantity === undefined ? null : {quantity: ingredient.quantity}
             )

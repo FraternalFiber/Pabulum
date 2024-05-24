@@ -3,7 +3,6 @@ import {AspectRatio} from "@/components/ui/aspect-ratio.tsx";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {Clock as ClockIcon, UsersRound as UsersRoundIcon} from "lucide-react";
 import {Table, TableBody, TableCaption, TableCell, TableRow} from "@/components/ui/table.tsx";
-import {TIngredient} from "@/types/TIngredient.ts";
 import {TNutrient} from "@/types/TNutrient.ts";
 import {TStep} from "@/types/TStep.ts";
 import {Separator} from "@/components/ui/separator.tsx";
@@ -12,6 +11,7 @@ import {useRecipe} from "@/services/useRecipe.ts";
 import {ErrorAlert} from "@/components/ErrorAlert/ErrorAlert.tsx";
 import {LoadingSkeletons} from "@/components/RecipeDetails/LoadingSkeletons.tsx";
 import { TDataSource } from "@/types/TDataSource.ts";
+import { TIngredient } from "@/types/TIngredient.ts";
 
 type RecipeLabelProps = {
   children?: React.ReactNode
@@ -105,13 +105,13 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
                 <TableBody>
                   {recipe.ingredients.map((ingredient: TIngredient, index: number) => (
                       <TableRow key={index}>
-                        <TableCell>{ingredient.name} - {ingredient.quantity}</TableCell>
+                        <TableCell>{ingredient.name} {ingredient.quantity ? `- ${ingredient.quantity}` : ''}</TableCell>
                       </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </div>
-            {/* Nutrition facts */}
+            {/* Nutrition facts - show if exist */}
             {recipe.nutrients && (
               <div>
                 <RecipeLabel>Nutrition facts</RecipeLabel>

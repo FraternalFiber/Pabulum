@@ -1,4 +1,4 @@
-import round from 'lodash.round'
+import _ from "lodash"
 import {SPOONACULAR_APIKEY} from "../constants.mjs";
 const NUTRIENTS_TO_SHOW = ['Calories', 'Fat', 'Saturated Fat', 'Carbohydrates', 'Sugar', 'Cholesterol', 'Protein']
 
@@ -73,7 +73,7 @@ export const recipeDetailController = async (req, res) => {
                     if(NUTRIENTS_TO_SHOW.includes(nutrient.name)) {
                         nutrients.push({
                             name: nutrient.name,
-                            quantity: `${round(nutrient.amount, 1)} ${nutrient.unit}`.trim()
+                            quantity: `${_.round(nutrient.amount, 1)} ${nutrient.unit}`.trim()
                         })
                     }
                 })

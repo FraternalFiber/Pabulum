@@ -1,4 +1,5 @@
 import { db } from '../firebase/firebase.mjs' // Import your Firebase configuration
+import _ from "lodash";
 
 export const userRecipeDetailController = async (req, res) => {
     const id = req.params.id;
@@ -17,8 +18,12 @@ export const userRecipeDetailController = async (req, res) => {
 
         // Fetch the diets, ingredients, and steps subcollections from the data
         const diets = (await docRef.collection('diets').get()).docs.map(doc => doc.data()).map(diet => diet.name);
-        const ingredients = (await docRef.collection('ingredients').get()).docs.map(doc => doc.data());
-        const steps = (await docRef.collection('steps').get()).docs.map(doc => doc.data());
+        let ingredients = (await docRef.collection('ingredients').get()).docs.map(doc => doc.data());
+        let steps = (await docRef.collection('steps').get()).docs.map(doc => doc.data());
+
+        // Sort ingredients and steps by number
+        ingredients = _.sortBy(ingredients, 'number')
+        steps = _.sortBy(steps, 'number');
 
         // Include the lists in the response
         const response = {

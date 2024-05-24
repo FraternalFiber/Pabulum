@@ -1,6 +1,6 @@
-import {TIngredient} from "@/types/TIngredient.ts";
 import {TNutrient} from "@/types/TNutrient.ts";
 import {TStep} from "@/types/TStep.ts";
+import { TIngredient } from "@/types/TIngredient.ts";
 
 export type TRecipeDetails = {
   image?: string

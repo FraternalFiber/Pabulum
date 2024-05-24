@@ -12,14 +12,8 @@ import {availableDietItems} from "@/components/SearchForm/searchFormFilterItems.
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {
   ACCEPTED_IMAGE_TYPES,
-  MAX_INGREDIENT_NAME_LEN,
-  MAX_INGREDIENT_QUANTITY_LEN,
   MAX_PREP_TIME,
-  MAX_RECIPE_DESCRIPTION_LEN, MAX_RECIPE_IMAGE_SIZE,
-  MAX_RECIPE_TITLE_LEN,
   MAX_SERVINGS_NUMBER,
-  MAX_STEP_INSTRUCTION_LEN,
-  MIN_PREP_TIME,
   MIN_SERVINGS_NUMBER,
   POST_RECIPE_ERROR_MESSAGE, POST_RECIPE_SUCCESS_MESSAGE,
   PREP_TIME_STEP,
@@ -34,70 +28,9 @@ import {ImagePreview} from "@/components/CreateRecipeForm/ImagePreview.tsx";
 import {Label} from "@/components/ui/label.tsx";
 import {Card, CardContent} from "@/components/ui/card.tsx";
 import {AspectRatio} from "@/components/ui/aspect-ratio.tsx";
-
-// Schema for a single ingredient
-const ingredientSchema = z.object({
-  name: z.string().trim()
-      .min(1, {message: 'Enter an ingredient name'})
-      .max(MAX_INGREDIENT_NAME_LEN, {message: `Enter no more than ${MAX_INGREDIENT_NAME_LEN} characters`}),
-  quantity: z.string().trim()
-      .max(30, {message: `Enter no more than ${MAX_INGREDIENT_QUANTITY_LEN} characters`})
-      .optional()
-})
-
-// Schema for a single recipe step
-const stepSchema = z.object({
-  instruction: z
-      .string()
-      .trim()
-      .min(1, {message: 'Enter a step'})
-      .max(MAX_STEP_INSTRUCTION_LEN, {message: `Enter no more than ${MAX_STEP_INSTRUCTION_LEN} characters`})
-})
-
-// List of available diets for validation (only IDs)
-const availableDiets = availableDietItems.map(diet => diet.id)
-
-// Schema for a single diet, checks if diet is in a list of available diets
-const dietSchema = z.string().refine(diet => availableDiets.includes(diet),{
-  message: 'Invalid diet, must be one of: ' + availableDiets.join(', ')
-})
-
-// Zod schema object, used to define a form schema for validation
-const formSchema = z.object({
-  title: z
-      .string()
-      .trim()
-      .min(1, {message: 'Enter a recipe title'})
-      .max(MAX_RECIPE_TITLE_LEN, {message: `Enter no more than ${MAX_RECIPE_TITLE_LEN} characters`}),
-  image: z
-      .custom<File>((file) => file instanceof File, {message: 'Expected a file'})
-      .refine((file) => file.size <= MAX_RECIPE_IMAGE_SIZE, 'Max file size is 5 MB')
-      .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), 'File type not supported. Use one of .jpg, .jpeg, .png and .jfif.')
-      .optional(),
-  prepTime: z
-      .coerce.number({invalid_type_error: 'Enter a number'})
-      .min(MIN_PREP_TIME, {message: `Min time is ${MIN_PREP_TIME} minutes`})
-      .max(MAX_PREP_TIME, {message: `Max time is ${MAX_PREP_TIME} minutes`}),
-  servingsNumber: z
-      .coerce.number({invalid_type_error: 'Enter a number'})
-      .int({message: 'Enter an integer number'})
-      .min(MIN_SERVINGS_NUMBER, {message: `Min number of servings is ${MIN_SERVINGS_NUMBER}`})
-      .max(MAX_SERVINGS_NUMBER, {message: `Max number of servings is ${MAX_SERVINGS_NUMBER}`}),
-  description: z
-      .string()
-      .trim()
-      .min(0)
-      .max(MAX_RECIPE_DESCRIPTION_LEN, {message: `Enter no more than ${MAX_RECIPE_DESCRIPTION_LEN} characters`}),
-  diets: z.array(dietSchema),
-  ingredients: z.array(ingredientSchema),
-  steps: z.array(stepSchema).transform((steps) => {
-    // add indexes to steps to make sure they are in correct order
-    return steps.map((step, index) => ({
-      ...step,
-      number: index + 1
-    }))
-  })
-})
+import {
+  formSchema,
+} from "@/components/CreateRecipeForm/schemas.ts";
 
 const FormLabelStyled = styled(FormLabel).attrs({
   className: 'text-2xl'
@@ -129,6 +62,7 @@ export function CreateRecipeForm() {
         console.log(response.message)
 
         // REDIRECT TO NEWLY CREATED RECIPE HERE
+        console.log(response.id)
       }
       else {
         // dismiss a loading toast and show an error toast
@@ -324,20 +258,20 @@ export function CreateRecipeForm() {
             <div className={'flex flex-wrap gap-5'}>
               {availableDietItems.map((diet) => (
                 <FormField
-                    key={diet.id}
+                    key={diet.value}
                     name={'diets'}
                     control={form.control}
                     render={({field}) => {
                       return (
-                          <FormItem key={diet.id}>
+                          <FormItem key={diet.value}>
                             <FormControl>
                               <Checkbox
                                 onCheckedChange={(checked) => {
                                   return checked
-                                    ? field.onChange([...field.value, diet.id])
+                                    ? field.onChange([...field.value, diet.value])
                                     : field.onChange(
                                         field.value?.filter(
-                                            (value) => value !== diet.id
+                                            (value) => value !== diet.value
                                         )
                                       )
                                 }}/>
