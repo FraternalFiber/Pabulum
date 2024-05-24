@@ -8,6 +8,7 @@ import {recipeEditController} from "../controllers/recipeEditController.mjs";
 import {recipeDeleteController} from "../controllers/recipeDeleteController.mjs";
 import {searchSchema} from "../schemas/searchSchema.mjs";
 import {userSearchController} from "../controllers/userSearchController.mjs";
+import { userSearchSchema } from "../schemas/userSearchSchema.mjs";
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ const router = express.Router();
 //router.get('/recipes/all', userSearchAllController);
 
 // Searching user's recipes
-router.get('/recipes/search', validateData({ query: searchSchema }), userSearchController);
+router.get('/recipes/search', validateData({ query: userSearchSchema }), userSearchController);
 
 // Details for specific user recipe
 router.get('/recipes/:id', userRecipeDetailController);

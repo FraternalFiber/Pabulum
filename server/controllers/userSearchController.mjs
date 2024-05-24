@@ -16,7 +16,6 @@ export const userSearchController = async (req, res) => {
         data.diet === undefined ? {diet: []} : {diet: Array.isArray(data.diet) ? data.diet: [data.diet]}
     );
 
-
     try
     {
         let collectionRef;

@@ -7,12 +7,10 @@ import {Button} from "@/components/ui/button.tsx";
 import {useEffect, useState} from "react";
 import {SearchResults} from "@/components/SearchResults";
 import {
-  // availableCuisineItems,
   availableCuisineItems,
   availableDietItems,
   availableMealTypeItems
 } from '@/components/SearchForm/searchFormFilterItems.ts'
-// import {SearchFormFilter} from "@/components/SearchForm/SearchFormFilter.tsx";
 import {useSearchParams} from "react-router-dom";
 import {TRecipeSearchParams} from "@/types/TRecipeSearchParams.ts";
 import {MAX_SEARCH_QUERY_LEN} from "@/helpers/constants.ts";
@@ -23,7 +21,7 @@ const formSchema = z.object({
   q: z
       .string()
       .trim()
-      .min(2, {message: "Enter at least 2 characters"})
+      .min(1, {message: "Enter a search query"})
       .max(MAX_SEARCH_QUERY_LEN, {message: `Enter no more than ${MAX_SEARCH_QUERY_LEN} characters.`}),
   diet: z.array(z.string()),
   cuisine: z.array(z.string()),
@@ -33,7 +31,6 @@ const formSchema = z.object({
 export function SearchForm() {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false)
   const [URLSearchParams, setURLSearchParams] = useSearchParams()
-  // const [searchParams, setSearchParams] = useState<IRecipeSearchParams>()
   const [searchParams, setSearchParams] = useState<TRecipeSearchParams>()
 
   // Code executed after submitting a form
@@ -61,7 +58,7 @@ export function SearchForm() {
     if(URLSearchParams.size > 0) {
       setIsSubmitted(true)
 
-      const values : TRecipeSearchParams = {
+      const values: TRecipeSearchParams = {
         q: URLSearchParams.get('q') ?? '', //assign an empty string if equals null
         diet: URLSearchParams.getAll('diet') ?? [],
         cuisine: URLSearchParams.getAll('cuisine') ?? [],
@@ -77,18 +74,6 @@ export function SearchForm() {
       setSearchParams(values)
     }
   }, [URLSearchParams])
-
-  // watch for changes in filters values
-  // const watchFilters = form.watch(['diet', 'cuisine', 'mealType'])
-  //
-  // useEffect(() => {
-  //   console.log(watchFilters)
-  //
-  //   if(form.watch('diet').length > 0) {
-  //
-  //   }
-  //
-  // }, [watchFilters]);
 
   return (
       <>
@@ -112,13 +97,10 @@ export function SearchForm() {
             </div>
             <div className={'mt-3 flex gap-x-3 flex-wrap gap-y-3'}>
               {/* Diet filter */}
-              {/*<SearchFormFilter title={'Diet'} name={'diet'} items={availableDietItems} form={form}/>*/}
               <SearchFormFilter title={'Diet'} fieldName={'diet'} items={availableDietItems} form={form}/>
               {/* Cuisine filter */}
-              {/*<SearchFormFilter title={'Cuisine'} name={'cuisine'} items={availableCuisineItems} form={form}/>*/}
               <SearchFormFilter title={'Cuisine'} fieldName={'cuisine'} items={availableCuisineItems} form={form}/>
               {/* Meal type filter */}
-              {/*<SearchFormFilter title={'Meal type'} name={'mealType'} items={availableMealTypeItems} form={form}/>*/}
               <SearchFormFilter title={'Meal type'} fieldName={'mealType'} items={availableMealTypeItems} form={form}/>
             </div>
           </form>
@@ -126,7 +108,7 @@ export function SearchForm() {
         {/* If form submitted and query is not empty show search results */}
         {isSubmitted && searchParams && (
             <div className={'mt-7'}>
-              <SearchResults {...searchParams} />
+              <SearchResults searchParams={searchParams} dataSource={'online'}/>
             </div>
           )
         }
