@@ -2,9 +2,10 @@ import {db} from "../firebase/firebase.mjs";
 
 export const userSearchController = async (req, res) => {
     const data = req.query
+
     const offset = data.offset || 0;
-    // Limit of recipes
     const limit = 9;
+
     console.log(data);
     console.log(offset);
 
@@ -15,6 +16,7 @@ export const userSearchController = async (req, res) => {
         //check if value is undefined / array / string - array needs to be printed with commas in between
         data.diet === undefined ? {diet: []} : {diet: Array.isArray(data.diet) ? data.diet: [data.diet]}
     );
+
 
     try
     {
@@ -56,11 +58,14 @@ export const userSearchController = async (req, res) => {
             //check for names has to be handled later on, since firebase doesn't support case insensitive query
             collectionRef = await db.collection('recipes');
 
-            //check for diets
+            // Check for diets
             searchParams.diet.forEach(diet => {
-                collectionRef = collectionRef.where('diets', 'array-contains', diet)
+                collectionRef = collectionRef.where('diets.name', 'array-contains', diet)
             });
 
+            // Move it by offset and  limit it
+            const actualOffset = await collectionRef.doc('offset').get();
+            collectionRef = collectionRef.startAfter(actualOffset).limit(limit);
         }
 
         const snapshot = await collectionRef.get();
