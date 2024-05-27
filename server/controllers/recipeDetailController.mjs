@@ -52,11 +52,11 @@ export const recipeDetailController = async (req, res) => {
 
                 // create a diets array from specific recipe properties
                 const diets = []
-                if(data.vegetarian) diets.push('Vegetarian')
-                if(data.vegan) diets.push('Vegan')
-                if(data.glutenFree) diets.push('Gluten free')
-                if(data.dairyFree) diets.push('Dairy free')
-                if(data.diets.includes('ketogenic')) diets.push('Ketogenic')
+                if(data.vegetarian) diets.push('vegetarian')
+                if(data.vegan) diets.push('vegan')
+                if(data.glutenFree) diets.push('gluten free')
+                if(data.dairyFree) diets.push('dairy free')
+                if(data.diets.includes('ketogenic')) diets.push('ketogenic')
 
                 // create a steps array to omit unnecessary properties and for names consistency
                 const steps = []

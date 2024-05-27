@@ -12,6 +12,7 @@ import {ErrorAlert} from "@/components/ErrorAlert/ErrorAlert.tsx";
 import {LoadingSkeletons} from "@/components/RecipeDetails/LoadingSkeletons.tsx";
 import { TDataSource } from "@/types/TDataSource.ts";
 import { TIngredient } from "@/types/TIngredient.ts";
+import { availableDietItems } from "@/components/SearchForm/searchFormFilterItems.ts";
 
 type RecipeLabelProps = {
   children?: React.ReactNode
@@ -56,6 +57,8 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
   }
 
   if (recipe) {
+    console.log(recipe.diets)
+
     return (
         <div className={'flex flex-col gap-y-8'}>
           {/* Recipe image - show only if recipe contains an image and image is loaded correctly */}
@@ -66,7 +69,7 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
                        onLoad={handleImageLoad}
                        onError={handleImageError}
                        alt={recipe.title}
-                       className={cn('rounded-sm w-full', showImage ? 'block' : 'hidden')}/>
+                       className={cn('rounded-sm w-full h-full object-contain object-center bg-secondary', showImage ? 'block' : 'hidden')}/>
 
                   {/* Image loading placeholder */}
                   <Skeleton className={cn('w-full h-full', showImage ? 'hidden' : 'block')}/>
@@ -91,9 +94,11 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
             {/* Diet badges - show box only when array is not empty */}
             {recipe.diets.length > 0 && (
                 <div className={'flex gap-x-4 flex-wrap gap-y-2'}>
-                  {recipe.diets.map((diet: string, index: number) => (
-                      <p key={index}>✅ {diet}</p>
-                  ))}
+                  {availableDietItems.map(dietItem => {
+                    if(recipe.diets.includes(dietItem.value)) {
+                      return <p>✅ {dietItem.label}</p>
+                    }
+                  })}
                 </div>
             )}
           </div>

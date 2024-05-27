@@ -23,7 +23,7 @@ export function RecipeResultCard({id, title, imageUrl = noImagePlaceholder, data
       <Link to={path}>
         <Card className={cn(className, 'w-full hover:bg-secondary')}>
           <CardHeader>
-            <CardTitle>{title}</CardTitle>
+            <CardTitle className={'break-words'}>{title}</CardTitle>
           </CardHeader>
           <CardContent>
               <div style={{backgroundImage: `url(${imageUrl}), url(${noImagePlaceholder})`}} className={'w-full h-52 bg-no-repeat bg-cover bg-center rounded-sm'}></div>

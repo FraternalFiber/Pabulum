@@ -31,6 +31,7 @@ import {AspectRatio} from "@/components/ui/aspect-ratio.tsx";
 import {
   formSchema,
 } from "@/components/CreateRecipeForm/schemas.ts";
+import {useNavigate} from "react-router-dom";
 
 const FormLabelStyled = styled(FormLabel).attrs({
   className: 'text-2xl'
@@ -42,6 +43,7 @@ export function CreateRecipeForm() {
   const [imageFile, setImageFile] = useState<File | undefined>(undefined)
   const [imageFileValue, setImageFileValue] = useState('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const navigate = useNavigate();
 
   // Code executed after submitting a form
   async function handleSubmit(values: z.infer<typeof formSchema>) {
@@ -59,10 +61,16 @@ export function CreateRecipeForm() {
         // dismiss a loading toast and show a success toast
         toast.dismiss(loadingToastId)
         toast.success(POST_RECIPE_SUCCESS_MESSAGE)
-        console.log(response.message)
 
-        // REDIRECT TO NEWLY CREATED RECIPE HERE
+        console.log(response.message)
         console.log(response.id)
+
+        // Redirect to a newly created recipe
+        setTimeout(() => {
+          navigate({
+            pathname: `/user/recipes/${response.id}`,
+          })
+        }, 1000)
       }
       else {
         // dismiss a loading toast and show an error toast
