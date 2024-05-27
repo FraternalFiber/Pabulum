@@ -1,7 +1,7 @@
 import {cn} from "@/lib/utils.ts";
 import {AspectRatio} from "@/components/ui/aspect-ratio.tsx";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
-import {Clock as ClockIcon, UsersRound as UsersRoundIcon} from "lucide-react";
+import { Clock as ClockIcon, SquarePen, Trash2, UsersRound as UsersRoundIcon } from "lucide-react";
 import {Table, TableBody, TableCaption, TableCell, TableRow} from "@/components/ui/table.tsx";
 import {TNutrient} from "@/types/TNutrient.ts";
 import {TStep} from "@/types/TStep.ts";
@@ -13,6 +13,17 @@ import {LoadingSkeletons} from "@/components/RecipeDetails/LoadingSkeletons.tsx"
 import { TDataSource } from "@/types/TDataSource.ts";
 import { TIngredient } from "@/types/TIngredient.ts";
 import { availableDietItems } from "@/components/SearchForm/searchFormFilterItems.ts";
+import { Button, buttonVariants } from "@/components/ui/button.tsx";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle,
+  AlertDialogTrigger
+} from "@/components/ui/alert-dialog.tsx";
+import { toast } from "sonner";
+import { DELETE_RECIPE_ERROR_MESSAGE, DELETE_RECIPE_SUCCESS_MESSAGE } from "@/helpers/constants.ts";
+import { useNavigate } from "react-router-dom";
+import { deleteRecipe } from "@/services/deleteRecipe.ts";
 
 type RecipeLabelProps = {
   children?: React.ReactNode
@@ -27,10 +38,53 @@ type RecipeDetailsProps = {
   dataSource: TDataSource
 }
 
+type RecipeMenuBarProps = {
+  dataSource: TDataSource
+  deleteRecipe: () => void
+}
+
+function RecipeMenuBar({dataSource, deleteRecipe}: RecipeMenuBarProps) {
+  if (dataSource === 'user') {
+    return (
+      <div className={'w-fit flex gap-x-1 outline outline-1 outline-stone-300 rounded-md p-1'}>
+        <Button type={'button'} variant={'ghost'}>
+          <SquarePen/>
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button type={'button'} variant={'ghost'} className={'hover:bg-destructive'}>
+              <Trash2/>
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Your recipe will be permanently deleted.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                type={'button'}
+                className={buttonVariants({variant: 'destructive'})}
+                onClick={deleteRecipe}>Delete</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    )
+  }
+
+  return <></>
+}
+
 export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
   const { data: recipe, isLoading, isError} = useRecipe(recipeId, dataSource)
   const [showImage, setShowImage] = useState<boolean>(false)
   const [imageError, setImageError] = useState<boolean>(false)
+  // Used for redirecting
+  const navigate = useNavigate();
 
   // Show image when it's loaded correctly
   const handleImageLoad = () => {
@@ -40,6 +94,49 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
   // Set error when image isn't loaded correctly to hide image container
   const handleImageError = () => {
     setImageError(true)
+  }
+
+  const handleDeleteRecipe = async () => {
+    console.log('delete recipe')
+    // show a loading toast
+    const loadingToastId = toast.loading('Deleting a recipe...')
+    // setIsLoading(true)
+
+    try {
+      // post recipe data to database
+      const response = await deleteRecipe(recipeId)
+
+      if(response.success) {
+        // dismiss a loading toast and show a success toast
+        toast.dismiss(loadingToastId)
+        toast.success(DELETE_RECIPE_SUCCESS_MESSAGE)
+
+        console.log(response.message)
+        console.log(response.id)
+
+        // Redirect to a newly created recipe
+        setTimeout(() => {
+          navigate({
+            pathname: `/user/recipes`,
+          })
+        }, 1000)
+      }
+      else {
+        // dismiss a loading toast and show an error toast
+        toast.dismiss(loadingToastId)
+        // setIsLoading(false)
+        toast.error(DELETE_RECIPE_ERROR_MESSAGE)
+        console.error(`${DELETE_RECIPE_ERROR_MESSAGE}: ${response.message}`)
+        console.error(response.message)
+      }
+    }
+    catch(error) {
+      // dismiss a loading toast and show an error toast
+      toast.dismiss(loadingToastId)
+      // setIsLoading(false)
+      toast.error(DELETE_RECIPE_ERROR_MESSAGE)
+      console.error(`${DELETE_RECIPE_ERROR_MESSAGE}: ${error}`)
+    }
   }
 
   if (isLoading) {
@@ -57,10 +154,9 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
   }
 
   if (recipe) {
-    console.log(recipe.diets)
-
     return (
         <div className={'flex flex-col gap-y-8'}>
+          <RecipeMenuBar dataSource={dataSource} deleteRecipe={handleDeleteRecipe}/>
           {/* Recipe image - show only if recipe contains an image and image is loaded correctly */}
           {recipe.image && (
               <div className={cn('w-full max-w-[28rem]', imageError ? 'hidden' : 'block')}>
@@ -96,7 +192,7 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
                 <div className={'flex gap-x-4 flex-wrap gap-y-2'}>
                   {availableDietItems.map(dietItem => {
                     if(recipe.diets.includes(dietItem.value)) {
-                      return <p>✅ {dietItem.label}</p>
+                      return <p key={dietItem.value}>✅ {dietItem.label}</p>
                     }
                   })}
                 </div>

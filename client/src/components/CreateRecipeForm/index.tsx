@@ -43,6 +43,7 @@ export function CreateRecipeForm() {
   const [imageFile, setImageFile] = useState<File | undefined>(undefined)
   const [imageFileValue, setImageFileValue] = useState('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  // Used for redirecting
   const navigate = useNavigate();
 
   // Code executed after submitting a form

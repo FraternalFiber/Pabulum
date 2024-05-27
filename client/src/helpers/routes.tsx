@@ -28,7 +28,7 @@ export const routes: Array<RouteElement> = [
     element: <Discover/>
   },
   {
-    path: '/recipes',
+    path: '/user/recipes',
     element: <MyRecipes/>
   },
   {
