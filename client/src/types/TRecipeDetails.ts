@@ -9,6 +9,7 @@ export type TRecipeDetails = {
   prepTime: number
   servingsNumber: number
   diets: Array<string>
+  description?: string
   ingredients: Array<TIngredient>
   nutrients?: Array<TNutrient>
   steps: Array<TStep>

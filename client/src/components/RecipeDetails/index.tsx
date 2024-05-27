@@ -97,6 +97,13 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
                 </div>
             )}
           </div>
+          {/* Description */}
+          {recipe.description && (
+            <div>
+              <RecipeLabel>Description</RecipeLabel>
+              <p className={'max-w-[40rem]'}>{recipe.description}</p>
+            </div>
+          )}
           <div className={'flex gap-y-10 flex-col md:flex-row md:gap-x-8 lg:gap-x-14'}>
             {/* Ingredients */}
             <div>
