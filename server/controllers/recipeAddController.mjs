@@ -5,8 +5,8 @@ export const recipeAddController = async (req, res) => {
         const data = req.body;
         const file = req.file;
 
-        console.log('data', data)
-        console.log('file', file)
+        // console.log('data', data)
+        // console.log('file', file)
 
         const addRecipe = Object.assign({},
             data.title === undefined ? null : {title: data.title},
@@ -21,7 +21,8 @@ export const recipeAddController = async (req, res) => {
         {
             // Create a new blob in the bucket and upload the file data.
             const upload = new Promise((resolve, reject) => {
-                const blob = bucket.file(`recipeImages/${req.file.originalname}`);
+                const originalName = req.file.originalname;
+                const blob = bucket.file(`recipeImages/${recipeRef.id}${originalName.slice(originalName.lastIndexOf('.'))}`);
                 const blobStream = blob.createWriteStream();
 
                 blobStream.on('error', (err) => {
