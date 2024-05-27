@@ -22,7 +22,7 @@ export const recipeAddController = async (req, res) => {
             // Create a new blob in the bucket and upload the file data.
             const upload = new Promise((resolve, reject) => {
                 const originalName = req.file.originalname;
-                const blob = bucket.file(`recipeImages/${recipeRef.id}${originalName.slice(originalName.lastIndexOf('.'))}`);
+                const blob = bucket.file(`recipeImages/recipeImg_${recipeRef.id}${originalName.slice(originalName.lastIndexOf('.'))}`);
                 const blobStream = blob.createWriteStream();
 
                 blobStream.on('error', (err) => {
