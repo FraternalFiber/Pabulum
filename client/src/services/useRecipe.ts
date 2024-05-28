@@ -10,10 +10,19 @@ export const getRecipe = async (id: string, dataSource: TDataSource) => {
     : `/user/recipes/${id}`)
 
   return fetch(url)
-      .then(res => res.json())
-      .catch((error) => {
-        throw ('Backend API connection error: ' + error)
-      })
+    .then((res) => {
+      if (!res.ok) {
+        throw {
+          status: res.status,
+          statusText: res.statusText
+        }
+      }
+
+      return res.json();
+    })
+    .catch((error) => {
+      throw { error: error.statusText, status: error.status };
+    });
 }
 
 export const useRecipe = (id: string, source: TDataSource) => {
@@ -24,6 +33,7 @@ export const useRecipe = (id: string, source: TDataSource) => {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     staleTime: Infinity, // keep data fresh for infinity until user refreshes the page
-    gcTime: Infinity // don't garbage collect
+    gcTime: Infinity, // don't garbage collect
+    retry: false
   })
 }

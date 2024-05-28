@@ -10,8 +10,7 @@ export const userRecipeDetailController = async (req, res) => {
 
         if (!(await docRef.get()).exists) {
             console.log('No such document');
-            res.status(404).json({ error: 'Recipe not found' });
-            return;
+            return res.status(404).json({ error: 'Recipe not found' });
         }
 
         const data = (await docRef.get()).data();

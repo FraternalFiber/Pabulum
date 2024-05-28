@@ -82,7 +82,7 @@ function RecipeMenuBar({dataSource, deleteRecipe}: RecipeMenuBarProps) {
 }
 
 export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
-  const { data: recipe, isLoading, isError} = useRecipe(recipeId, dataSource)
+  const { data: recipe, isLoading, isError, error } = useRecipe(recipeId, dataSource)
   const [showImage, setShowImage] = useState<boolean>(false)
   const [imageError, setImageError] = useState<boolean>(false)
   // Used for managing cache data
@@ -106,7 +106,7 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
     const loadingToastId = toast.loading('Deleting a recipe...')
 
     try {
-      // Post recipe data to database
+      // Delete recipe data from database
       const response = await deleteRecipe(recipeId, queryClient)
 
       if(response.success) {
@@ -147,6 +147,14 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
   }
 
   if (isError) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    if (error.status == 404) {
+      return (
+        <ErrorAlert className={'mt-20'} title={'Error 404'} message={"Recipe was not found"} variant={'default'}/>
+      )
+    }
+
     return (
         <>
           <ErrorAlert className={'mt-20'} message={"Sorry, we couldn't load your recipe"}/>

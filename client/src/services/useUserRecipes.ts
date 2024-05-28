@@ -22,7 +22,16 @@ const getUserRecipes = async (searchParams: TUserRecipeSearchParams, queryClient
   }
 
   return fetch(url)
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) {
+        throw {
+          status: res.status,
+          statusText: res.statusText
+        }
+      }
+
+      return res.json();
+    })
     .then(res => {
       return res
     })
