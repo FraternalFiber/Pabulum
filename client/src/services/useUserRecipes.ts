@@ -4,7 +4,7 @@ import { TRecipeResult } from "@/types/TRecipeResult.ts";
 import { BACKEND_SERVER_URL } from "@/helpers/constants.ts";
 
 // Function for fetching user recipes
-const getUserRecipes = async (searchParams: TUserRecipeSearchParams, queryClient: QueryClient,) => {
+const getUserRecipes = async (searchParams: TUserRecipeSearchParams, queryClient: QueryClient) => {
   const url = new URL(`${BACKEND_SERVER_URL}/user/recipes/search?`)
   // const params = new URLSearchParams({q: searchParams.q})
   const params = new URLSearchParams()

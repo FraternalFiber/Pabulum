@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import { DELETE_RECIPE_ERROR_MESSAGE, DELETE_RECIPE_SUCCESS_MESSAGE } from "@/helpers/constants.ts";
 import { useNavigate } from "react-router-dom";
 import { deleteRecipe } from "@/services/deleteRecipe.ts";
+import { useQueryClient } from "@tanstack/react-query";
 
 type RecipeLabelProps = {
   children?: React.ReactNode
@@ -43,6 +44,7 @@ type RecipeMenuBarProps = {
   deleteRecipe: () => void
 }
 
+// Menu bar with 'edit' and 'delete' buttons
 function RecipeMenuBar({dataSource, deleteRecipe}: RecipeMenuBarProps) {
   if (dataSource === 'user') {
     return (
@@ -83,6 +85,8 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
   const { data: recipe, isLoading, isError} = useRecipe(recipeId, dataSource)
   const [showImage, setShowImage] = useState<boolean>(false)
   const [imageError, setImageError] = useState<boolean>(false)
+  // Used for managing cache data
+  const queryClient = useQueryClient()
   // Used for redirecting
   const navigate = useNavigate();
 
@@ -98,16 +102,15 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
 
   const handleDeleteRecipe = async () => {
     console.log('delete recipe')
-    // show a loading toast
+    // Show a loading toast
     const loadingToastId = toast.loading('Deleting a recipe...')
-    // setIsLoading(true)
 
     try {
-      // post recipe data to database
-      const response = await deleteRecipe(recipeId)
+      // Post recipe data to database
+      const response = await deleteRecipe(recipeId, queryClient)
 
       if(response.success) {
-        // dismiss a loading toast and show a success toast
+        // Dismiss a loading toast and show a success toast
         toast.dismiss(loadingToastId)
         toast.success(DELETE_RECIPE_SUCCESS_MESSAGE)
 
@@ -119,21 +122,19 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
           navigate({
             pathname: `/user/recipes`,
           })
-        }, 1000)
+        }, 500)
       }
       else {
-        // dismiss a loading toast and show an error toast
+        // Dismiss a loading toast and show an error toast
         toast.dismiss(loadingToastId)
-        // setIsLoading(false)
         toast.error(DELETE_RECIPE_ERROR_MESSAGE)
         console.error(`${DELETE_RECIPE_ERROR_MESSAGE}: ${response.message}`)
         console.error(response.message)
       }
     }
     catch(error) {
-      // dismiss a loading toast and show an error toast
+      // Dismiss a loading toast and show an error toast
       toast.dismiss(loadingToastId)
-      // setIsLoading(false)
       toast.error(DELETE_RECIPE_ERROR_MESSAGE)
       console.error(`${DELETE_RECIPE_ERROR_MESSAGE}: ${error}`)
     }

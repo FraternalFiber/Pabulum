@@ -32,6 +32,7 @@ import {
   formSchema,
 } from "@/components/CreateRecipeForm/schemas.ts";
 import {useNavigate} from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 const FormLabelStyled = styled(FormLabel).attrs({
   className: 'text-2xl'
@@ -43,6 +44,8 @@ export function CreateRecipeForm() {
   const [imageFile, setImageFile] = useState<File | undefined>(undefined)
   const [imageFileValue, setImageFileValue] = useState('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  // Used for managing cache data
+  const queryClient = useQueryClient()
   // Used for redirecting
   const navigate = useNavigate();
 
@@ -50,16 +53,16 @@ export function CreateRecipeForm() {
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
 
-    // show a loading toast
+    // Show a loading toast
     const loadingToastId = toast.loading('Creating a recipe...')
     setIsLoading(true)
 
     try {
-      // post recipe data to database
-      const response = await postRecipe(values)
+      // Post recipe data to database
+      const response = await postRecipe(values, queryClient)
 
       if(response.success) {
-        // dismiss a loading toast and show a success toast
+        // Dismiss a loading toast and show a success toast
         toast.dismiss(loadingToastId)
         toast.success(POST_RECIPE_SUCCESS_MESSAGE)
 
@@ -74,7 +77,7 @@ export function CreateRecipeForm() {
         }, 1000)
       }
       else {
-        // dismiss a loading toast and show an error toast
+        // Dismiss a loading toast and show an error toast
         toast.dismiss(loadingToastId)
         setIsLoading(false)
         toast.error(POST_RECIPE_ERROR_MESSAGE)
@@ -83,7 +86,7 @@ export function CreateRecipeForm() {
       }
     }
     catch(error) {
-      // dismiss a loading toast and show an error toast
+      // Dismiss a loading toast and show an error toast
       toast.dismiss(loadingToastId)
       setIsLoading(false)
       toast.error(POST_RECIPE_ERROR_MESSAGE)
@@ -93,7 +96,7 @@ export function CreateRecipeForm() {
 
   // React Hook Form definition
   const form = useForm<z.infer<typeof formSchema>>({
-    // use forSchema to validate form data
+    // Use forSchema to validate form data
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
