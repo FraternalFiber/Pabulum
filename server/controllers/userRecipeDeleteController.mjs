@@ -21,7 +21,6 @@ export const userRecipeDeleteController = async (req, res) => {
             const bucketName = 'pabulum-zsk.appspot.com/';
             const blobFilePath = filePath.slice(bucketName.length);
 
-
             const oldBlob = bucket.file(blobFilePath);
             const [exists] = await oldBlob.exists();
 

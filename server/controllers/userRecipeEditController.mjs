@@ -13,8 +13,10 @@ export const userRecipeEditController = async (req, res) => {
         const oldData = (await recipeRef.get()).data();
 
         // If a new image is uploaded, replace the old one
-        if (file && oldData.image !== `https://storage.googleapis.com/recipeImages/${file.originalname}`) {
-            const blob = bucket.file(`recipeImages/${req.file.originalname}`);
+        // if (file && oldData.image !== `https://storage.googleapis.com/recipeImages/${file.originalname}`) {
+        if (file) {
+            const originalName = req.file.originalname;
+            const blob = bucket.file(`recipeImages/recipeImg_${recipeRef.id}${originalName.slice(originalName.lastIndexOf('.'))}`);
             const blobStream = blob.createWriteStream();
 
             blobStream.on('error', (err) => {
@@ -40,12 +42,24 @@ export const userRecipeEditController = async (req, res) => {
 
             blobStream.end(req.file.buffer);
         } else if (!file) {
-            // If no new image is uploaded, delete the old image and its link
-            const oldBlob = bucket.file(`recipeImages/${oldData.image}`);
-            await oldBlob.delete();
-            data.image = null;
-            await recipeRef.update(data);
+            // If no new image is uploaded, delete the old image and its link (if old data had image)
+            if (oldData.image) {
+                // FIX HERE
+                const oldBlob = bucket.file(`recipeImages/${oldData.image}`);
+                // const oldBlob = bucket.file(`recipeImages/recipeImg_yIUXzIEYod8iJHS1FDRw.jpg`);
+                await oldBlob.delete();
+                data.image = null;
+                await recipeRef.update(data);
+            }
         }
+
+        // Update data
+        await recipeRef.update({
+            title: data.title,
+            description: data.description,
+            prepTime: data.prepTime,
+            servingsNumber: data.servingsNumber
+        })
 
         // Update all diets data of the recipe
         await recipeRef.collection('diets').get().then(querySnapshot => {
@@ -91,7 +105,7 @@ export const userRecipeEditController = async (req, res) => {
         // Send a response back to the frontend
         res.status(200).send({success: true, message: 'Data updated successfully', id: recipeRef.id});
     } catch (error) {
-        console.error('Error updating: ', error);
+        console.error('Error updating: ', error.message);
         res.status(500).send({success: false, message: 'An error occurred while updating data'});
     }
 };
