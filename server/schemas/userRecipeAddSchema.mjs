@@ -25,7 +25,7 @@ const dietSchema = z.string().refine(diet => AVAILABLE_FILTER_ITEMS.DIETS.includ
 })
 
 // Schema for validation of recipes in form
-export const recipeAddSchema = z.object({
+export const userRecipeAddSchema = z.object({
     title: z.string().trim()
         .min(1, {message: 'Title missing'})
         .max(RECIPE.MAX_RECIPE_TITLE_LEN, {message: 'Title too long'}),

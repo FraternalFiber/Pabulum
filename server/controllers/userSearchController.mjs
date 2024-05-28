@@ -13,7 +13,7 @@ export const userSearchController = async (req, res) => {
 
     const searchParams = Object.assign({},
         data.q === undefined ? "" : {query: data.q.toLowerCase()},
-        //check if value is undefined / array / string - array needs to be printed with commas in between
+        // Check if value is undefined / array / string - array needs to be printed with commas in between
         data.diet === undefined ? {diet: []} : {diet: Array.isArray(data.diet) ? data.diet: [data.diet]}
     );
 
@@ -22,7 +22,7 @@ export const userSearchController = async (req, res) => {
     {
         let collectionRef;
 
-        //query for all recipes
+        // Query for all recipes
         if(searchAll)
         {
             collectionRef = db.collection('recipes').orderBy('title'); // Order the collection by title
@@ -39,7 +39,7 @@ export const userSearchController = async (req, res) => {
                 collectionRef = collectionRef.limit(limit); // If there's no offset, just limit the results
             }
         }
-        //query for recipes with filters included
+        // Query for recipes with filters included
         else
         {
             // Add search params to url only if they are not undefined
@@ -55,7 +55,7 @@ export const userSearchController = async (req, res) => {
                 .where('title', '<=', searchParams.query + '\uf8ff')
                 .limit(limit);*/
 
-            //check for names has to be handled later on, since firebase doesn't support case insensitive query
+            // Check for names has to be handled later on, since firebase doesn't support case insensitive query
             collectionRef = await db.collection('recipes');
 
             // Check for diets

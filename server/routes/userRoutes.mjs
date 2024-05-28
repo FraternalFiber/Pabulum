@@ -1,11 +1,11 @@
 import express from 'express';
-import {recipeAddSchema} from "../schemas/recipeAddSchema.mjs";
-import {recipeAddController} from "../controllers/recipeAddController.mjs";
+import {userRecipeAddSchema} from "../schemas/userRecipeAddSchema.mjs";
+import {userRecipeAddController} from "../controllers/userRecipeAddController.mjs";
 import {validateData} from "../middlewares/validationMiddleware.mjs";
 import {uploadFile} from "../middlewares/fileUploadMiddleware.mjs";
 import {userRecipeDetailController} from "../controllers/userRecipeDetailController.mjs";
-import {recipeEditController} from "../controllers/recipeEditController.mjs";
-import {recipeDeleteController} from "../controllers/recipeDeleteController.mjs";
+import {userRecipeEditController} from "../controllers/userRecipeEditController.mjs";
+import {userRecipeDeleteController} from "../controllers/userRecipeDeleteController.mjs";
 import {searchSchema} from "../schemas/searchSchema.mjs";
 import {userSearchController} from "../controllers/userSearchController.mjs";
 import { userSearchSchema } from "../schemas/userSearchSchema.mjs";
@@ -22,12 +22,12 @@ router.get('/recipes/search', validateData({ query: userSearchSchema }), userSea
 router.get('/recipes/:id', userRecipeDetailController);
 
 // Adding recipes to database from form
-router.post('/recipes', uploadFile(), validateData({body: recipeAddSchema}), recipeAddController);
+router.post('/recipes', uploadFile(), validateData({body: userRecipeAddSchema}), userRecipeAddController);
 
 // Editing recipes
-router.put('/recipes/:id', uploadFile(), validateData({body: recipeAddSchema}), recipeEditController);
+router.put('/recipes/:id', uploadFile(), validateData({body: userRecipeAddSchema}), userRecipeEditController);
 
 // Delete recipes
-router.delete('/recipes/:id', recipeDeleteController);
+router.delete('/recipes/:id', userRecipeDeleteController);
 
 export default router;

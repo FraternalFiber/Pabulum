@@ -1,7 +1,7 @@
 import {bucket, db} from "../firebase/firebase.mjs";
 import path from 'path';
 
-export const recipeDeleteController = async (req, res) => {
+export const userRecipeDeleteController = async (req, res) => {
     try {
         const id = req.params.id;
 

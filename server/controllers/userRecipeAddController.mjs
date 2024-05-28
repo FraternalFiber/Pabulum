@@ -1,6 +1,6 @@
 import {bucket, db} from "../firebase/firebase.mjs";
 
-export const recipeAddController = async (req, res) => {
+export const userRecipeAddController = async (req, res) => {
     try {
         const data = req.body;
         const file = req.file;
