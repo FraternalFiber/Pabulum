@@ -8,6 +8,7 @@ import {CreateRecipe} from "@/pages/CreateRecipe";
 import {Account} from "@/pages/Account";
 import {Recipe} from "@/pages/Recipe";
 import {NotFound} from "@/pages/NotFound";
+import { EditRecipe } from "@/pages/EditRecipe";
 
 interface RouteElement {
   path: string
@@ -32,8 +33,12 @@ export const routes: Array<RouteElement> = [
     element: <MyRecipes/>
   },
   {
-    path: '/recipes/create',
+    path: '/user/recipes/create',
     element: <CreateRecipe/>
+  },
+  {
+    path: '/user/recipes/:id/edit',
+    element: <EditRecipe/>
   },
   {
     path: '/recipes/:id',

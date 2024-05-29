@@ -75,5 +75,6 @@ export const formSchema = z.object({
       ...step,
       number: index + 1
     }))
-  })
+  }),
+  imageChanged: z.boolean()
 })

@@ -1,4 +1,5 @@
 import {bucket, db} from "../firebase/firebase.mjs";
+import path from "path";
 
 export const userRecipeEditController = async (req, res) => {
     try {
@@ -12,11 +13,31 @@ export const userRecipeEditController = async (req, res) => {
         const recipeRef = db.collection('recipes').doc(id);
         const oldData = (await recipeRef.get()).data();
 
-        // If a new image is uploaded, replace the old one
         // if (file && oldData.image !== `https://storage.googleapis.com/recipeImages/${file.originalname}`) {
+        // If a new image is uploaded => user added or changed image. Delete an old image and upload a new one.
         if (file) {
-            const originalName = req.file.originalname;
-            const blob = bucket.file(`recipeImages/recipeImg_${recipeRef.id}${originalName.slice(originalName.lastIndexOf('.'))}`);
+            // Delete old image
+            if (oldData.image) {
+                // Parse the URL and extract the pathname
+                const imagePath = new URL(oldData.image).pathname;
+                // Get file name from path
+                const fileName = path.basename(imagePath)
+                const oldBlob = bucket.file(`recipeImages/${fileName}`);
+                const [exists] = await oldBlob.exists();
+
+                if(exists) {
+                    // Delete image file
+                    await oldBlob.delete();
+                    console.log("OLD IMAGE DELETED")
+                }
+                else {
+                    console.log(`No file exists at path: ${oldBlob.name}`);
+                }
+            }
+
+            const fileExtension = path.extname(req.file.originalname)
+            const timestamp = Date.now()
+            const blob = bucket.file(`recipeImages/recipeImg_${recipeRef.id}_${timestamp}${fileExtension}`);
             const blobStream = blob.createWriteStream();
 
             blobStream.on('error', (err) => {
@@ -31,9 +52,10 @@ export const userRecipeEditController = async (req, res) => {
                 try {
                     await blob.makePublic();
                     console.log(`public url to image: ${publicUrl}`);
-                    data.image = publicUrl;
-                    // Update the recipe data in the database
-                    await recipeRef.update(data);
+                    // Update the image property in database
+                    await recipeRef.update({
+                        image: publicUrl
+                    });
                 } catch (err) {
                     console.error('Error making file public:', err);
                     throw err;
@@ -41,16 +63,29 @@ export const userRecipeEditController = async (req, res) => {
             });
 
             blobStream.end(req.file.buffer);
-        } else if (!file) {
-            // If no new image is uploaded, delete the old image and its link (if old data had image)
-            if (oldData.image) {
-                // FIX HERE
-                const oldBlob = bucket.file(`recipeImages/${oldData.image}`);
-                // const oldBlob = bucket.file(`recipeImages/recipeImg_yIUXzIEYod8iJHS1FDRw.jpg`);
+        // If no image is uploaded and file was changed => user removed the image, so delete the old image and its link.
+        // Otherwise, file has not been changed.
+        } else if (data.imageChanged && oldData.image) {
+            // DELETE IMAGE
+            // Parse the URL and extract the pathname
+            const imagePath = new URL(oldData.image).pathname;
+            // Get file name from path
+            const fileName = path.basename(imagePath)
+            const oldBlob = bucket.file(`recipeImages/${fileName}`);
+            const [exists] = await oldBlob.exists();
+
+            if(exists) {
+                // Delete image file
                 await oldBlob.delete();
-                data.image = null;
-                await recipeRef.update(data);
             }
+            else {
+                console.log(`No file exists at path: ${oldBlob.name}`);
+            }
+            // END DELETE IMAGE
+
+            await recipeRef.update({
+                image: null
+            });
         }
 
         // Update data

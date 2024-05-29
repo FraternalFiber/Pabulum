@@ -7,7 +7,7 @@ import { UserSearchForm } from "@/components/UserSearchForm";
 export function MyRecipes() {
   useEffect(() => {
     document.title = "My recipes - Pabulum"
-  })
+  }, [])
 
   return (
       <>

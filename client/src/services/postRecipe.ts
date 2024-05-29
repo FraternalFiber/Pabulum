@@ -1,4 +1,4 @@
-import {BACKEND_SERVER_URL, POST_RECIPE_ERROR_MESSAGE} from "@/helpers/constants.ts";
+import { BACKEND_SERVER_URL } from "@/helpers/constants.ts";
 import { QueryClient } from "@tanstack/react-query";
 
 // Service for posting recipe data to server
@@ -17,7 +17,7 @@ export const postRecipe = async (data: any, queryClient: QueryClient) => {
     }
 
     const response = await fetch(`${BACKEND_SERVER_URL}/user/recipes`, {
-      method: 'POST',
+      method: "POST",
       body: formData
     })
 
@@ -27,7 +27,7 @@ export const postRecipe = async (data: any, queryClient: QueryClient) => {
     return response.json()
   }
   catch (error) {
-    console.error(`${POST_RECIPE_ERROR_MESSAGE}: ${error}`)
+    console.error(`Post recipe error: ${error}`)
     throw error
   }
 }

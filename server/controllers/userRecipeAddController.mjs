@@ -1,4 +1,5 @@
 import {bucket, db} from "../firebase/firebase.mjs";
+import path from "path";
 
 export const userRecipeAddController = async (req, res) => {
     try {
@@ -21,8 +22,9 @@ export const userRecipeAddController = async (req, res) => {
         {
             // Create a new blob in the bucket and upload the file data.
             const upload = new Promise((resolve, reject) => {
-                const originalName = req.file.originalname;
-                const blob = bucket.file(`recipeImages/recipeImg_${recipeRef.id}${originalName.slice(originalName.lastIndexOf('.'))}`);
+                const fileExtension = path.extname(req.file.originalname)
+                const timestamp = Date.now()
+                const blob = bucket.file(`recipeImages/recipeImg_${recipeRef.id}_${timestamp}${fileExtension}`);
                 const blobStream = blob.createWriteStream();
 
                 blobStream.on('error', (err) => {

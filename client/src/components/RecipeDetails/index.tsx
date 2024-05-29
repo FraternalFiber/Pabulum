@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/alert-dialog.tsx";
 import { toast } from "sonner";
 import { DELETE_RECIPE_ERROR_MESSAGE, DELETE_RECIPE_SUCCESS_MESSAGE } from "@/helpers/constants.ts";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { deleteRecipe } from "@/services/deleteRecipe.ts";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -41,17 +41,22 @@ type RecipeDetailsProps = {
 
 type RecipeMenuBarProps = {
   dataSource: TDataSource
+  recipeId: string
   deleteRecipe: () => void
 }
 
 // Menu bar with 'edit' and 'delete' buttons
-function RecipeMenuBar({dataSource, deleteRecipe}: RecipeMenuBarProps) {
+function RecipeMenuBar({dataSource, recipeId, deleteRecipe}: RecipeMenuBarProps) {
   if (dataSource === 'user') {
     return (
       <div className={'w-fit flex gap-x-1 outline outline-1 outline-stone-300 rounded-md p-1'}>
-        <Button type={'button'} variant={'ghost'}>
-          <SquarePen/>
-        </Button>
+        {/* Edit button */}
+        <Link to={`/user/recipes/${recipeId}/edit`}>
+          <Button type={'button'} variant={'ghost'}>
+            <SquarePen/>
+          </Button>
+        </Link>
+        {/*#region Delete button */}
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button type={'button'} variant={'ghost'} className={'hover:bg-destructive'}>
@@ -74,6 +79,7 @@ function RecipeMenuBar({dataSource, deleteRecipe}: RecipeMenuBarProps) {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+        {/*#endregion*/}
       </div>
     )
   }
@@ -165,7 +171,7 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
   if (recipe) {
     return (
         <div className={'flex flex-col gap-y-8'}>
-          <RecipeMenuBar dataSource={dataSource} deleteRecipe={handleDeleteRecipe}/>
+          <RecipeMenuBar dataSource={dataSource} recipeId={recipeId} deleteRecipe={handleDeleteRecipe}/>
           {/* Recipe image - show only if recipe contains an image and image is loaded correctly */}
           {recipe.image && (
               <div className={cn('w-full max-w-[28rem]', imageError ? 'hidden' : 'block')}>

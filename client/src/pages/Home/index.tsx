@@ -7,7 +7,7 @@ import LogoTextOnly from "@/assets/images/logo_text_only.svg"
 export function Home() {
   useEffect(() => {
     document.title = "Pabulum"
-  })
+  }, [])
 
   return (
       <>

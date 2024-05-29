@@ -15,7 +15,7 @@ const menuButtons : Array<MenuButtonProps> = [
   { title: 'Discover', path: '/discover', icon: <CompassIcon size={20}/>},
   { title: 'My recipes', path: '/user/recipes', icon: <ScrollTextIcon size={20}/>},
   { title: 'My pantry', path: '/pantry', icon: <RefrigeratorIcon size={20}/>},
-  { title: 'Create recipe', path: '/recipes/create', icon: <PlusCircleIcon size={20}/>}
+  { title: 'Create recipe', path: '/user/recipes/create', icon: <PlusCircleIcon size={20}/>}
 ]
 
 function MenuButton({title, path, icon}: MenuButtonProps) {

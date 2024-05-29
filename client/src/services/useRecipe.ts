@@ -34,6 +34,6 @@ export const useRecipe = (id: string, source: TDataSource) => {
     refetchOnReconnect: false,
     staleTime: Infinity, // keep data fresh for infinity until user refreshes the page
     gcTime: Infinity, // don't garbage collect
-    retry: false
+    // retry: false // try fetching only once
   })
 }

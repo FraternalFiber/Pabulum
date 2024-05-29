@@ -11,7 +11,7 @@ import styled from "styled-components";
 import {availableDietItems} from "@/components/SearchForm/searchFormFilterItems.ts";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {
-  ACCEPTED_IMAGE_TYPES,
+  ACCEPTED_IMAGE_TYPES, EDIT_RECIPE_ERROR_MESSAGE, EDIT_RECIPE_SUCCESS_MESSAGE,
   MAX_PREP_TIME,
   MAX_SERVINGS_NUMBER,
   MIN_SERVINGS_NUMBER,
@@ -23,51 +23,79 @@ import {SubtractButton} from "@/components/CreateRecipeForm/SubtractButton.tsx";
 import {AddButton} from "@/components/CreateRecipeForm/AddButton.tsx";
 import {postRecipe} from "@/services/postRecipe.ts";
 import {toast} from "sonner";
-import {useState} from "react";
-import {ImagePreview} from "@/components/CreateRecipeForm/ImagePreview.tsx";
-import {Label} from "@/components/ui/label.tsx";
-import {Card, CardContent} from "@/components/ui/card.tsx";
-import {AspectRatio} from "@/components/ui/aspect-ratio.tsx";
+import { useEffect, useState } from "react";
 import {
   formSchema,
 } from "@/components/CreateRecipeForm/schemas.ts";
 import {useNavigate} from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
+import { TRecipeDetails } from "@/types/TRecipeDetails.ts";
+import { editRecipe } from "@/services/editRecipe.ts";
+import { ImageLabelAndPreview } from "@/components/CreateRecipeForm/ImageLabelAndPreview.tsx";
 
 const FormLabelStyled = styled(FormLabel).attrs({
   className: 'text-2xl'
 })``
 
-// Form to create a new recipe
-export function CreateRecipeForm() {
-  // state used to store value of image for upload
+type CreateRecipeFormProps = {
+  mode?: "create" | "edit"
+  initialData?: TRecipeDetails
+  recipeId?: string
+}
+
+// Form to create a new recipe or edit an existing one
+export function CreateRecipeForm({mode = "create", initialData, recipeId}: CreateRecipeFormProps) {
+  // Used to store value of image for upload
   const [imageFile, setImageFile] = useState<File | undefined>(undefined)
   const [imageFileValue, setImageFileValue] = useState('')
+  // Used to store recipe image url if exists (in edit mode)
+  const [onlineImageUrl, setOnlineImageUrl] = useState<string | null>(null)
+  // Used to check if recipe is uploading
   const [isLoading, setIsLoading] = useState<boolean>(false)
   // Used for managing cache data
   const queryClient = useQueryClient()
   // Used for redirecting
   const navigate = useNavigate();
 
+  // Set initial data (in edit mode)
+  useEffect(() => {
+    if (initialData) {
+      console.log(initialData)
+      for (const [key, value] of Object.entries(initialData)) {
+        // @ts-expect-error Key will always be of type one of the keys in initialData
+        form.setValue(key, value)
+      }
+
+      // Check is recipe contains image
+      if (initialData.image) {
+        setOnlineImageUrl(initialData.image)
+        form.setValue('image', undefined)
+      }
+    }
+  }, []);
+
   // Code executed after submitting a form
-  async function handleSubmit(values: z.infer<typeof formSchema>) {
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values)
 
+    // Choose messages depending on mode
+    const SUCCESS_MESSAGE = mode === "create" ? POST_RECIPE_SUCCESS_MESSAGE : EDIT_RECIPE_SUCCESS_MESSAGE
+    const ERROR_MESSAGE = mode === "create" ? POST_RECIPE_ERROR_MESSAGE : EDIT_RECIPE_ERROR_MESSAGE
+
     // Show a loading toast
-    const loadingToastId = toast.loading('Creating a recipe...')
+    const loadingToastId = toast.loading(mode === "create" ? 'Creating a recipe...' : 'Saving changes...')
     setIsLoading(true)
 
     try {
-      // Post recipe data to database
-      const response = await postRecipe(values, queryClient)
+      // Choose service depending on mode
+      const response = mode === "edit" && recipeId
+        ? await editRecipe(values, queryClient, recipeId)
+        : await postRecipe(values, queryClient)
 
       if(response.success) {
         // Dismiss a loading toast and show a success toast
         toast.dismiss(loadingToastId)
-        toast.success(POST_RECIPE_SUCCESS_MESSAGE)
-
-        console.log(response.message)
-        console.log(response.id)
+        toast.success(SUCCESS_MESSAGE)
 
         // Redirect to a newly created recipe
         setTimeout(() => {
@@ -80,17 +108,16 @@ export function CreateRecipeForm() {
         // Dismiss a loading toast and show an error toast
         toast.dismiss(loadingToastId)
         setIsLoading(false)
-        toast.error(POST_RECIPE_ERROR_MESSAGE)
-        console.error(`${POST_RECIPE_ERROR_MESSAGE}: ${response.message}`)
-        console.error(response.message)
+        toast.error(ERROR_MESSAGE)
+        console.error(`${ERROR_MESSAGE}: ${response.message}`)
       }
     }
     catch(error) {
       // Dismiss a loading toast and show an error toast
       toast.dismiss(loadingToastId)
       setIsLoading(false)
-      toast.error(POST_RECIPE_ERROR_MESSAGE)
-      console.error(`${POST_RECIPE_ERROR_MESSAGE}: ${error}`)
+      toast.error(ERROR_MESSAGE)
+      console.error(`${ERROR_MESSAGE}: ${error}`)
     }
   }
 
@@ -115,7 +142,8 @@ export function CreateRecipeForm() {
         {
           instruction: ''
         }
-      ]
+      ],
+      imageChanged: false
     }
   })
 
@@ -123,13 +151,22 @@ export function CreateRecipeForm() {
     // form.trigger('image').then(() => {
       setImageFile(undefined)
       setImageFileValue('')
+      setOnlineImageUrl(null)
       form.setValue('image', undefined)
+      form.setValue('imageChanged', true)
     // })
   }
 
   const handleImageError = () => {
     form.setError('image', {type: 'custom', message: "File couldn't be loaded correctly"})
     deleteImage()
+  }
+
+  // Navigate to recipe details on cancel
+  const handleCancel = () => {
+    navigate({
+      pathname: `/user/recipes/${recipeId}`,
+    })
   }
 
   return (
@@ -161,24 +198,26 @@ export function CreateRecipeForm() {
                     <FormControl>
                       <div className={'pt-1'}>
                         {/*Visible label for uploading files to input*/}
-                        {!imageFile && (
-                            <Label htmlFor={'imageUploadInput'} className={'block w-full sm:max-w-96 cursor-pointer'}>
-                              <Card>
-                                <CardContent className={'w-full h-full flex justify-center items-center text-lg hover:underline underline-offset-2 decoration-2 p-5'}>
-                                  Upload image
-                                </CardContent>
-                              </Card>
-                            </Label>
-                        )}
+                        {/*{!imageFile && !onlineImageUrl && (*/}
+                        {/*    <Label htmlFor={'imageUploadInput'} className={'block w-full sm:max-w-96 cursor-pointer'}>*/}
+                        {/*      <Card>*/}
+                        {/*        <CardContent className={'w-full h-full flex justify-center items-center text-lg hover:underline underline-offset-2 decoration-2 p-5'}>*/}
+                        {/*          Upload image*/}
+                        {/*        </CardContent>*/}
+                        {/*      </Card>*/}
+                        {/*    </Label>*/}
+                        {/*)}*/}
 
-                        {/*Preview of an image to upload - show when file is set*/}
-                        {imageFile && (
-                            <div className={'w-full max-w-96 mb-2'}>
-                              <AspectRatio ratio={3 / 2}>
-                                <ImagePreview file={imageFile} deleteImage={deleteImage} handleImageError={handleImageError}/>
-                              </AspectRatio>
-                            </div>
-                        )}
+                        {/*/!*Preview of an image to upload - show when file is set*!/*/}
+                        {/*{imageFile || onlineImageUrl && (*/}
+                        {/*    <div className={'w-full max-w-96 mb-2'}>*/}
+                        {/*      <AspectRatio ratio={3 / 2}>*/}
+                        {/*        <ImagePreview file={imageFile} deleteImage={deleteImage} handleImageError={handleImageError} onlineImageUrl={onlineImageUrl}/>*/}
+                        {/*      </AspectRatio>*/}
+                        {/*    </div>*/}
+                        {/*)}*/}
+
+                        <ImageLabelAndPreview imageFile={imageFile} onlineImageUrl={onlineImageUrl} deleteImage={deleteImage} handleImageError={handleImageError}/>
 
                         <Input
                             {...field}
@@ -190,6 +229,8 @@ export function CreateRecipeForm() {
                             onChange={(e) => {
                               setImageFileValue(e.target.value)
                               form.setValue('image', e.target.files?.[0])
+                              form.setValue('imageChanged', true)
+                              console.log(form.getValues())
 
                               // Trigger field validation
                               form.trigger('image').then((valid) => {
@@ -286,7 +327,9 @@ export function CreateRecipeForm() {
                                             (value) => value !== diet.value
                                         )
                                       )
-                                }}/>
+                                }}
+                                // Check initial diets (in edit mode)
+                                checked={form.getValues('diets').includes(diet.value)}/>
                             </FormControl>
                             <FormLabel className={'ml-2 cursor-pointer'}>
                               {diet.label}
@@ -299,7 +342,20 @@ export function CreateRecipeForm() {
             {/*#endregion*/}
             <IngredientsDynamicList form={form}/>
             <StepsDynamicList form={form}/>
-            <Button type={'submit'} className={'mt-5 select-none transition'} disabled={isLoading}>Create</Button>
+            <div className={'mt-5 grid grid-flow-col auto-cols-fr gap-x-2'}>
+              {/* Cancel button (in edit mode) */}
+              {mode === "edit" && (
+                <Button type={'button'} variant={'accent'} className={'col-span-1'}
+                        disabled={isLoading}
+                        onClick={handleCancel}>Cancel</Button>
+              )}
+              {/* Creat or save changes button */}
+              <Button type={'submit'} className={'select-none transition col-span-2'} disabled={isLoading}>
+                {mode === "create"
+                  ? "Create"
+                  : "Save changes"}
+              </Button>
+            </div>
           </form>
         </Form>
       </>

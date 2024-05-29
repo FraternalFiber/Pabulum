@@ -45,5 +45,6 @@ export const userRecipeAddSchema = z.object({
     steps: z.array(stepSchema)
         // Check if steps numbers are unique
         .refine((steps) => _.isEqual(steps, _.uniqBy(steps, 'number')),
-            {message: 'Steps numbers must be unique'})
+            {message: 'Steps numbers must be unique'}),
+    imageChanged: z.boolean()
 });

@@ -9,27 +9,22 @@ export const userRecipeDeleteController = async (req, res) => {
 
         const oldData = (await recipeRef.get()).data();
         // Delete the image from the storage
-        if (oldData && oldData.image != null) {
+        if (oldData && oldData.image) {
+            // DELETE IMAGE
             // Parse the URL and extract the pathname
-            const imageUrl = new URL(oldData.image);
-            const imagePath = imageUrl.pathname;
-
-            // Remove the leading '/' from the pathname and get the file path
-            const filePath = path.join(imagePath.slice(1));
-
-            // Remove the bucket name from the file path
-            const bucketName = 'pabulum-zsk.appspot.com/';
-            const blobFilePath = filePath.slice(bucketName.length);
-
-            const oldBlob = bucket.file(blobFilePath);
+            const imagePath = new URL(oldData.image).pathname;
+            // Get file name from path
+            const fileName = path.basename(imagePath)
+            const oldBlob = bucket.file(`recipeImages/${fileName}`);
             const [exists] = await oldBlob.exists();
 
             if(exists) {
                 await oldBlob.delete();
             }
             else {
-                console.log(`No file exists at path: ${blobFilePath}`);
+                console.log(`No file exists at path: ${oldBlob.name}`);
             }
+            // END DELETE IMAGE
         }
 
         // Delete the 'diets' subcollection

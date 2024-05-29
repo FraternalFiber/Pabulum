@@ -40,7 +40,6 @@ export function uploadFile() {
                         res.status(400).json({success: false, message: 'Invalid JSON format'})
                     }
 
-
                     next()
                 }
             })

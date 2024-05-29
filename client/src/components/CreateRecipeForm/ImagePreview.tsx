@@ -4,28 +4,34 @@ import {Trash2} from "lucide-react";
 import {Button} from "@/components/ui/button.tsx";
 
 type ImagePreviewProps = {
-  file: File
+  file: File | undefined
   deleteImage: () => void
   handleImageError: () => void
+  onlineImageUrl: string | null
 }
 
 // Preview of an image to upload
-export function ImagePreview({file, deleteImage, handleImageError}: ImagePreviewProps) {
+export function ImagePreview({file, deleteImage, handleImageError, onlineImageUrl}: ImagePreviewProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [showImage, setShowImage] = useState<boolean>(false)
 
   useEffect(() => {
     // Return nothing when there is no file
-    if(!file) {
+    if (!file && !onlineImageUrl) {
       return
     }
 
-    // Create a URL object to be used as src of image preview
-    setPreviewUrl(URL.createObjectURL(file))
+    if (file) {
+      // Create a URL object to be used as src of image preview
+      setPreviewUrl(URL.createObjectURL(file))
+    }
+    else if (onlineImageUrl) {
+      setPreviewUrl(onlineImageUrl)
+    }
 
     // Revoke object URL on unmount or file change to prevent memory leaks
     return () => {
-      if(previewUrl) {
+      if (previewUrl) {
         URL.revokeObjectURL(previewUrl)
       }
     }
