@@ -7,6 +7,7 @@ import { useRecipe } from "@/services/useRecipe.ts";
 import { useParams } from "react-router-dom";
 import {LoadingSkeletons} from "@/pages/EditRecipe/LoadingSkeletons.tsx";
 import {ErrorAlert} from "@/components/ErrorAlert/ErrorAlert.tsx";
+import {BackButton} from "@/components/BackButton";
 
 // Page for creating or editing recipe. Default mode is "create".
 export function EditRecipe() {
@@ -19,11 +20,14 @@ export function EditRecipe() {
     document.title = "Edit recipe - Pabulum"
   }, [])
 
+  // To be improved: code duplication
+
   if (isLoading) {
     return (
       <>
         <Menu/>
         <Main>
+          <BackButton className={'mb-8 mt-2'}/>
           <Heading content={"Edit recipe"}/>
           <LoadingSkeletons/>
         </Main>
@@ -36,6 +40,7 @@ export function EditRecipe() {
       <>
         <Menu/>
         <Main>
+          <BackButton className={'mb-8 mt-2'}/>
           <Heading content={"Edit recipe"}/>
           <ErrorAlert className={'mt-20'} message={"Sorry, we couldn't load your recipe"}/>
         </Main>
@@ -48,11 +53,11 @@ export function EditRecipe() {
       <>
         <Menu/>
         <Main>
+          <BackButton className={'mb-8 mt-2'}/>
           <Heading content={"Edit recipe"}/>
           <CreateRecipeForm mode={"edit"} initialData={recipe} recipeId={id}/>
         </Main>
       </>
     )
   }
-
 }

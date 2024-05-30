@@ -162,11 +162,9 @@ export function CreateRecipeForm({mode = "create", initialData, recipeId}: Creat
     deleteImage()
   }
 
-  // Navigate to recipe details on cancel
+  // Navigate back on cancel (in edit mode)
   const handleCancel = () => {
-    navigate({
-      pathname: `/user/recipes/${recipeId}`,
-    })
+    navigate(-1)
   }
 
   return (
