@@ -5,6 +5,8 @@ import { Heading } from "@/components/Heading";
 import { CreateRecipeForm } from "@/components/CreateRecipeForm";
 import { useRecipe } from "@/services/useRecipe.ts";
 import { useParams } from "react-router-dom";
+import {LoadingSkeletons} from "@/pages/EditRecipe/LoadingSkeletons.tsx";
+import {ErrorAlert} from "@/components/ErrorAlert/ErrorAlert.tsx";
 
 // Page for creating or editing recipe. Default mode is "create".
 export function EditRecipe() {
@@ -23,7 +25,7 @@ export function EditRecipe() {
         <Menu/>
         <Main>
           <Heading content={"Edit recipe"}/>
-          <p>Loading...</p>
+          <LoadingSkeletons/>
         </Main>
       </>
     )
@@ -35,7 +37,7 @@ export function EditRecipe() {
         <Menu/>
         <Main>
           <Heading content={"Edit recipe"}/>
-          <p>Error!</p>
+          <ErrorAlert className={'mt-20'} message={"Sorry, we couldn't load your recipe"}/>
         </Main>
       </>
     )

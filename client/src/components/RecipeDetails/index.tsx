@@ -148,7 +148,7 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
 
   if (isLoading) {
     return (
-        <LoadingSkeletons/>
+        <LoadingSkeletons dataSource={dataSource}/>
     )
   }
 
