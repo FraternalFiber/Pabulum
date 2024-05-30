@@ -180,7 +180,7 @@ export function RecipeDetails({recipeId, dataSource}: RecipeDetailsProps) {
                        onLoad={handleImageLoad}
                        onError={handleImageError}
                        alt={recipe.title}
-                       className={cn('rounded-sm w-full h-full object-contain object-center bg-secondary', showImage ? 'block' : 'hidden')}/>
+                       className={cn('rounded-sm w-full h-full object-cover object-center bg-secondary', showImage ? 'block' : 'hidden')}/>
 
                   {/* Image loading placeholder */}
                   <Skeleton className={cn('w-full h-full', showImage ? 'hidden' : 'block')}/>
