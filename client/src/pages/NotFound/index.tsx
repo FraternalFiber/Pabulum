@@ -3,9 +3,14 @@ import {Main} from "@/components/Main";
 import {Heading} from "@/components/Heading";
 import {Button} from "@/components/ui/button.tsx";
 import {Link} from "react-router-dom";
+import { useEffect } from "react";
 
 // Error 404 page
 export function NotFound() {
+  useEffect(() => {
+    document.title = "Page not found - Pabulum"
+  }, [])
+
   return (
       <>
         <Menu/>

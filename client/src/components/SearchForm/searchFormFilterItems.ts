@@ -1,114 +1,54 @@
-const availableDietItems = [
-  {
-    id: 'vegetarian',
-    label: 'Vegetarian'
-  },
-  {
-    id: 'vegan',
-    label: 'Vegan'
-  },
-  {
-    id: 'gluten free',
-    label: 'Gluten free'
-  },
-  {
-    id: 'ketogenic',
-    label: 'Ketogenic'
-  },
-  {
-    id: 'dairy free',
-    label: 'Dairy free'
-  }
+export const availableDietItems = [
+  { value: 'vegetarian', label: 'Vegetarian' },
+  { value: 'vegan', label: 'Vegan' },
+  { value: 'gluten free', label: 'Gluten free' },
+  { value: 'ketogenic', label: 'Ketogenic' },
+  { value: 'dairy free', label: 'Dairy free' }
 ]
 
-const availableCuisineItems = [
-  {
-    id: 'asian',
-    label: 'Asian'
-  },
-  {
-    id: 'french',
-    label: 'French'
-  },
-  {
-    id: 'italian',
-    label: 'Italian'
-  },
-  {
-    id: 'korean',
-    label: 'Korean'
-  },
-  {
-    id: 'mexican',
-    label: 'Mexican'
-  },
-  {
-    id: 'spanish',
-    label: 'Spanish'
-  },
-  {
-    id: 'vietnamese',
-    label: 'Vietnamese'
-  }
+export const availableCuisineItems = [
+  { value: 'african', label: 'African' },
+  { value: 'asian', label: 'Asian' },
+  { value: 'american', label: 'American' },
+  { value: 'british', label: 'British' },
+  { value: 'cajun', label: 'Cajun' },
+  { value: 'caribbean', label: 'Caribbean' },
+  { value: 'chinese', label: 'Chinese' },
+  { value: 'eastern european', label: 'Eastern European' },
+  { value: 'european', label: 'European' },
+  { value: 'french', label: 'French' },
+  { value: 'german', label: 'German' },
+  { value: 'greek', label: 'Greek' },
+  { value: 'indian', label: 'Indian' },
+  { value: 'irish', label: 'Irish' },
+  { value: 'italian', label: 'Italian' },
+  { value: 'japanese', label: 'Japanese' },
+  { value: 'jewish', label: 'Jewish' },
+  { value: 'korean', label: 'Korean' },
+  { value: 'latin american', label: 'Latin American' },
+  { value: 'mediterranean', label: 'Mediterranean' },
+  { value: 'mexican', label: 'Mexican' },
+  { value: 'middle eastern', label: 'Middle Eastern' },
+  { value: 'nordic', label: 'Nordic' },
+  { value: 'southern', label: 'Southern' },
+  { value: 'spanish', label: 'Spanish' },
+  { value: 'thai', label: 'Thai' },
+  { value: 'vietnamese', label: 'Vietnamese' }
 ]
 
-const availableMealTypeItems = [
-  {
-    id: 'main course',
-    label: 'Main course'
-  },
-  {
-    id: 'side dish',
-    label: 'Side dish'
-  },
-  {
-    id: 'dessert',
-    label: 'Dessert'
-  },
-  {
-    id: 'appetizer',
-    label: 'Appetizer'
-  },
-  {
-    id: 'salad',
-    label: 'Salad'
-  },
-  {
-    id: 'bread',
-    label: 'Bread'
-  },
-  {
-    id: 'breakfast',
-    label: 'Breakfast'
-  },
-  {
-    id: 'soup',
-    label: 'Soup'
-  },
-  {
-    id: 'beverage',
-    label: 'Beverage'
-  },
-  {
-    id: 'sauce',
-    label: 'Sauce'
-  },
-  {
-    id: 'marinade',
-    label: 'Marinade'
-  },
-  {
-    id: 'fingerfood',
-    label: 'Finger food'
-  },
-  {
-    id: 'snack',
-    label: 'Snack'
-  },
-  {
-    id: 'drink',
-    label: 'Drink'
-  },
+export const availableMealTypeItems = [
+  { value: 'main course', label: 'Main course' },
+  { value: 'side dish', label: 'Side dish' },
+  { value: 'dessert', label: 'Dessert' },
+  { value: 'appetizer', label: 'Appetizer' },
+  { value: 'salad', label: 'Salad' },
+  { value: 'bread', label: 'Bread' },
+  { value: 'breakfast', label: 'Breakfast' },
+  { value: 'soup', label: 'Soup' },
+  { value: 'beverage', label: 'Beverage' },
+  { value: 'sauce', label: 'Sauce' },
+  { value: 'marinade', label: 'Marinade' },
+  { value: 'fingerfood', label: 'Finger food' },
+  { value: 'snack', label: 'Snack' },
+  { value: 'drink', label: 'Drink' },
 ]
-
-export {availableDietItems, availableCuisineItems, availableMealTypeItems}

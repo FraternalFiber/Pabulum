@@ -3,7 +3,7 @@ import {Plus, Trash2} from "lucide-react";
 import {useFieldArray} from "react-hook-form";
 import {FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
-import {TCreateRecipeFormStep} from "@/types/TCreateRecipeFormStep.ts";
+import {TStepBeforeTransform} from "@/types/TStepBeforeTransform.ts";
 
 type StepsTableProps = {
   form: any
@@ -27,12 +27,12 @@ export function StepsDynamicList({form}: StepsTableProps) {
   }
 
   // returns true if step instruction is empty
-  function isEmptyStep(step: TCreateRecipeFormStep): boolean {
+  function isEmptyStep(step: TStepBeforeTransform): boolean {
     return !step.instruction
   }
 
   // returns index of first empty step after the current step or -1 if such not found
-  function getNextEmptyStepIndex(stepFields: TCreateRecipeFormStep[], currentIndex: number): number {
+  function getNextEmptyStepIndex(stepFields: TStepBeforeTransform[], currentIndex: number): number {
     for(let index = currentIndex + 1; index < stepFields.length; index++) {
       if(isEmptyStep(stepFields[index])) {
         return index

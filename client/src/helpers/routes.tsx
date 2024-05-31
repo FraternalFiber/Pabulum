@@ -8,6 +8,7 @@ import {CreateRecipe} from "@/pages/CreateRecipe";
 import {Account} from "@/pages/Account";
 import {Recipe} from "@/pages/Recipe";
 import {NotFound} from "@/pages/NotFound";
+import { EditRecipe } from "@/pages/EditRecipe";
 
 interface RouteElement {
   path: string
@@ -28,16 +29,24 @@ export const routes: Array<RouteElement> = [
     element: <Discover/>
   },
   {
-    path: '/recipe',
+    path: '/user/recipes',
     element: <MyRecipes/>
   },
   {
-    path: '/recipe/create',
+    path: '/user/recipes/create',
     element: <CreateRecipe/>
   },
   {
-    path: '/recipe/:id',
-    element: <Recipe/>
+    path: '/user/recipes/:id/edit',
+    element: <EditRecipe/>
+  },
+  {
+    path: '/recipes/:id',
+    element: <Recipe dataSource={'online'}/>
+  },
+  {
+    path: '/user/recipes/:id',
+    element: <Recipe dataSource={'user'}/>
   },
   {
     path: '/pantry',

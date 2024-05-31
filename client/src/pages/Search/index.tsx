@@ -8,7 +8,7 @@ import { Heading } from "@/components/Heading";
 export function Search() {
   useEffect(() => {
     document.title = "Search recipes - Pabulum"
-  })
+  }, [])
 
   return (
       <>

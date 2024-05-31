@@ -1,12 +1,13 @@
 import {bucket, db} from "../firebase/firebase.mjs";
+import path from "path";
 
-export const recipeAddController = async (req, res) => {
+export const userRecipeAddController = async (req, res) => {
     try {
         const data = req.body;
         const file = req.file;
 
-        console.log('data', data)
-        console.log('file', file)
+        // console.log('data', data)
+        // console.log('file', file)
 
         const addRecipe = Object.assign({},
             data.title === undefined ? null : {title: data.title},
@@ -17,33 +18,49 @@ export const recipeAddController = async (req, res) => {
 
         const recipeRef = db.collection('recipes').doc();
 
-        // Create a new blob in the bucket and upload the file data.
-        const upload = new Promise((resolve, reject) => {
-            const blob = bucket.file(`recipeImages/${req.file.originalname}`);
-            const blobStream = blob.createWriteStream();
+        if(file !== undefined)
+        {
+            // Create a new blob in the bucket and upload the file data.
+            const upload = new Promise((resolve, reject) => {
+                const fileExtension = path.extname(req.file.originalname)
+                const timestamp = Date.now()
+                const blob = bucket.file(`recipeImages/recipeImg_${recipeRef.id}_${timestamp}${fileExtension}`);
+                const blobStream = blob.createWriteStream();
 
-            blobStream.on('error', (err) => {
-                reject(`(Error while uploading image) :${err.message}`);
+                blobStream.on('error', (err) => {
+                    reject(`(Error while uploading image) :${err.message}`);
+                });
+
+                blobStream.on('finish', () => {
+                    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+
+                    // Make the file public
+                    blob.makePublic().then(() => {
+                        console.log(`public url to image: ${publicUrl}`);
+                        addRecipe.image = publicUrl;
+                        resolve();
+                    }).catch(err => {
+                        console.error('Error making file public:', err);
+                        reject(err);
+                    });
+                });
+
+                blobStream.end(req.file.buffer);
             });
 
-            blobStream.on('finish', () => {
-                const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-                console.log(`public url to image: ${publicUrl}`);
-                addRecipe.image = publicUrl;
-                resolve();
+            // Use the Promise
+            // Called in a promise so image first uploads and it's link is ready to send
+            upload.then(async () => {
+                // Add a recipe data to database
+                await recipeRef.set(addRecipe);
+            }).catch((error) => {
+                throw new Error(error);
             });
-
-            blobStream.end(req.file.buffer);
-        });
-
-        // Use the Promise
-        // Called in a promise so image first uploads and it's link is ready to send
-        upload.then(async () => {
-            // Add a recipe data to database
+        }
+        else
+        {
             await recipeRef.set(addRecipe);
-        }).catch((error) => {
-            throw new Error(error);
-        });
+        }
 
         // Add all diets data to recipe
         for (let diet of data.diets) {
@@ -57,6 +74,7 @@ export const recipeAddController = async (req, res) => {
         // Add all ingredients to recipe
         for (let ingredient of data.ingredients) {
             const addIngredient = Object.assign({},
+                ingredient.number === undefined ? null : {number: ingredient.number},
                 ingredient.name === undefined ? null : {name: ingredient.name},
                 ingredient.quantity === undefined ? null : {quantity: ingredient.quantity}
             )

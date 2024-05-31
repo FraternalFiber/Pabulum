@@ -11,7 +11,7 @@ type BackButtonProps = {
 export function BackButton({className, text = 'Back', type}: BackButtonProps) {
   const navigate = useNavigate()
 
-  // navigate back when the back button is clicked
+  // Navigate back one entry in history stack
   function handleBackButton() {
     navigate(-1)
   }

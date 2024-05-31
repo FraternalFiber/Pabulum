@@ -10,15 +10,19 @@ export const SERVINGS_NUMBER_STEP = 1
 export const MAX_RECIPE_DESCRIPTION_LEN = 2000
 export const MAX_INGREDIENT_NAME_LEN = 80
 export const MAX_INGREDIENT_QUANTITY_LEN = 30
-export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png']
+export const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png"]
 export const MAX_RECIPE_IMAGE_SIZE = 5242880 // 5 MB
 
 // SearchForm
 export const MAX_SEARCH_QUERY_LEN = 80
 
 // URL
-export const BACKEND_SERVER_URL = 'http://127.0.0.1:42069'
+export const BACKEND_SERVER_URL = "http://127.0.0.1:42069"
 
 // Messages
-export const POST_RECIPE_SUCCESS_MESSAGE = 'Recipe has been added!'
-export const POST_RECIPE_ERROR_MESSAGE = 'An error occurred while creating a recipe'
+export const POST_RECIPE_SUCCESS_MESSAGE = "Recipe has been created!"
+export const POST_RECIPE_ERROR_MESSAGE = "We couldn't create your recipe"
+export const DELETE_RECIPE_SUCCESS_MESSAGE = "Recipe has been deleted"
+export const DELETE_RECIPE_ERROR_MESSAGE = "We couldn't delete your recipe"
+export const EDIT_RECIPE_SUCCESS_MESSAGE = "Recipe changes have been saved"
+export const EDIT_RECIPE_ERROR_MESSAGE = "We couldn't save your changes"

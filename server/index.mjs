@@ -2,8 +2,8 @@ import "dotenv/config.js";
 import express from 'express';
 import cors from 'cors';
 
-import searchRoutes from "./routes/searchRoutes.mjs";
-import recipeRoutes from "./routes/recipeRoutes.mjs";
+import generalRoutes from "./routes/generalRoutes.mjs";
+import userRoutes from "./routes/userRoutes.mjs";
 
 const app = express();
 const hostname = '127.0.0.1';
@@ -18,8 +18,8 @@ app.get('/', (req, res) => {
     res.json({'status': 'Server is working properly'});
 });
 
-app.use('/', searchRoutes);
-app.use('/recipe', recipeRoutes);
+app.use('/', generalRoutes);
+app.use('/user', userRoutes);
 
 app.listen(port, hostname, () => {
     console.log(`Listening on ${hostname}:${port}`);

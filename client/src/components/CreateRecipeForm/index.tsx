@@ -11,15 +11,9 @@ import styled from "styled-components";
 import {availableDietItems} from "@/components/SearchForm/searchFormFilterItems.ts";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {
-  ACCEPTED_IMAGE_TYPES,
-  MAX_INGREDIENT_NAME_LEN,
-  MAX_INGREDIENT_QUANTITY_LEN,
+  ACCEPTED_IMAGE_TYPES, EDIT_RECIPE_ERROR_MESSAGE, EDIT_RECIPE_SUCCESS_MESSAGE,
   MAX_PREP_TIME,
-  MAX_RECIPE_DESCRIPTION_LEN, MAX_RECIPE_IMAGE_SIZE,
-  MAX_RECIPE_TITLE_LEN,
   MAX_SERVINGS_NUMBER,
-  MAX_STEP_INSTRUCTION_LEN,
-  MIN_PREP_TIME,
   MIN_SERVINGS_NUMBER,
   POST_RECIPE_ERROR_MESSAGE, POST_RECIPE_SUCCESS_MESSAGE,
   PREP_TIME_STEP,
@@ -29,124 +23,107 @@ import {SubtractButton} from "@/components/CreateRecipeForm/SubtractButton.tsx";
 import {AddButton} from "@/components/CreateRecipeForm/AddButton.tsx";
 import {postRecipe} from "@/services/postRecipe.ts";
 import {toast} from "sonner";
-import {useState} from "react";
-import {ImagePreview} from "@/components/CreateRecipeForm/ImagePreview.tsx";
-import {Label} from "@/components/ui/label.tsx";
-import {Card, CardContent} from "@/components/ui/card.tsx";
-import {AspectRatio} from "@/components/ui/aspect-ratio.tsx";
-
-// Schema for a single ingredient
-const ingredientSchema = z.object({
-  name: z.string().trim()
-      .min(1, {message: 'Enter an ingredient name'})
-      .max(MAX_INGREDIENT_NAME_LEN, {message: `Enter no more than ${MAX_INGREDIENT_NAME_LEN} characters`}),
-  quantity: z.string().trim()
-      .max(30, {message: `Enter no more than ${MAX_INGREDIENT_QUANTITY_LEN} characters`})
-      .optional()
-})
-
-// Schema for a single recipe step
-const stepSchema = z.object({
-  instruction: z
-      .string()
-      .trim()
-      .min(1, {message: 'Enter a step'})
-      .max(MAX_STEP_INSTRUCTION_LEN, {message: `Enter no more than ${MAX_STEP_INSTRUCTION_LEN} characters`})
-})
-
-// List of available diets for validation (only IDs)
-const availableDiets = availableDietItems.map(diet => diet.id)
-
-// Schema for a single diet, checks if diet is in a list of available diets
-const dietSchema = z.string().refine(diet => availableDiets.includes(diet),{
-  message: 'Invalid diet, must be one of: ' + availableDiets.join(', ')
-})
-
-// Zod schema object, used to define a form schema for validation
-const formSchema = z.object({
-  title: z
-      .string()
-      .trim()
-      .min(1, {message: 'Enter a recipe title'})
-      .max(MAX_RECIPE_TITLE_LEN, {message: `Enter no more than ${MAX_RECIPE_TITLE_LEN} characters`}),
-  image: z
-      .custom<File>((file) => file instanceof File, {message: 'Expected a file'})
-      .refine((file) => file.size <= MAX_RECIPE_IMAGE_SIZE, 'Max file size is 5 MB')
-      .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), 'File type not supported. Use one of .jpg, .jpeg, .png and .jfif.')
-      .optional(),
-  prepTime: z
-      .coerce.number({invalid_type_error: 'Enter a number'})
-      .min(MIN_PREP_TIME, {message: `Min time is ${MIN_PREP_TIME} minutes`})
-      .max(MAX_PREP_TIME, {message: `Max time is ${MAX_PREP_TIME} minutes`}),
-  servingsNumber: z
-      .coerce.number({invalid_type_error: 'Enter a number'})
-      .int({message: 'Enter an integer number'})
-      .min(MIN_SERVINGS_NUMBER, {message: `Min number of servings is ${MIN_SERVINGS_NUMBER}`})
-      .max(MAX_SERVINGS_NUMBER, {message: `Max number of servings is ${MAX_SERVINGS_NUMBER}`}),
-  description: z
-      .string()
-      .trim()
-      .min(0)
-      .max(MAX_RECIPE_DESCRIPTION_LEN, {message: `Enter no more than ${MAX_RECIPE_DESCRIPTION_LEN} characters`}),
-  diets: z.array(dietSchema),
-  ingredients: z.array(ingredientSchema),
-  steps: z.array(stepSchema).transform((steps) => {
-    // add indexes to steps to make sure they are in correct order
-    return steps.map((step, index) => ({
-      ...step,
-      number: index + 1
-    }))
-  })
-})
+import { useEffect, useState } from "react";
+import {
+  formSchema,
+} from "@/components/CreateRecipeForm/schemas.ts";
+import {useNavigate} from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { TRecipeDetails } from "@/types/TRecipeDetails.ts";
+import { editRecipe } from "@/services/editRecipe.ts";
+import { ImageLabelAndPreview } from "@/components/CreateRecipeForm/ImageLabelAndPreview.tsx";
 
 const FormLabelStyled = styled(FormLabel).attrs({
   className: 'text-2xl'
 })``
 
-// Form to create a new recipe
-export function CreateRecipeForm() {
-  // state used to store value of image for upload
+type CreateRecipeFormProps = {
+  mode?: "create" | "edit"
+  initialData?: TRecipeDetails
+  recipeId?: string
+}
+
+// Form to create a new recipe or edit an existing one
+export function CreateRecipeForm({mode = "create", initialData, recipeId}: CreateRecipeFormProps) {
+  // Used to store value of image for upload
   const [imageFile, setImageFile] = useState<File | undefined>(undefined)
   const [imageFileValue, setImageFileValue] = useState('')
+  // Used to store recipe image url if exists (in edit mode)
+  const [onlineImageUrl, setOnlineImageUrl] = useState<string | null>(null)
+  // Used to check if recipe is uploading
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  // Used for managing cache data
+  const queryClient = useQueryClient()
+  // Used for redirecting
+  const navigate = useNavigate();
+
+  // Set initial data (in edit mode)
+  useEffect(() => {
+    if (initialData) {
+      console.log(initialData)
+      for (const [key, value] of Object.entries(initialData)) {
+        // @ts-expect-error Key will always be of type one of the keys in initialData
+        form.setValue(key, value)
+      }
+
+      // Check is recipe contains image
+      if (initialData.image) {
+        setOnlineImageUrl(initialData.image)
+        form.setValue('image', undefined)
+      }
+    }
+  }, []);
 
   // Code executed after submitting a form
-  async function handleSubmit(values: z.infer<typeof formSchema>) {
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values)
 
-    // show a loading toast
-    const loadingToastId = toast.loading('Creating a recipe...')
+    // Choose messages depending on mode
+    const SUCCESS_MESSAGE = mode === "create" ? POST_RECIPE_SUCCESS_MESSAGE : EDIT_RECIPE_SUCCESS_MESSAGE
+    const ERROR_MESSAGE = mode === "create" ? POST_RECIPE_ERROR_MESSAGE : EDIT_RECIPE_ERROR_MESSAGE
+
+    // Show a loading toast
+    const loadingToastId = toast.loading(mode === "create" ? 'Creating a recipe...' : 'Saving changes...')
+    setIsLoading(true)
 
     try {
-      // post recipe data to database
-      const response = await postRecipe(values)
+      // Choose service depending on mode
+      const response = mode === "edit" && recipeId
+        ? await editRecipe(values, queryClient, recipeId)
+        : await postRecipe(values, queryClient)
 
       if(response.success) {
-        // dismiss a loading toast and show a success toast
+        // Dismiss a loading toast and show a success toast
         toast.dismiss(loadingToastId)
-        toast.success(POST_RECIPE_SUCCESS_MESSAGE)
-        console.log(response.message)
+        toast.success(SUCCESS_MESSAGE)
 
-        // REDIRECT TO NEWLY CREATED RECIPE HERE
+        // Redirect to a newly created recipe
+        setTimeout(() => {
+          navigate({
+            pathname: `/user/recipes/${response.id}`,
+          })
+        }, 1000)
       }
       else {
-        // dismiss a loading toast and show an error toast
+        // Dismiss a loading toast and show an error toast
         toast.dismiss(loadingToastId)
-        toast.error(POST_RECIPE_ERROR_MESSAGE)
-        console.error(`${POST_RECIPE_ERROR_MESSAGE}: ${response.message}`)
-        console.error(response.message)
+        setIsLoading(false)
+        toast.error(ERROR_MESSAGE)
+        console.error(`${ERROR_MESSAGE}: ${response.message}`)
       }
     }
     catch(error) {
-      // dismiss a loading toast and show an error toast
+      // Dismiss a loading toast and show an error toast
       toast.dismiss(loadingToastId)
-      toast.error(POST_RECIPE_ERROR_MESSAGE)
-      console.error(`${POST_RECIPE_ERROR_MESSAGE}: ${error}`)
+      setIsLoading(false)
+      toast.error(ERROR_MESSAGE)
+      console.error(`${ERROR_MESSAGE}: ${error}`)
     }
   }
 
   // React Hook Form definition
   const form = useForm<z.infer<typeof formSchema>>({
-    // use forSchema to validate form data
+    // Use forSchema to validate form data
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
@@ -165,7 +142,8 @@ export function CreateRecipeForm() {
         {
           instruction: ''
         }
-      ]
+      ],
+      imageChanged: false
     }
   })
 
@@ -173,7 +151,9 @@ export function CreateRecipeForm() {
     // form.trigger('image').then(() => {
       setImageFile(undefined)
       setImageFileValue('')
+      setOnlineImageUrl(null)
       form.setValue('image', undefined)
+      form.setValue('imageChanged', true)
     // })
   }
 
@@ -182,10 +162,15 @@ export function CreateRecipeForm() {
     deleteImage()
   }
 
+  // Navigate back on cancel (in edit mode)
+  const handleCancel = () => {
+    navigate(-1)
+  }
+
   return (
       <>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className={'flex flex-col gap-y-5 max-w-[40rem] overflow-y-hidden'}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className={'flex flex-col gap-y-5 max-w-[40rem]'}>
             {/*#region Title input*/}
             <FormField
                 name={'title'}
@@ -211,24 +196,26 @@ export function CreateRecipeForm() {
                     <FormControl>
                       <div className={'pt-1'}>
                         {/*Visible label for uploading files to input*/}
-                        {!imageFile && (
-                            <Label htmlFor={'imageUploadInput'} className={'block w-full sm:max-w-96 cursor-pointer'}>
-                              <Card>
-                                <CardContent className={'w-full h-full flex justify-center items-center text-lg hover:underline underline-offset-2 decoration-2 p-5'}>
-                                  Upload image
-                                </CardContent>
-                              </Card>
-                            </Label>
-                        )}
+                        {/*{!imageFile && !onlineImageUrl && (*/}
+                        {/*    <Label htmlFor={'imageUploadInput'} className={'block w-full sm:max-w-96 cursor-pointer'}>*/}
+                        {/*      <Card>*/}
+                        {/*        <CardContent className={'w-full h-full flex justify-center items-center text-lg hover:underline underline-offset-2 decoration-2 p-5'}>*/}
+                        {/*          Upload image*/}
+                        {/*        </CardContent>*/}
+                        {/*      </Card>*/}
+                        {/*    </Label>*/}
+                        {/*)}*/}
 
-                        {/*Preview of an image to upload - show when file is set*/}
-                        {imageFile && (
-                            <div className={'w-full max-w-96 mb-2'}>
-                              <AspectRatio ratio={3 / 2}>
-                                <ImagePreview file={imageFile} deleteImage={deleteImage} handleImageError={handleImageError}/>
-                              </AspectRatio>
-                            </div>
-                        )}
+                        {/*/!*Preview of an image to upload - show when file is set*!/*/}
+                        {/*{imageFile || onlineImageUrl && (*/}
+                        {/*    <div className={'w-full max-w-96 mb-2'}>*/}
+                        {/*      <AspectRatio ratio={3 / 2}>*/}
+                        {/*        <ImagePreview file={imageFile} deleteImage={deleteImage} handleImageError={handleImageError} onlineImageUrl={onlineImageUrl}/>*/}
+                        {/*      </AspectRatio>*/}
+                        {/*    </div>*/}
+                        {/*)}*/}
+
+                        <ImageLabelAndPreview imageFile={imageFile} onlineImageUrl={onlineImageUrl} deleteImage={deleteImage} handleImageError={handleImageError}/>
 
                         <Input
                             {...field}
@@ -240,6 +227,8 @@ export function CreateRecipeForm() {
                             onChange={(e) => {
                               setImageFileValue(e.target.value)
                               form.setValue('image', e.target.files?.[0])
+                              form.setValue('imageChanged', true)
+                              console.log(form.getValues())
 
                               // Trigger field validation
                               form.trigger('image').then((valid) => {
@@ -320,23 +309,25 @@ export function CreateRecipeForm() {
             <div className={'flex flex-wrap gap-5'}>
               {availableDietItems.map((diet) => (
                 <FormField
-                    key={diet.id}
+                    key={diet.value}
                     name={'diets'}
                     control={form.control}
                     render={({field}) => {
                       return (
-                          <FormItem key={diet.id}>
+                          <FormItem key={diet.value}>
                             <FormControl>
                               <Checkbox
                                 onCheckedChange={(checked) => {
                                   return checked
-                                    ? field.onChange([...field.value, diet.id])
+                                    ? field.onChange([...field.value, diet.value])
                                     : field.onChange(
                                         field.value?.filter(
-                                            (value) => value !== diet.id
+                                            (value) => value !== diet.value
                                         )
                                       )
-                                }}/>
+                                }}
+                                // Check initial diets (in edit mode)
+                                checked={form.getValues('diets').includes(diet.value)}/>
                             </FormControl>
                             <FormLabel className={'ml-2 cursor-pointer'}>
                               {diet.label}
@@ -349,7 +340,20 @@ export function CreateRecipeForm() {
             {/*#endregion*/}
             <IngredientsDynamicList form={form}/>
             <StepsDynamicList form={form}/>
-            <Button type={'submit'} className={'mt-5'}>Create</Button>
+            <div className={'mt-5 grid grid-flow-col auto-cols-fr gap-x-2'}>
+              {/* Cancel button (in edit mode) */}
+              {mode === "edit" && (
+                <Button type={'button'} variant={'accent'} className={'col-span-1'}
+                        disabled={isLoading}
+                        onClick={handleCancel}>Cancel</Button>
+              )}
+              {/* Creat or save changes button */}
+              <Button type={'submit'} className={'select-none transition col-span-2'} disabled={isLoading}>
+                {mode === "create"
+                  ? "Create"
+                  : "Save changes"}
+              </Button>
+            </div>
           </form>
         </Form>
       </>

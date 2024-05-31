@@ -1,5 +1,5 @@
 import multer from "multer";
-import {ACCEPTED_IMAGE_TYPES, MAX_RECIPE_IMAGE_SIZE} from "../constants.js";
+import {ACCEPTED_IMAGE_TYPES, MAX_RECIPE_IMAGE_SIZE} from "../constants.mjs";
 
 export function uploadFile() {
     const upload = multer({
@@ -39,7 +39,6 @@ export function uploadFile() {
                     catch (error) {
                         res.status(400).json({success: false, message: 'Invalid JSON format'})
                     }
-
 
                     next()
                 }

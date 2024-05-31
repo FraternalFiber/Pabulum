@@ -1,7 +1,16 @@
 import { z } from 'zod';
-import {RECIPE} from "./constants.mjs";
+import { AVAILABLE_FILTER_ITEMS, RECIPE } from "../constants.mjs";
 import _ from 'lodash'
-import {AVAILABLE_DIETS} from "../constants.js";
+
+const ingredientSchema = z.object({
+    number: z.coerce.number().int().positive(),
+    name: z.string().trim()
+      .min(1, {message: 'Ingredient name missing'})
+      .max(RECIPE.MAX_INGREDIENT_NAME_LEN, {message: 'Ingredient name too long'}),
+    quantity: z.string().trim()
+      .max(30, {message: 'Ingredient quantity too large'})
+      .optional()
+})
 
 const stepSchema = z.object({
     number: z.coerce.number().int().positive(),
@@ -11,12 +20,12 @@ const stepSchema = z.object({
 })
 
 // Schema for a single diet, checks if diet is in a list of available diets
-const dietSchema = z.string().refine(diet => AVAILABLE_DIETS.includes(diet),{
-    message: 'Invalid diet, must be one of: ' + AVAILABLE_DIETS.join(', ')
+const dietSchema = z.string().refine(diet => AVAILABLE_FILTER_ITEMS.DIETS.includes(diet),{
+    message: 'Invalid diet, must be one of: ' + AVAILABLE_FILTER_ITEMS.DIETS.join(', ')
 })
 
 // Schema for validation of recipes in form
-export const recipeAddSchema = z.object({
+export const userRecipeAddSchema = z.object({
     title: z.string().trim()
         .min(1, {message: 'Title missing'})
         .max(RECIPE.MAX_RECIPE_TITLE_LEN, {message: 'Title too long'}),
@@ -30,16 +39,12 @@ export const recipeAddSchema = z.object({
         .min(0)
         .max(RECIPE.MAX_RECIPE_DESCRIPTION_LEN, {message: 'Description too long'}),
     diets: z.array(dietSchema).optional(),
-    ingredients: z.array(z.object({
-        name: z.string().trim()
-            .min(1, {message: 'Ingredient name missing'})
-            .max(RECIPE.MAX_INGREDIENT_NAME_LEN, {message: 'Ingredient name too long'}),
-        quantity: z.string().trim()
-            .max(30, {message: 'Ingredient quantity too large'})
-            .optional()
-    })),
-    // Check if steps numbers are unique
+    ingredients: z.array(ingredientSchema)
+      // Check if ingredients numbers are unique
+      .refine((ingredients) => _.isEqual(ingredients, _.uniqBy(ingredients, 'number'))),
     steps: z.array(stepSchema)
-        .refine(steps => _.isEqual(steps, _.uniqBy(steps, 'number')),
-            {message: 'Steps numbers must be unique'})
+        // Check if steps numbers are unique
+        .refine((steps) => _.isEqual(steps, _.uniqBy(steps, 'number')),
+            {message: 'Steps numbers must be unique'}),
+    imageChanged: z.boolean()
 });

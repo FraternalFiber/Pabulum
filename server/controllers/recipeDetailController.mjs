@@ -1,5 +1,5 @@
-import round from 'lodash.round'
-import {SPOONACULAR_APIKEY} from "../constants.js";
+import _ from "lodash"
+import {SPOONACULAR_APIKEY} from "../constants.mjs";
 const NUTRIENTS_TO_SHOW = ['Calories', 'Fat', 'Saturated Fat', 'Carbohydrates', 'Sugar', 'Cholesterol', 'Protein']
 
 // let test_counter = 0;
@@ -16,22 +16,31 @@ export const recipeDetailController = async (req, res) => {
     // url to a test recipe
     // const url = 'http://127.0.0.1:42069/recipe/test'
 
-    // console.log("recipe url: ", url);
+    console.log("recipe url: ", url);
     // test_counter++;
     // console.log('Details fetch: ' + test_counter)
 
     try
     {
         fetch(url)
-            .then((response) => response.json())
+            .then((response) => {
+              if (!response.ok) {
+                throw {
+                  status: response.status,
+                  statusText: response.statusText
+                }
+              }
+
+              return response.json()
+            })
             .then((data) => {
-                // remove ingredients that don't exist in API's database anymore from given list
+                // Remove ingredients that don't exist in API's database anymore from given list
                 let ingredients = data.extendedIngredients.filter(object => object.id !== -1);
 
-                // remove ingredients duplicates based on id
+                // Remove ingredients duplicates based on id
                 ingredients = [...ingredients.reduce((acc, item) => acc.set(item.id, item), new Map()).values()]
 
-                // change weird values of ingredient amount
+                // Change weird values of ingredient amount
                 ingredients.map((ingredient) => {
                     if (ingredient.amount > (1/3 - 0.001) && ingredient.amount < (1/3 + 0.001)) {
                         ingredient.amount = '⅓';
@@ -41,7 +50,7 @@ export const recipeDetailController = async (req, res) => {
                     }
                 })
 
-                // extract specific properties from ingredients
+                // Extract specific properties from ingredients
                 const cleanIngredients = []
                 ingredients.map((ingredient) => {
                     cleanIngredients.push({
@@ -50,15 +59,15 @@ export const recipeDetailController = async (req, res) => {
                     })
                 })
 
-                // create a diets array from specific recipe properties
+                // Create a diets array from specific recipe properties
                 const diets = []
-                if(data.vegetarian) diets.push('Vegetarian')
-                if(data.vegan) diets.push('Vegan')
-                if(data.glutenFree) diets.push('Gluten free')
-                if(data.dairyFree) diets.push('Dairy free')
-                if(data.diets.includes('ketogenic')) diets.push('Ketogenic')
+                if(data.vegetarian) diets.push('vegetarian')
+                if(data.vegan) diets.push('vegan')
+                if(data.glutenFree) diets.push('gluten free')
+                if(data.dairyFree) diets.push('dairy free')
+                if(data.diets.includes('ketogenic')) diets.push('ketogenic')
 
-                // create a steps array to omit unnecessary properties and for names consistency
+                // Create a steps array to omit unnecessary properties and for names consistency
                 const steps = []
                 data.analyzedInstructions[0].steps.forEach((step) => {
                     steps.push({
@@ -67,18 +76,18 @@ export const recipeDetailController = async (req, res) => {
                     })
                 })
 
-                // filter nutrients based on NUTRIENTS_TO_SHOW and extract specific properties
+                // Filter nutrients based on NUTRIENTS_TO_SHOW and extract specific properties
                 const nutrients = []
                 data.nutrition.nutrients.forEach((nutrient) => {
                     if(NUTRIENTS_TO_SHOW.includes(nutrient.name)) {
                         nutrients.push({
                             name: nutrient.name,
-                            quantity: `${round(nutrient.amount, 1)} ${nutrient.unit}`.trim()
+                            quantity: `${_.round(nutrient.amount, 1)} ${nutrient.unit}`.trim()
                         })
                     }
                 })
 
-                // create a final recipe object to send
+                // Create a final recipe object to send
                 const recipe = {
                     image: data.image,
                     title: data.title,
@@ -94,7 +103,12 @@ export const recipeDetailController = async (req, res) => {
             })
             .catch((error) => {
                 console.error('Error fetching data from external API: ', error);
-                res.status(500).json({ error: 'An error occurred while fetching data' });
+
+                if (error.status) {
+                  return res.status(error.status).json({ error: error.statusText})
+                }
+
+                return res.status(500).json({ error: 'An error occurred while fetching data' });
             })
     }
     catch (error)

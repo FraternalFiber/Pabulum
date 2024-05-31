@@ -3,7 +3,7 @@ import * as path from "node:path";
 const __dirname = path.resolve(path.dirname(''));
 const filePath = path.join(__dirname + '/recipe.json')
 
-// controller returning a saved recipe from file for testing purposes
+// Controller returning a saved recipe from file for testing purposes
 export const testRecipeController = async (req, res) => {
     try
     {

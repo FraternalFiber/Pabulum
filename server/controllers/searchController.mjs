@@ -1,9 +1,11 @@
-import {SPOONACULAR_APIKEY} from "../constants.js";
+import {SPOONACULAR_APIKEY} from "../constants.mjs";
 
 // let test_counter = 0;
 
 export const searchController = async (req, res) => {
     const data = req.query
+
+    const limit = 9;
 
     // Add search params to url only if they are not undefined
     const searchParams = Object.assign({},
@@ -17,7 +19,7 @@ export const searchController = async (req, res) => {
     const url = 'https://api.spoonacular.com/recipes/complexSearch?' + new URLSearchParams({
         apiKey: SPOONACULAR_APIKEY,
         // Number of results to be returned
-        number: 9,
+        number: limit,
         // To make sure api gives only recipes that include whole instructions list
         instructionsRequired: true,
         ...searchParams
@@ -30,6 +32,12 @@ export const searchController = async (req, res) => {
     fetch(url)
         .then((response) => response.json())
         .then((data) => {
+            // Delete imageType property from results
+            data.results.forEach((result) => {
+                if (result.imageType) {
+                    delete result.imageType
+                }
+            })
             res.json(data);
         })
         .catch((error) => {
