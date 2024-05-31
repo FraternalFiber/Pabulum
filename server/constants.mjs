@@ -1,6 +1,6 @@
 export const SPOONACULAR_APIKEY = process.env.SPOONACULAR_APIKEY;
-export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png']
-export const MAX_RECIPE_IMAGE_SIZE = 5242881 // 5 MB + 1 (BUG: multer doesn't accept files with exact max size)
+export const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png"];
+export const MAX_RECIPE_IMAGE_SIZE = 5242881; // 5 MB + 1 (BUG: multer doesn't accept files with exact max size)
 
 export const RECIPE = {
   MAX_STEP_INSTRUCTION_LEN: 1000,
@@ -14,8 +14,8 @@ export const RECIPE = {
   MAX_RECIPE_DESCRIPTION_LEN: 2000,
   MAX_INGREDIENT_NAME_LEN: 80,
   MAX_INGREDIENT_QUANTITY_LEN: 30,
-  MAX_SEARCH_QUERY_LEN: 80
-}
+  MAX_SEARCH_QUERY_LEN: 80,
+};
 
 export const AVAILABLE_FILTER_ITEMS = {
   DIETS: [
@@ -23,7 +23,7 @@ export const AVAILABLE_FILTER_ITEMS = {
     "vegan",
     "gluten free",
     "ketogenic",
-    "dairy free"
+    "dairy free",
   ],
   CUISINES: [
     "african",
@@ -55,19 +55,19 @@ export const AVAILABLE_FILTER_ITEMS = {
     "vietnamese",
   ],
   MEAL_TYPES: [
-    'main course',
-    'side dish',
-    'dessert',
-    'appetizer',
-    'salad',
-    'bread',
-    'breakfast',
-    'soup',
-    'beverage',
-    'sauce',
-    'marinade',
-    'fingerfood',
-    'snack',
-    'drink',
-  ]
+    "main course",
+    "side dish",
+    "dessert",
+    "appetizer",
+    "salad",
+    "bread",
+    "breakfast",
+    "soup",
+    "beverage",
+    "sauce",
+    "marinade",
+    "fingerfood",
+    "snack",
+    "drink",
+  ],
 };

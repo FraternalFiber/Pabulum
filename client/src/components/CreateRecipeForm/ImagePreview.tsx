@@ -1,65 +1,77 @@
-import {useEffect, useState} from "react";
-import {cn} from "@/lib/utils.ts";
-import {Trash2} from "lucide-react";
-import {Button} from "@/components/ui/button.tsx";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils.ts";
+import { Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button.tsx";
 
 type ImagePreviewProps = {
-  file: File | undefined
-  deleteImage: () => void
-  handleImageError: () => void
-  onlineImageUrl: string | null
-}
+  file: File | undefined;
+  deleteImage: () => void;
+  handleImageError: () => void;
+  onlineImageUrl: string | null;
+};
 
 // Preview of an image to upload
-export function ImagePreview({file, deleteImage, handleImageError, onlineImageUrl}: ImagePreviewProps) {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [showImage, setShowImage] = useState<boolean>(false)
+export function ImagePreview({
+  file,
+  deleteImage,
+  handleImageError,
+  onlineImageUrl,
+}: ImagePreviewProps) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [showImage, setShowImage] = useState<boolean>(false);
 
   useEffect(() => {
     // Return nothing when there is no file
     if (!file && !onlineImageUrl) {
-      return
+      return;
     }
 
     if (file) {
       // Create a URL object to be used as src of image preview
-      setPreviewUrl(URL.createObjectURL(file))
-    }
-    else if (onlineImageUrl) {
-      setPreviewUrl(onlineImageUrl)
+      setPreviewUrl(URL.createObjectURL(file));
+    } else if (onlineImageUrl) {
+      setPreviewUrl(onlineImageUrl);
     }
 
     // Revoke object URL on unmount or file change to prevent memory leaks
     return () => {
       if (previewUrl) {
-        URL.revokeObjectURL(previewUrl)
+        URL.revokeObjectURL(previewUrl);
       }
-    }
-  }, [file])
+    };
+  }, [file]);
 
   const handleImageLoad = () => {
-    setShowImage(true)
-    console.log('image loaded')
-  }
+    setShowImage(true);
+    console.log("image loaded");
+  };
 
   return (
-      <div className={'relative w-full h-full'}>
-        {/* Show image when previewUrl is set */}
-        {previewUrl && (
-            <>
-              <img src={previewUrl}
-                   alt={'Uploaded image preview'}
-                   onLoad={handleImageLoad}
-                   onError={handleImageError}
-                   className={cn('rounded-sm w-full h-full object-cover object-center bg-secondary', showImage ? 'block' : 'hidden')}/>
-              <Button
-                  type={'button'}
-                  className={'absolute -top-3 -right-3 pr-2 pl-2 rounded-full bg-secondary hover:bg-destructive'}
-                  onClick={deleteImage}>
-                <Trash2/>
-              </Button>
-            </>
-        )}
-      </div>
-  )
+    <div className={"relative w-full h-full"}>
+      {/* Show image when previewUrl is set */}
+      {previewUrl && (
+        <>
+          <img
+            src={previewUrl}
+            alt={"Uploaded image preview"}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+            className={cn(
+              "rounded-sm w-full h-full object-cover object-center bg-secondary",
+              showImage ? "block" : "hidden",
+            )}
+          />
+          <Button
+            type={"button"}
+            className={
+              "absolute -top-3 -right-3 pr-2 pl-2 rounded-full bg-secondary hover:bg-destructive"
+            }
+            onClick={deleteImage}
+          >
+            <Trash2 />
+          </Button>
+        </>
+      )}
+    </div>
+  );
 }

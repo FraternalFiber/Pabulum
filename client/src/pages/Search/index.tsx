@@ -7,16 +7,16 @@ import { Heading } from "@/components/Heading";
 // Page to search for recipes
 export function Search() {
   useEffect(() => {
-    document.title = "Search recipes - Pabulum"
-  }, [])
+    document.title = "Search recipes - Pabulum";
+  }, []);
 
   return (
-      <>
-        <Menu/>
-        <Main>
-          <Heading content={'Find your favourite recipes'}/>
-          <SearchForm/>
-        </Main>
-      </>
-  )
+    <>
+      <Menu />
+      <Main>
+        <Heading content={"Find your favourite recipes"} />
+        <SearchForm />
+      </Main>
+    </>
+  );
 }
