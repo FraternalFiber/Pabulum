@@ -5,29 +5,28 @@ import { QueryClient } from "@tanstack/react-query";
 export const postRecipe = async (data: any, queryClient: QueryClient) => {
   try {
     // Create a formData object to store data from multipart/form-data form
-    const formData = new FormData()
+    const formData = new FormData();
 
     // Append image to formData without JSON transformation and delete it from data object
-    formData.append('image', data.image)
-    delete data.image
+    formData.append("image", data.image);
+    delete data.image;
 
     // Convert every property except image to JSON string format
     for (const key in data) {
-      formData.append(key, JSON.stringify(data[key]))
+      formData.append(key, JSON.stringify(data[key]));
     }
 
     const response = await fetch(`${BACKEND_SERVER_URL}/user/recipes`, {
       method: "POST",
-      body: formData
-    })
+      body: formData,
+    });
 
     // Remove all user search results from cache (to have fresh data)
-    queryClient.removeQueries({queryKey: ["userSearchResults"]})
+    queryClient.removeQueries({ queryKey: ["userSearchResults"] });
 
-    return response.json()
+    return response.json();
+  } catch (error) {
+    console.error(`Post recipe error: ${error}`);
+    throw error;
   }
-  catch (error) {
-    console.error(`Post recipe error: ${error}`)
-    throw error
-  }
-}
+};
