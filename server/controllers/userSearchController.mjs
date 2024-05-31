@@ -6,13 +6,11 @@ export const userSearchController = async (req, res) => {
     const offset = data.offset || 0;
     const limit = 9;
 
-    console.log(data);
-    console.log(offset);
 
     const searchAll = data.q === undefined && data.diet === undefined;
 
     const searchParams = Object.assign({},
-        data.q === undefined ? "" : {query: data.q.toLowerCase()},
+        data.q === undefined ? {query: ""} : {query: data.q.toLowerCase()},
         // Check if value is undefined / array / string - array needs to be printed with commas in between
         data.diet === undefined ? {diet: []} : {diet: Array.isArray(data.diet) ? data.diet: [data.diet]}
     );
@@ -20,52 +18,27 @@ export const userSearchController = async (req, res) => {
 
     try
     {
-        let collectionRef;
+        let collectionRef = db.collection('recipes').orderBy('title');// Order the collection by title
 
         // Query for all recipes
-        if(searchAll)
+        // if(!searchAll)
+        // {
+        //     // Check for diets
+        //     // searchParams.diet.forEach(diet => {
+        //     //     collectionRef = collectionRef.where("diets.name", "array-contains", diet);
+        //     // });
+        //
+        // }
+
+        if (offset > 0)
         {
-            collectionRef = db.collection('recipes').orderBy('title'); // Order the collection by title
+            const snapshot = await collectionRef.limit(offset * limit).get(); // Get the last document of the previous page
+            const lastDoc = snapshot.docs[snapshot.docs.length - 1];
 
-            if (offset > 0)
-            {
-                console.log("offset")
-                const snapshot = await collectionRef.limit(offset * limit).get(); // Get the last document of the previous page
-                const lastDoc = snapshot.docs[snapshot.docs.length - 1];
-
-                collectionRef = collectionRef.startAfter(lastDoc).limit(limit); // Start after the last document of the previous page
-            } else
-            {
-                collectionRef = collectionRef.limit(limit); // If there's no offset, just limit the results
-            }
-        }
-        // Query for recipes with filters included
-        else
+            collectionRef = collectionRef.startAfter(lastDoc).limit(limit); // Start after the last document of the previous page
+        } else
         {
-            // Add search params to url only if they are not undefined
-
-
-            // get recipes with specific name
-            // collectionRef = db.collection('recipes').where('title', '==', query);
-
-            // disabled /doesn't work
-            // get recipes with specific name (case insensitive)
-            /*collectionRef = await db.collection('recipes')
-                .where('title', '>=', searchParams.query)
-                .where('title', '<=', searchParams.query + '\uf8ff')
-                .limit(limit);*/
-
-            // Check for names has to be handled later on, since firebase doesn't support case insensitive query
-            collectionRef = await db.collection('recipes');
-
-            // Check for diets
-            searchParams.diet.forEach(diet => {
-                collectionRef = collectionRef.where('diets.name', 'array-contains', diet)
-            });
-
-            // Move it by offset and  limit it
-            const actualOffset = await collectionRef.doc('offset').get();
-            collectionRef = collectionRef.startAfter(actualOffset).limit(limit);
+            collectionRef = collectionRef.limit(limit); // If there's no offset, just limit the results
         }
 
         const snapshot = await collectionRef.get();
@@ -75,23 +48,32 @@ export const userSearchController = async (req, res) => {
         {
             const recipe = doc.data();
 
-            /*
-            // Fetch diets subcollection
-            const dietsSnapshot = await doc.ref.collection('diets').get();
-            recipe.diets = dietsSnapshot.docs.map(doc => doc.data());
-
-            // Fetch ingredients subcollection
-            const ingredientsSnapshot = await doc.ref.collection('ingredients').get();
-            recipe.ingredients = ingredientsSnapshot.docs.map(doc => doc.data());
-
-            // Fetch steps subcollection
-            const stepsSnapshot = await doc.ref.collection('steps').get();
-            recipe.steps = stepsSnapshot.docs.map(doc => doc.data());
-            */
-
             if(!searchAll)
             {
-                if(!recipe.title.toLowerCase().includes(searchParams.query))
+                // check if name matches query
+                if(searchParams.query !== "" && !recipe.title.toLowerCase().includes(searchParams.query))
+                {
+                    continue;
+                }
+
+                // Fetch diets subcollection
+                let dietsMatch = true;
+                const dietsSnapshot = await doc.ref.collection('diets').get();
+                searchParams.diet.forEach(diet => {
+                    let found = false;
+                    dietsSnapshot.forEach((dietDoc) => {
+                        const dietName = dietDoc.data().name;
+                        if(dietName === diet)
+                        {
+                            found = true;
+                        }
+                    });
+                    if(!found)
+                    {
+                        dietsMatch = false;
+                    }
+                });
+                if(!dietsMatch)
                 {
                     continue;
                 }
