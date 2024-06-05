@@ -1,39 +1,28 @@
-// // __tests__/Search.test.js
-// import { render } from '@testing-library/react';
-// import '@testing-library/jest-dom/extend-expect';
-// import { Search } from '@/pages/Search/index.tsx';
-// import { Menu } from '@/components/Menu';
-// import { Main } from '@/components/Main';
-// import { SearchForm } from '@/components/SearchForm';
-// import { Heading } from '@/components/Heading';
-// import {expect} from '@jest/globals';
-// import '@testing-library/jest-dom'
-//
-// // Mock the imported components
-// jest.mock('@/components/Menu');
-// jest.mock('@/components/Main');
-// jest.mock('@/components/SearchForm');
-// jest.mock('@/components/Heading');
-//
-// describe('Search Component', () => {
-//   beforeEach(() => {
-//     Menu.mockImplementation(() => <div>Menu Component</div>);
-//     Main.mockImplementation(({ children }) => <div>{children}</div>);
-//     SearchForm.mockImplementation(() => <div>SearchForm Component</div>);
-//     Heading.mockImplementation(({ content }) => <div>{content}</div>);
-//   });
-//
-//   it('should render the Search component correctly', () => {
-//     const { getByText } = render(<Search />);
-//
-//     // Check if components are rendered
-//     expect(getByText('Menu Component')).toBeInTheDocument();
-//     expect(getByText('Find your favourite recipes')).toBeInTheDocument();
-//     expect(getByText('SearchForm Component')).toBeInTheDocument();
-//   });
-//
-//   it('should set document.title to "Search recipes - Pabulum"', () => {
-//     render(<Search />);
-//     expect(document.title).toBe('Search recipes - Pabulum');
-//   });
-// });
+import { render } from "@testing-library/react";
+import { Search } from "@/pages/Search";
+import "@testing-library/jest-dom";
+
+// Mock the imported components
+jest.mock("@/components/SearchForm", () => ({
+  SearchForm: () => <div>SearchForm component</div>,
+}));
+jest.mock("@/components/Heading", () => ({
+  Heading: ({ content }: { content: string }) => <div>{content}</div>,
+}));
+
+describe("Search page", () => {
+  it("should render correctly", () => {
+    const { getByText } = render(<Search />);
+
+    // Check if the Heading component is rendered with correct text
+    expect(getByText("Find your favourite recipes")).toBeInTheDocument();
+
+    // Check if the SearchForm component is rendered
+    expect(getByText("SearchForm component")).toBeInTheDocument();
+  });
+
+  it('should set document.title to "Search recipes - Pabulum"', () => {
+    render(<Search />);
+    expect(document.title).toBe("Search recipes - Pabulum");
+  });
+});

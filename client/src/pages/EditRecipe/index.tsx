@@ -19,7 +19,6 @@ export function EditRecipe() {
   }, []);
 
   // To be improved: code duplication
-
   if (isLoading) {
     return (
       <>

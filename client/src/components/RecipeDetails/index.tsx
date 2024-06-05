@@ -39,7 +39,7 @@ function RecipeLabel({ children }: RecipeLabelProps) {
   return <div className={"text-2xl font-medium mb-2"}>{children}</div>;
 }
 
-type RecipeDetailsProps = {
+export type RecipeDetailsProps = {
   recipeId: string;
   dataSource: TDataSource;
 };

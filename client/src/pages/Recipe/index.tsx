@@ -12,11 +12,9 @@ export function Recipe({ dataSource }: RecipeProps) {
   const { id = "" } = useParams<{ id: string }>();
 
   return (
-    <>
-      <div className={"mt-2"}>
-        <BackButton className={"mb-8"} />
-        <RecipeDetails recipeId={id} dataSource={dataSource} />
-      </div>
-    </>
+    <div className={"mt-2"}>
+      <BackButton className={"mb-8"} />
+      <RecipeDetails recipeId={id} dataSource={dataSource} />
+    </div>
   );
 }
