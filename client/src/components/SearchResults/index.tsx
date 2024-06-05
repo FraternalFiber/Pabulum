@@ -1,4 +1,4 @@
-import { RecipeResultCard } from "@/components/RecipeResultCard/index.js";
+import { RecipeResultCard } from "@/components/RecipeResultCard/index.tsx";
 import { useRecipes } from "@/services/useRecipes.ts";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
