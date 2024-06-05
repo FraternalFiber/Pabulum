@@ -1,5 +1,3 @@
-import { Menu } from "@/components/Menu";
-import { Main } from "@/components/Main";
 import { useEffect } from "react";
 
 export function Discover() {
@@ -7,10 +5,5 @@ export function Discover() {
     document.title = "Discover - Pabulum";
   }, []);
 
-  return (
-    <>
-      <Menu />
-      <Main />
-    </>
-  );
+  return <></>;
 }

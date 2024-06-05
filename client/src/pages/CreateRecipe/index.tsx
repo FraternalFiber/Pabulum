@@ -1,5 +1,3 @@
-import { Menu } from "@/components/Menu";
-import { Main } from "@/components/Main";
 import { useEffect } from "react";
 import { Heading } from "@/components/Heading";
 import { CreateRecipeForm } from "@/components/CreateRecipeForm";
@@ -12,11 +10,8 @@ export function CreateRecipe() {
 
   return (
     <>
-      <Menu />
-      <Main>
-        <Heading content={"Create recipe"} />
-        <CreateRecipeForm mode={"create"} />
-      </Main>
+      <Heading content={"Create recipe"} />
+      <CreateRecipeForm mode={"create"} />
     </>
   );
 }
