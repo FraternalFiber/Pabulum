@@ -1,9 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { EditRecipe } from "./";
+import { EditRecipe } from "./index.tsx";
 import * as useRecipeModule from "@/services/useRecipe.ts";
 import { CreateRecipeForm } from "@/components/CreateRecipeForm";
-import { CreateRecipe } from "@/pages/CreateRecipe";
 
 jest.mock("@/services/useRecipe.ts", () => ({
   useRecipe: jest.fn(),
@@ -35,6 +34,27 @@ jest.mock("@/services/useRecipe.ts", () => ({
   useRecipe: jest.fn(),
 }));
 
+const mockRecipeData = {
+  title: "Recipe title",
+  prepTime: 10,
+  servingsNumber: 4,
+  description: "Recipe description",
+  diets: ["vegetarian"],
+  ingredients: [
+    {
+      number: 1,
+      name: "First ingredient",
+      quantity: "1",
+    },
+  ],
+  steps: [
+    {
+      number: 1,
+      instruction: "First step",
+    },
+  ],
+};
+
 describe("EditRecipe", () => {
   beforeEach(() => {
     // Reset mocks before each test
@@ -44,7 +64,13 @@ describe("EditRecipe", () => {
   it("should render the loading state correctly", () => {
     // Mock the useRecipe hook to return the loading state
     const useRecipeMock = jest.spyOn(useRecipeModule, "useRecipe");
-    useRecipeMock.mockReturnValue({
+    // useRecipeMock.mockReturnValue({
+    //   isLoading: true,
+    //   isError: false,
+    //   data: undefined,
+    // });
+
+    (useRecipeMock as jest.Mock).mockReturnValue({
       isLoading: true,
       isError: false,
       data: undefined,
@@ -67,7 +93,12 @@ describe("EditRecipe", () => {
   it("should render the error state correctly", () => {
     // Mock the useRecipe hook to return the error state
     const useRecipeMock = jest.spyOn(useRecipeModule, "useRecipe");
-    useRecipeMock.mockReturnValue({ isLoading: false, isError: true, data: undefined });
+    // useRecipeMock.mockReturnValue({ isLoading: false, isError: true, data: undefined });
+    (useRecipeMock as jest.Mock).mockReturnValue({
+      isLoading: false,
+      isError: true,
+      data: undefined,
+    });
 
     render(
       <MemoryRouter initialEntries={["/recipes/123/edit"]}>
@@ -86,10 +117,10 @@ describe("EditRecipe", () => {
   it("should render the CreateRecipeForm component with the correct props", () => {
     // Mock the useRecipe hook to return the recipe data
     const useRecipeMock = jest.spyOn(useRecipeModule, "useRecipe");
-    useRecipeMock.mockReturnValue({
+    (useRecipeMock as jest.Mock).mockReturnValue({
       isLoading: false,
       isError: false,
-      data: { title: "Recipe Name" },
+      data: mockRecipeData,
     });
 
     render(
@@ -107,13 +138,27 @@ describe("EditRecipe", () => {
 
     // Check if the CreateRecipeForm component is called with the correct props
     expect(CreateRecipeForm).toHaveBeenCalledWith(
-      { mode: "edit", initialData: { id: "123", name: "Recipe Name" }, recipeId: "123" },
+      { mode: "edit", initialData: mockRecipeData, recipeId: "123" },
       {},
     );
   });
 
   it('should set document.title to "Edit recipe - Pabulum"', () => {
-    render(<EditRecipe />);
+    // Mock the useRecipe hook to return the recipe data
+    const useRecipeMock = jest.spyOn(useRecipeModule, "useRecipe");
+    (useRecipeMock as jest.Mock).mockReturnValue({
+      isLoading: false,
+      isError: false,
+      data: mockRecipeData,
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/recipes/123/edit"]}>
+        <Routes>
+          <Route path="/recipes/:id/edit" element={<EditRecipe />} />
+        </Routes>
+      </MemoryRouter>,
+    );
     expect(document.title).toBe("Edit recipe - Pabulum");
   });
 });

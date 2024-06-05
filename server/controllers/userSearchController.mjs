@@ -4,7 +4,7 @@ export const userSearchController = async (req, res) => {
   const data = req.query;
 
   const offset = data.offset || 0;
-  const limit = 9;
+  const limit = 99999; // 9 when pagination is made on frontend
 
 
   const searchAll = data.q === undefined && data.diet === undefined;
