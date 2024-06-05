@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { MyRecipes } from "./";
+import { MyRecipes } from "../index.tsx";
 
 // Mock the Heading and UserSearchForm components
 jest.mock("@/components/Heading", () => ({

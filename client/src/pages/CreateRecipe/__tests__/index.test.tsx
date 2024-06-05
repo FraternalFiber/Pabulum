@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { CreateRecipe } from "./";
+import { CreateRecipe } from "../index.tsx";
 import { CreateRecipeForm } from "@/components/CreateRecipeForm";
 
 // Mock the Heading and CreateRecipeForm components

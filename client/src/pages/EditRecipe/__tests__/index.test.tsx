@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { EditRecipe } from "./index.tsx";
+import { EditRecipe } from "../index.tsx";
 import * as useRecipeModule from "@/services/useRecipe.ts";
 import { CreateRecipeForm } from "@/components/CreateRecipeForm";
 

@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react";
-import { LoadingSkeletons } from "./LoadingSkeletons.tsx";
+import { LoadingSkeletons } from "../LoadingSkeletons.tsx";
 
 describe("LoadingSkeletons", () => {
   it("renders correctly", () => {

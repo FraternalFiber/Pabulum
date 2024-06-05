@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { Recipe } from "./";
+import { Recipe } from "../index.tsx";
 import { RecipeDetails } from "@/components/RecipeDetails";
 import { BackButton } from "@/components/BackButton";
 import * as ReactRouterDom from "react-router-dom";
