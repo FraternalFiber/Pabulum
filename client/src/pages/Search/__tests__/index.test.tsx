@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react";
-import { Search } from "@/pages/Search";
+import { Search } from "../index";
 import "@testing-library/jest-dom";
 
 // Mock the imported components

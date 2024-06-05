@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react";
-import { Pantry } from "@/pages/Pantry";
+import { Pantry } from "../index";
 import "@testing-library/jest-dom";
 
 describe("Pantry page", () => {

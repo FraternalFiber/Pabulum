@@ -1,8 +1,8 @@
 import { render } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { Recipe } from "../index.tsx";
-import { RecipeDetails } from "@/components/RecipeDetails";
-import { BackButton } from "@/components/BackButton";
+import { Recipe } from "../index";
+import { RecipeDetails } from "@/components/RecipeDetails/index.tsx";
+import { BackButton } from "@/components/BackButton/index.tsx";
 import * as ReactRouterDom from "react-router-dom";
 
 // Mock the useParams hook
