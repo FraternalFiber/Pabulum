@@ -21,7 +21,7 @@ jest.mock("@/pages/EditRecipe/LoadingSkeletons.tsx", () => ({
   LoadingSkeletons: jest.fn(() => <div>LoadingSkeletons</div>),
 }));
 
-jest.mock("@/components/ErrorAlert/ErrorAlert.tsx", () => ({
+jest.mock("@/components/ErrorAlert", () => ({
   ErrorAlert: jest.fn(() => <div>ErrorAlert</div>),
 }));
 

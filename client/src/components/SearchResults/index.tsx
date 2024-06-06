@@ -3,7 +3,7 @@ import { useRecipes } from "@/services/useRecipes.ts";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { LoadingSkeletons } from "@/components/SearchResults/LoadingSkeletons.tsx";
-import { ErrorAlert } from "@/components/ErrorAlert/ErrorAlert.tsx";
+import { ErrorAlert } from "@/components/ErrorAlert";
 import { NoResults } from "@/components/SearchResults/NoResults.tsx";
 import { TDataSource } from "@/types/TDataSource.ts";
 import { useUserRecipes } from "@/services/useUserRecipes.ts";

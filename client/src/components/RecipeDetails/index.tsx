@@ -8,7 +8,7 @@ import { TStep } from "@/types/TStep.ts";
 import { Separator } from "@/components/ui/separator.tsx";
 import React, { useState } from "react";
 import { useRecipe } from "@/services/useRecipe.ts";
-import { ErrorAlert } from "@/components/ErrorAlert/ErrorAlert.tsx";
+import { ErrorAlert } from "@/components/ErrorAlert";
 import { LoadingSkeletons } from "@/components/RecipeDetails/LoadingSkeletons.tsx";
 import { TDataSource } from "@/types/TDataSource.ts";
 import { TIngredient } from "@/types/TIngredient.ts";

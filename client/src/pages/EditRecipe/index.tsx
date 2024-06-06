@@ -4,7 +4,7 @@ import { CreateRecipeForm } from "@/components/CreateRecipeForm";
 import { useRecipe } from "@/services/useRecipe.ts";
 import { useParams } from "react-router-dom";
 import { LoadingSkeletons } from "@/pages/EditRecipe/LoadingSkeletons.tsx";
-import { ErrorAlert } from "@/components/ErrorAlert/ErrorAlert.tsx";
+import { ErrorAlert } from "@/components/ErrorAlert";
 import { BackButton } from "@/components/BackButton";
 
 // Page for creating or editing recipe. Default mode is "create".
