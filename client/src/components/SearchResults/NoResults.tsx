@@ -8,7 +8,7 @@ type NoResultsParams = {
 // Alert box showed when no search results found
 export function NoResults({ query }: NoResultsParams) {
   return (
-    <div className={"flex justify-center mt-16"}>
+    <div className={"flex justify-center mt-16"} data-testid="no-results">
       <Alert className={"w-fit pr-8"}>
         <HeartCrack size={20} />
         <AlertTitle className={"ml-1.5"}>No results</AlertTitle>

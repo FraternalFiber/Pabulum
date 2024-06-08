@@ -26,7 +26,7 @@ export function RecipeResultCard({
   const path = dataSource === "online" ? `/recipes/${id}` : `/user/recipes/${id}`;
 
   return (
-    <Link to={path} role={"link"}>
+    <Link to={path} role={"link"} data-testid="recipe-result-card">
       <Card className={cn(className, "w-full hover:bg-secondary")}>
         <CardHeader>
           <CardTitle className={"break-words"}>{title}</CardTitle>

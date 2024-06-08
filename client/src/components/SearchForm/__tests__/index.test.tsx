@@ -18,7 +18,7 @@ describe('SearchForm', () => {
         expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
     });
 
-    //TODO: the rest of coverage
+    //TODO: the rest of coverage for userSearchForm
     /*it('submits the form with valid input', async () => {
         render(
             <QueryClientProvider client={queryClient}>
