@@ -125,7 +125,7 @@ export function SearchForm() {
       {/* If form submitted and query is not empty show search results */}
       {isSubmitted && searchParams && (
         <div className={"mt-7"}>
-          <SearchResults searchParams={searchParams} dataSource={"online"} />
+          <SearchResults searchParams={searchParams} dataSource={"online"} data-testid="search-results"/>
         </div>
       )}
     </>
