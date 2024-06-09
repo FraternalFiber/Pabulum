@@ -64,7 +64,12 @@ function RecipeMenuBar({ dataSource, recipeId, deleteRecipe }: RecipeMenuBarProp
         {/*#region Delete button */}
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button type={"button"} variant={"ghost"} className={"hover:bg-destructive"}>
+            <Button
+              type={"button"}
+              variant={"ghost"}
+              className={"hover:bg-destructive"}
+              data-testid={"delete-recipe-button"}
+            >
               <Trash2 />
             </Button>
           </AlertDialogTrigger>
@@ -81,6 +86,7 @@ function RecipeMenuBar({ dataSource, recipeId, deleteRecipe }: RecipeMenuBarProp
                 type={"button"}
                 className={buttonVariants({ variant: "destructive" })}
                 onClick={deleteRecipe}
+                data-testid={"delete-recipe-confirm-button"}
               >
                 Delete
               </AlertDialogAction>

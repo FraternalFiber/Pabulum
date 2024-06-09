@@ -4,10 +4,6 @@ import { EditRecipe } from "../index.tsx";
 import * as useRecipeModule from "@/services/useRecipe.ts";
 import { CreateRecipeForm } from "@/components/CreateRecipeForm";
 
-jest.mock("@/services/useRecipe.ts", () => ({
-  useRecipe: jest.fn(),
-}));
-
 // Mock the Heading, CreateRecipeForm, LoadingSkeletons, ErrorAlert, and BackButton components
 jest.mock("@/components/Heading", () => ({
   Heading: jest.fn(() => <div>Heading</div>),
@@ -27,11 +23,6 @@ jest.mock("@/components/ErrorAlert", () => ({
 
 jest.mock("@/components/BackButton", () => ({
   BackButton: jest.fn(() => <div>BackButton</div>),
-}));
-
-// Mock the useRecipe hook
-jest.mock("@/services/useRecipe.ts", () => ({
-  useRecipe: jest.fn(),
 }));
 
 const mockRecipeData = {
@@ -64,11 +55,6 @@ describe("EditRecipe", () => {
   it("should render the loading state correctly", () => {
     // Mock the useRecipe hook to return the loading state
     const useRecipeMock = jest.spyOn(useRecipeModule, "useRecipe");
-    // useRecipeMock.mockReturnValue({
-    //   isLoading: true,
-    //   isError: false,
-    //   data: undefined,
-    // });
 
     (useRecipeMock as jest.Mock).mockReturnValue({
       isLoading: true,
