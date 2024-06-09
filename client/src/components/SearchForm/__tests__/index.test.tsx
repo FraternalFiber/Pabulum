@@ -1,9 +1,15 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { SearchForm } from '../index.tsx';
-import { BrowserRouter } from 'react-router-dom';
+import {BrowserRouter} from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
+
+jest.mock('@/components/SearchResults', () => ({
+    SearchResults: ({ searchParams }: { searchParams: any }) => (
+        <div data-testid="search-results">{JSON.stringify(searchParams)}</div>
+    ),
+}));
 
 describe('SearchForm', () => {
     it('renders the form', () => {
@@ -18,8 +24,7 @@ describe('SearchForm', () => {
         expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
     });
 
-    //TODO: the rest of coverage for userSearchForm
-    /*it('submits the form with valid input', async () => {
+    it('submits the form with valid input', async () => {
         render(
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
@@ -31,13 +36,40 @@ describe('SearchForm', () => {
         const searchInput = screen.getByPlaceholderText('Dish name...');
         const submitButton = screen.getByRole('button', { name: 'Search' });
 
-        await userEvent.type(searchInput, 'pizza');
+        fireEvent.change(searchInput, { target: { value: 'Pasta' } });
         fireEvent.click(submitButton);
 
-        // Wait for the SearchResults component to be rendered
-        const searchResults = await screen.getByTestId('search-results');
+        await waitFor(() => {
+            expect(screen.getByTestId('search-results')).toHaveTextContent('Pasta');
+        });
+    });
 
-        expect(searchResults).toBeInTheDocument();
-    });*/
+    //TODO: should update the form values when URL search params change
+
+    // it('should update the form values when URL search params change', async () => {
+    //     const routes = [
+    //         {
+    //             path: '/',
+    //             element: <SearchForm />,
+    //         },
+    //     ];
+    //
+    //     // Create a URLSearchParams object with the desired query params
+    //     const searchParams = new URLSearchParams();
+    //     searchParams.set('q', 'pizza');
+    //
+    //     // Create the router instance with the initial entries
+    //     const router = createMemoryRouter(routes, {
+    //         initialEntries: [`/?${searchParams.toString()}`],
+    //     });
+    //
+    //     // Render the component with the router instance
+    //     render(<RouterProvider router={router} />);
+    //
+    //     // Wait for the form values to update
+    //     await waitFor(() => {
+    //         expect(screen.getByPlaceholderText('Dish name...')).toHaveValue('pizza');
+    //     });
+    // });
 
 });

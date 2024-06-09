@@ -178,7 +178,13 @@ export function CreateRecipeForm({
 
   // Navigate back on cancel (in edit mode)
   const handleCancel = () => {
-    navigate(-1);
+    if (mode === "edit" && recipeId) {
+      // Redirect to the recipe page
+      navigate(`/user/recipes/${recipeId}`);
+    } else
+    {
+      navigate(-1);
+    }
   };
 
   return (

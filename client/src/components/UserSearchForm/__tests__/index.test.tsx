@@ -41,10 +41,10 @@ describe('UserSearchForm', () => {
             </BrowserRouter>
         );
 
-        const input = screen.getByPlaceholderText('Dish name...');
+        const searchInput = screen.getByPlaceholderText('Dish name...');
         const submitButton = screen.getByText('Search');
 
-        fireEvent.change(input, { target: { value: 'Pasta' } });
+        fireEvent.change(searchInput, { target: { value: 'Pasta' } });
         fireEvent.click(submitButton);
 
         await waitFor(() => {

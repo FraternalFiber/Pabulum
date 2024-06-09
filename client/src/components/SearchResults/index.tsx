@@ -31,18 +31,18 @@ export function SearchResults({ searchParams, dataSource }: SearchResultsProps) 
   // Refetch when search params changed
   useEffect(() => {
     refetch();
-  }, [URLSearchParams]);
+  }, [URLSearchParams, refetch]);
 
   if (isLoading) {
-    return <LoadingSkeletons />;
+    return <LoadingSkeletons data-testid="search-results"/>;
   }
 
   if (isError) {
-    return <ErrorAlert className={"mt-16"} message={"Sorry, we couldn't load your recipes."} />;
+    return <ErrorAlert className={"mt-16"} message={"Sorry, we couldn't load your recipes."} data-testid="search-results"/>;
   }
 
   return recipes?.length ? ( //if recipes is not null and not empty
-    <div className={"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"}>
+    <div className={"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"}  data-testid="search-results">
       {recipes.map((result) => (
         <RecipeResultCard
           id={result.id}

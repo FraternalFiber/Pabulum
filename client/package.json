@@ -38,6 +38,7 @@
     "react-hook-form": "^7.51.0",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.22.1",
+    "resize-observer-polyfill": "^1.5.1",
     "sass": "^1.71.1",
     "sonner": "^1.4.41",
     "styled-components": "^6.1.8",
