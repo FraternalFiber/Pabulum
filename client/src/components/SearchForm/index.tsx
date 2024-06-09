@@ -67,14 +67,14 @@ export function SearchForm() {
         mealType: URLSearchParams.getAll("mealType") ?? [],
       };
 
-      console.log(values)
+      console.log(values);
       // set values in input and filters
       form.setValue("q", values.q);
       form.setValue("diet", values.diet);
       form.setValue("cuisine", values.cuisine);
       form.setValue("mealType", values.mealType);
 
-      console.log(form.getValues('q'));
+      console.log(form.getValues("q"));
       setSearchParams(values);
     }
   }, [URLSearchParams, form]);
@@ -127,7 +127,7 @@ export function SearchForm() {
       {/* If form submitted and query is not empty show search results */}
       {isSubmitted && searchParams && (
         <div className={"mt-7"}>
-          <SearchResults searchParams={searchParams} dataSource={"online"}/>
+          <SearchResults searchParams={searchParams} dataSource={"online"} />
         </div>
       )}
     </>
