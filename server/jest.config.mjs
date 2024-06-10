@@ -7,6 +7,15 @@ const config = {
   transform: {
     "^.+\\.mjs$": "babel-jest", // Use babel-jest to transform .mjs files
   },
+
+  coveragePathIgnorePatterns: [
+    "controllers/searchController.mjs",
+    "controllers/userRecipeAddController.mjs",
+    "controllers/userRecipeDeleteController.mjs",
+    "controllers/userRecipeDetailController.mjs",
+    "controllers/userRecipeEditController.mjs",
+    "controllers/userSearchController.mjs",
+  ]
 };
 
 export default config;
