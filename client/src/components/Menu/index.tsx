@@ -36,6 +36,7 @@ function MenuButton({ title, path, icon }: MenuButtonProps) {
         cn("flex p-4 hover:bg-primary rounded-sm", nav.isActive ? "bg-primary" : "")
       }
       data-testid={title}
+      end
     >
       <div className={"flex items-center mr-2"}>{icon}</div>
       <div>{title}</div>
