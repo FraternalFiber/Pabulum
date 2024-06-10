@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { RecipeDetails } from "../";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRecipe } from "@/services/useRecipe.ts";
@@ -177,23 +177,33 @@ describe("RecipeDetails", () => {
     // });
 
     // expect(navigateMock).toHaveBeenCalledWith({ pathname: "/user/recipes" });
-
-    // await waitFor(() => {
-    // });
   });
-  //
-  // test("handles delete recipe error", async () => {
-  //   useRecipe.mockReturnValue({ data: mockUserRecipeData, isLoading: false, isError: false });
-  //   deleteRecipe.mockResolvedValue({ success: false, message: "Error deleting recipe" });
-  //   render(<RecipeDetails recipeId="1" dataSource="user" />);
-  //
-  //   fireEvent.click(screen.getByText(/delete/i));
-  //   fireEvent.click(screen.getByText(/are you sure/i));
-  //   fireEvent.click(screen.getByText(/delete/i));
-  //
-  //   await waitFor(() => {
-  //     expect(toast.loading).toHaveBeenCalledWith("Deleting a recipe...");
-  //     expect(toast.error).toHaveBeenCalledWith("Error deleting recipe");
-  //   });
-  // });
+
+  test("should handle delete recipe error", async () => {
+    const queryClient = new QueryClient();
+
+    (useRecipe as jest.Mock).mockReturnValue({
+      data: mockUserRecipeData,
+      isLoading: false,
+      isError: false,
+    });
+    (deleteRecipe as jest.Mock).mockResolvedValue({
+      success: false,
+      message: "Error deleting recipe",
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <RecipeDetails recipeId={"1"} dataSource={"user"} />,
+      </QueryClientProvider>,
+    );
+
+    fireEvent.click(screen.getByTestId("delete-recipe-button"));
+    fireEvent.click(screen.getByTestId("delete-recipe-confirm-button"));
+
+    await waitFor(() => {
+      expect(toast.loading).toHaveBeenCalledWith("Deleting a recipe...");
+      expect(toast.error).toHaveBeenCalledWith("We couldn't delete your recipe");
+    });
+  });
 });
