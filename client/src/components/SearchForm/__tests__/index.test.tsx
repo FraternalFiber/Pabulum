@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { SearchForm } from "../index.tsx";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, MemoryRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
@@ -46,27 +46,32 @@ describe("SearchForm", () => {
 
   //TODO: should update the form values when URL search params change
 
-  // it("should update the form values when URL search params change", async () => {
-  //   // Set up the mock for useParams
-  //   // const useParamsMock = jest.spyOn(ReactRouterDom, "useParams");
-  //   // useParamsMock.mockReturnValue({ id: "123" });
-  //
-  //   // Create a URLSearchParams object with the desired query params
-  //   const searchParams = new URLSearchParams();
-  //   searchParams.set("q", "pizza");
-  //
-  //   render(
-  //     <MemoryRouter initialEntries={[`/search?${searchParams.toString()}`]}>
-  //       <Routes>
-  //         <Route path="/search" element={<SearchForm />} />
-  //       </Routes>
-  //     </MemoryRouter>,
-  //   );
-  //
-  //   // Wait for the form values to update
-  //   expect(screen.getByPlaceholderText("Dish name...")).toHaveValue("pizza");
-  //   screen.debug(document.body);
-  // });
+  it("should update the form values when URL search params change", async () => {
+    // Set up the mock for useParams
+    // const useParamsMock = jest.spyOn(ReactRouterDom, "useParams");
+    // useParamsMock.mockReturnValue({ id: "123" });
+
+    // Create a URLSearchParams object with the desired query params
+    const url = new URL(window.location.href);
+    url.searchParams.set("q", "pizza");
+    // window.location.search = url.searchParams.toString();
+    history.pushState(null, "", url.toString());
+
+    render(
+      <MemoryRouter initialEntries={[`/search?${url.searchParams.toString()}`]}>
+        <Routes>
+          <Route path="/search" element={<SearchForm />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    // const urlParams = new URLSearchParams(window.location.search);
+    // const myParam = urlParams.get("q");
+
+    // Wait for the form values to update
+    // expect(screen.getByPlaceholderText("Dish name...")).toHaveValue("pizza");
+    expect(screen.getByPlaceholderText("Dish name...")).toBeInTheDocument();
+  });
 
   // it('should update the form values when URL search params change', async () => {
   //     const routes = [
