@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoadingSkeletons renders correctly 1`] = `
+<div>
+  <div
+    class="flex flex-col gap-y-8 max-w-[40rem]"
+  >
+    <div
+      class="flex flex-col gap-y-3"
+    >
+      <div
+        class="animate-pulse rounded-md bg-muted w-12 h-8"
+      />
+      <div
+        class="animate-pulse rounded-md bg-muted w-full h-10"
+      />
+    </div>
+    <div
+      class="flex flex-col gap-y-3 max-w-96"
+    >
+      <div
+        class="animate-pulse rounded-md bg-muted w-[4.25rem] h-8"
+      />
+      <div
+        data-radix-aspect-ratio-wrapper=""
+        style="position: relative; width: 100%; padding-bottom: 66.66666666666667%;"
+      >
+        <div
+          style="position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px;"
+        >
+          <div
+            class="animate-pulse rounded-md bg-muted w-full h-full"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex gap-x-8 flex-wrap gap-y-5"
+    >
+      <div
+        class="animate-pulse rounded-md bg-muted w-[10.6rem] h-20"
+      />
+      <div
+        class="animate-pulse rounded-md bg-muted w-[8.5rem] h-20"
+      />
+    </div>
+    <div
+      class="flex flex-col gap-y-3"
+    >
+      <div
+        class="animate-pulse rounded-md bg-muted w-[7.7rem] h-8"
+      />
+      <div
+        class="animate-pulse rounded-md bg-muted w-full h-10"
+      />
+    </div>
+  </div>
+</div>
+`;

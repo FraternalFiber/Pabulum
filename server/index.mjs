@@ -15,12 +15,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  res.json({ "status": "Server is working properly" });
+  res.json({ status: "Server is working properly" });
 });
 
 app.use("/", generalRoutes);
 app.use("/user", userRoutes);
 
-app.listen(port, hostname, () => {
+const server = app.listen(port, hostname, () => {
   console.log(`Listening on ${hostname}:${port}`);
 });
+
+export default server;

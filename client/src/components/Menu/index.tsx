@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet.tsx";
 import pabulumLogoWithText from "@/assets/images/logo_with_text.svg";
+import { cn } from "@/lib/utils.ts";
 
 type MenuButtonProps = {
   path: string;
@@ -32,8 +33,9 @@ function MenuButton({ title, path, icon }: MenuButtonProps) {
     <NavLink
       to={path}
       className={(nav) =>
-        `${nav.isActive ? "bg-primary" : ""} flex p-4 hover:bg-primary rounded-sm`
+        cn("flex p-4 hover:bg-primary rounded-sm", nav.isActive ? "bg-primary" : "")
       }
+      data-testid={title}
       end
     >
       <div className={"flex items-center mr-2"}>{icon}</div>
@@ -80,11 +82,15 @@ function Menu() {
         className={
           "hidden sm:flex flex-col w-60 min-w-60 h-full bg-secondary border-r border-gray-300 overflow-y-auto"
         }
+        data-testid={"menu-fixed-nav"}
       >
         <MenuContent />
       </nav>
       {/* Collapsable menu */}
-      <div className={"sm:hidden fixed flex-col w-screen top-0 pl-3 pt-2 pb-1 bg-white z-50"}>
+      <div
+        className={"sm:hidden fixed flex-col w-screen top-0 pl-3 pt-2 pb-1 bg-white z-50"}
+        data-testid={"menu-collapsable-nav"}
+      >
         <Sheet>
           <SheetTrigger>
             <MenuIcon size={35} className={"p-0 m-0"} />

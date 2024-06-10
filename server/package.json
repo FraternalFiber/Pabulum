@@ -4,7 +4,8 @@
   "main": "index.mjs",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --passWithNoTests --detectOpenHandles",
+    "coverage": "jest --coverage --passWithNoTests --detectOpenHandles",
     "start": "node index.mjs",
     "dev": "node index.mjs",
     "deploy": "firebase deploy --only functions:api"
@@ -24,12 +25,15 @@
     "zod-express-middleware": "^1.4.0"
   },
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "description": "",
   "devDependencies": {
+    "@babel/preset-env": "^7.24.7",
     "express": "^4.19.2",
+    "fetch-mock": "^9.11.0",
     "jest": "^29.7.0",
+    "jest-fetch-mock": "^3.0.3",
     "mongoose": "^8.4.0",
     "prettier": "3.2.5",
     "supertest": "^7.0.0"

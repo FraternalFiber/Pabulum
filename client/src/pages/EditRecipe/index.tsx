@@ -1,12 +1,10 @@
-import { Menu } from "@/components/Menu";
-import { Main } from "@/components/Main";
 import { useEffect } from "react";
 import { Heading } from "@/components/Heading";
 import { CreateRecipeForm } from "@/components/CreateRecipeForm";
 import { useRecipe } from "@/services/useRecipe.ts";
 import { useParams } from "react-router-dom";
 import { LoadingSkeletons } from "@/pages/EditRecipe/LoadingSkeletons.tsx";
-import { ErrorAlert } from "@/components/ErrorAlert/ErrorAlert.tsx";
+import { ErrorAlert } from "@/components/ErrorAlert";
 import { BackButton } from "@/components/BackButton";
 
 // Page for creating or editing recipe. Default mode is "create".
@@ -21,16 +19,12 @@ export function EditRecipe() {
   }, []);
 
   // To be improved: code duplication
-
   if (isLoading) {
     return (
       <>
-        <Menu />
-        <Main>
-          <BackButton className={"mb-8 mt-2"} />
-          <Heading content={"Edit recipe"} />
-          <LoadingSkeletons />
-        </Main>
+        <BackButton className={"mb-8 mt-2"} />
+        <Heading content={"Edit recipe"} />
+        <LoadingSkeletons />
       </>
     );
   }
@@ -38,12 +32,9 @@ export function EditRecipe() {
   if (isError) {
     return (
       <>
-        <Menu />
-        <Main>
-          <BackButton className={"mb-8 mt-2"} />
-          <Heading content={"Edit recipe"} />
-          <ErrorAlert className={"mt-20"} message={"Sorry, we couldn't load your recipe"} />
-        </Main>
+        <BackButton className={"mb-8 mt-2"} />
+        <Heading content={"Edit recipe"} />
+        <ErrorAlert className={"mt-20"} message={"Sorry, we couldn't load your recipe"} />
       </>
     );
   }
@@ -51,12 +42,9 @@ export function EditRecipe() {
   if (recipe) {
     return (
       <>
-        <Menu />
-        <Main>
-          <BackButton className={"mb-8 mt-2"} />
-          <Heading content={"Edit recipe"} />
-          <CreateRecipeForm mode={"edit"} initialData={recipe} recipeId={id} />
-        </Main>
+        <BackButton className={"mb-8 mt-2"} />
+        <Heading content={"Edit recipe"} />
+        <CreateRecipeForm mode={"edit"} initialData={recipe} recipeId={id} />
       </>
     );
   }

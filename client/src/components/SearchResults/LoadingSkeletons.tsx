@@ -10,7 +10,7 @@ export function LoadingSkeletons() {
 
     for (let i = 0; i < SKELETONS_NUMBER; i++) {
       content.push(
-        <Skeleton key={i}>
+        <Skeleton key={i} >
           <Card className={"w-full h-96 border-secondary"}>
             <CardHeader>
               <CardTitle>
@@ -32,7 +32,7 @@ export function LoadingSkeletons() {
   };
 
   return (
-    <div className={"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"}>
+    <div className={"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"} data-testid="loading-skeletons">
       {getLoadingSkeletons()}
     </div>
   );

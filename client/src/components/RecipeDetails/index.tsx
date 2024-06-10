@@ -8,7 +8,7 @@ import { TStep } from "@/types/TStep.ts";
 import { Separator } from "@/components/ui/separator.tsx";
 import React, { useState } from "react";
 import { useRecipe } from "@/services/useRecipe.ts";
-import { ErrorAlert } from "@/components/ErrorAlert/ErrorAlert.tsx";
+import { ErrorAlert } from "@/components/ErrorAlert";
 import { LoadingSkeletons } from "@/components/RecipeDetails/LoadingSkeletons.tsx";
 import { TDataSource } from "@/types/TDataSource.ts";
 import { TIngredient } from "@/types/TIngredient.ts";
@@ -39,7 +39,7 @@ function RecipeLabel({ children }: RecipeLabelProps) {
   return <div className={"text-2xl font-medium mb-2"}>{children}</div>;
 }
 
-type RecipeDetailsProps = {
+export type RecipeDetailsProps = {
   recipeId: string;
   dataSource: TDataSource;
 };
@@ -64,7 +64,12 @@ function RecipeMenuBar({ dataSource, recipeId, deleteRecipe }: RecipeMenuBarProp
         {/*#region Delete button */}
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button type={"button"} variant={"ghost"} className={"hover:bg-destructive"}>
+            <Button
+              type={"button"}
+              variant={"ghost"}
+              className={"hover:bg-destructive"}
+              data-testid={"delete-recipe-button"}
+            >
               <Trash2 />
             </Button>
           </AlertDialogTrigger>
@@ -81,6 +86,7 @@ function RecipeMenuBar({ dataSource, recipeId, deleteRecipe }: RecipeMenuBarProp
                 type={"button"}
                 className={buttonVariants({ variant: "destructive" })}
                 onClick={deleteRecipe}
+                data-testid={"delete-recipe-confirm-button"}
               >
                 Delete
               </AlertDialogAction>

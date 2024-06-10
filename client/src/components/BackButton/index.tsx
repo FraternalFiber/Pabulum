@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button.tsx";
 type BackButtonProps = {
   className?: string;
   text?: string;
-  type?: string;
+  type?: "button" | "link";
 };
 
 export function BackButton({ className, text = "Back", type }: BackButtonProps) {
@@ -19,7 +19,7 @@ export function BackButton({ className, text = "Back", type }: BackButtonProps) 
 
   if (type === "button") {
     return (
-      <Button className={cn(className, "bg-secondary")} onClick={handleBackButton}>
+      <Button className={cn(className, "bg-secondary")} onClick={handleBackButton} type={"button"}>
         {text}
       </Button>
     );

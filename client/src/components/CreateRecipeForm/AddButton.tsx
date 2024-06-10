@@ -37,7 +37,7 @@ export function AddButton({ form, fieldName, step = 1, maxValue }: AddButtonProp
   }
 
   return (
-    <Button type={"button"} className={"h-9 p-2 rounded-full"} onClick={add}>
+    <Button type={"button"} role={"button"} className={"h-9 p-2 rounded-full"} onClick={add}>
       <Plus size={20} />
     </Button>
   );

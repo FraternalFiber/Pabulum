@@ -67,15 +67,17 @@ export function SearchForm() {
         mealType: URLSearchParams.getAll("mealType") ?? [],
       };
 
+      console.log(values);
       // set values in input and filters
       form.setValue("q", values.q);
       form.setValue("diet", values.diet);
       form.setValue("cuisine", values.cuisine);
       form.setValue("mealType", values.mealType);
 
+      console.log(form.getValues("q"));
       setSearchParams(values);
     }
-  }, [URLSearchParams]);
+  }, [URLSearchParams, form]);
 
   return (
     <>

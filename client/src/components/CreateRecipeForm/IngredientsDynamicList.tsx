@@ -138,6 +138,7 @@ export function IngredientsDynamicList({ form }: IngredientsTableProps) {
                   type={"button"}
                   className={"bg-transparent hover:bg-destructive"}
                   onClick={() => removeIngredient(index)}
+                  data-testid={"delete-ingredient-button"}
                 >
                   <Trash2 color={"black"} />
                 </Button>
@@ -148,7 +149,11 @@ export function IngredientsDynamicList({ form }: IngredientsTableProps) {
         </TableBody>
         {/*#region Button to add a row with a new ingredient */}
         <TableCaption>
-          <Button type={"button"} onClick={() => append({ name: "", quantity: "" })}>
+          <Button
+            type={"button"}
+            onClick={() => append({ name: "", quantity: "" })}
+            data-testid={"add-ingredient-button"}
+          >
             <Plus />
           </Button>
         </TableCaption>

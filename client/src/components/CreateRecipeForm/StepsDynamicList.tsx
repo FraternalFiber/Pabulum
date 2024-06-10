@@ -17,6 +17,8 @@ export function StepsDynamicList({ form }: StepsTableProps) {
     name: "steps",
   });
 
+  console.log(fields);
+
   function removeStep(index: number) {
     remove(index);
 
@@ -98,6 +100,7 @@ export function StepsDynamicList({ form }: StepsTableProps) {
                 type={"button"}
                 className={"bg-transparent hover:bg-destructive"}
                 onClick={() => removeStep(index)}
+                data-testid={"delete-step-button"}
               >
                 <Trash2 color={"black"} />
               </Button>
@@ -107,7 +110,11 @@ export function StepsDynamicList({ form }: StepsTableProps) {
       </div>
       {/* Button to add a row with a new step */}
       <div className={"flex justify-center mt-2"}>
-        <Button type={"button"} onClick={() => append({ instruction: "" })}>
+        <Button
+          type={"button"}
+          onClick={() => append({ instruction: "" })}
+          data-testid={"add-step-button"}
+        >
           <Plus />
         </Button>
       </div>
