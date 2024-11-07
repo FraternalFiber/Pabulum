@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { routes } from "@/helpers/routes.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "sonner";
 import { Menu } from "@/components/Menu";
 import { Main } from "@/components/Main";
@@ -24,7 +24,7 @@ function App() {
       {/* Component for displaying toasts */}
       <Toaster richColors visibleToasts={1} />
       {/* Dev tools */}
-      <ReactQueryDevtools initialIsOpen={false} buttonPosition={"bottom-left"} />
+      {/*<ReactQueryDevtools initialIsOpen={false} buttonPosition={"bottom-left"} />*/}
     </QueryClientProvider>
   );
 }

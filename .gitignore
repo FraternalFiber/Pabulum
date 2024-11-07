@@ -6,3 +6,4 @@
 /client/coverage/
 /client/dist/
 /server/coverage/
+/node_modules/
