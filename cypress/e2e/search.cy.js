@@ -81,4 +81,24 @@ describe("Search functionality", () => {
     cy.get("button[type='submit']").click();
     cy.get("[data-testid='search-container']").should("not.exist");
   });
+
+  it("Redirect to correct recipe page after clicking a result card", () => {
+    cy.get("input[name='q']").type("spaghetti");
+    cy.get("button[type='submit']").click();
+
+    // Wait until results are loaded
+    cy.get("[data-testid='loading-skeletons']").should("not.exist");
+
+    cy.get("[data-testid='search-container']").then(($container) => {
+      if ($container.find("[data-testid='search-results']").length > 0) {
+        cy.get("[data-testid='recipe-result-card']")
+          .eq(0)
+          .invoke("attr", "href")
+          .then((recipe_link) => {
+            cy.get("[data-testid='recipe-result-card']").eq(0).click();
+            cy.url().should("eq", `http://localhost:5173${recipe_link}`);
+          });
+      }
+    });
+  });
 });
