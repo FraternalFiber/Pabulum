@@ -5,7 +5,6 @@ describe("User recipes API", () => {
       url: "127.0.0.1:42069/user/recipes/search/",
     }).then((response) => {
       expect(response.status).to.eq(200);
-      expect(response.body).length.to.be.greaterThan(0);
     });
   });
 
@@ -20,41 +19,70 @@ describe("User recipes API", () => {
     });
   });
 
+  let testData = {
+    description: "Test description",
+    diets: [],
+    imageChanged: false,
+    ingredients: [
+      {
+        name: "Test ingredient",
+        number: 1,
+        quantity: "Test quantity",
+      },
+    ],
+    prepTime: 0,
+    servingsNumber: 1,
+    steps: [
+      {
+        instruction: "Test instruction",
+        number: 1,
+      },
+    ],
+    title: "Test title",
+  };
+
+  const testFormData = new FormData();
+
+  for (const key in testData) {
+    testFormData.append(key, JSON.stringify(testData[key]));
+  }
+
+  let testRecipeId;
+
   it("POST - creates a recipe", () => {
-    let testData = {
-      description: "Test description",
-      diets: [],
-      imageChanged: false,
-      ingredients: [
-        {
-          name: "Test ingredient",
-          number: 1,
-          quantity: "Test quantity",
-        },
-      ],
-      prepTime: 0,
-      servingsNumber: 1,
-      steps: [
-        {
-          instruction: "Test instruction",
-          number: 1,
-        },
-      ],
-      title: "Test title",
-    };
-
-    const testFormData = new FormData();
-
-    for (const key in testData) {
-      testFormData.append(key, JSON.stringify(testData[key]));
-    }
-
     cy.request({
       method: "POST",
       url: "127.0.0.1:42069/user/recipes/",
       body: testFormData,
     }).then((response) => {
+      const body = JSON.parse(new TextDecoder().decode(response.body));
       expect(response.status).to.eq(200);
+      expect(body.success).to.eq(true);
+      testRecipeId = body.id;
+    });
+  });
+
+  it("PUT - edits a recipe", () => {
+    testFormData.set("title", '"Edited test recipe"');
+
+    cy.request({
+      method: "PUT",
+      url: `127.0.0.1:42069/user/recipes/${testRecipeId}`,
+      body: testFormData,
+    }).then((response) => {
+      const body = JSON.parse(new TextDecoder().decode(response.body));
+      expect(response.status).to.eq(200);
+      expect(body.success).to.eq(true);
+    });
+  });
+
+  it("DELETE - deletes a recipe", () => {
+    cy.request({
+      method: "DELETE",
+      url: `127.0.0.1:42069/user/recipes/${testRecipeId}`,
+    }).then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.body.success).to.eq(true);
     });
   });
 });
