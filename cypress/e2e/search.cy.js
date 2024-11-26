@@ -3,22 +3,22 @@ describe("Search page elements displaying", () => {
     cy.visit("localhost:5173/search");
   });
 
-  it("Title exists", () => {
+  it("Title is displayed", () => {
     cy.contains("Find your favourite recipes");
   });
-  it("Search input exists", () => {
+  it("Search input is displayed", () => {
     cy.get("input[name='q']");
   });
-  it("Submit button exists", () => {
+  it("Submit button is displayed", () => {
     cy.get("button[type='submit']");
   });
-  it("Diet filter exists", () => {
+  it("Diet filter is displayed", () => {
     cy.get("button[role='combobox']").eq(0).should("have.text", "Diet");
   });
-  it("Cuisine filter exists", () => {
+  it("Cuisine filter is displayed", () => {
     cy.get("button[role='combobox']").eq(1).should("have.text", "Cuisine");
   });
-  it("Meal type filter exists", () => {
+  it("Meal type filter is displayed", () => {
     cy.get("button[role='combobox']").eq(2).should("have.text", "Meal type");
   });
 });
@@ -82,7 +82,7 @@ describe("Search functionality", () => {
     cy.get("[data-testid='search-container']").should("not.exist");
   });
 
-  it("Redirect to correct recipe page after clicking a result card", () => {
+  it("Redirects to correct recipe page after clicking a result card", () => {
     cy.get("input[name='q']").type("spaghetti");
     cy.get("button[type='submit']").click();
 

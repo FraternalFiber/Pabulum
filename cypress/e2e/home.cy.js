@@ -3,16 +3,16 @@ describe("Home page elements displaying", () => {
     cy.visit("localhost:5173");
   });
 
-  it("Slogan exists", () => {
+  it("Slogan is displayed", () => {
     cy.contains("Savor the flavor, master the meal!");
   });
   it("Logo is visible", () => {
     cy.get('[alt="Pabulum"]').should("be.visible");
   });
-  it("Search input exists", () => {
+  it("Search input is displayed", () => {
     cy.get('input[name="q"]');
   });
-  it("Submit button exists", () => {
+  it("Submit button is displayed", () => {
     cy.get('button[type="submit"]');
   });
 });
