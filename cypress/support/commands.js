@@ -24,10 +24,10 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-Cypress.Commands.add("typeIntoSearchField", (query) => {
-  cy.get("input[name='q']").type(query);
-});
-
 Cypress.Commands.add("clickSubmitButton", () => {
   cy.get("button[type='submit']").click();
+});
+
+Cypress.Commands.add("typeIntoInputField", (name, value) => {
+  cy.get(`input[name='${name}']`).type(value);
 });

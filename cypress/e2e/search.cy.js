@@ -36,7 +36,7 @@ describe("Search functionality", () => {
 
   testSearchQueries.forEach((testSearchQuery) => {
     it(`Displays correct results or a "no results" message after searching for a keyword ${testSearchQuery.diet || testSearchQuery.cuisine || testSearchQuery.mealType ? "with filters" : ""}`, () => {
-      cy.typeIntoSearchField(testSearchQuery.q);
+      cy.typeIntoInputField("q", testSearchQuery.q);
 
       if (testSearchQuery.diet) {
         cy.get("button[role='combobox']").eq(0).click();
@@ -77,13 +77,13 @@ describe("Search functionality", () => {
   });
 
   it("Does not perform a search after typing an empty query", () => {
-    cy.typeIntoSearchField(" ");
+    cy.typeIntoInputField("q", " ");
     cy.clickSubmitButton();
     cy.get("[data-testid='search-container']").should("not.exist");
   });
 
   it("Redirects to correct recipe page after clicking a result card", () => {
-    cy.typeIntoSearchField("spaghetti");
+    cy.typeIntoInputField("q", "spaghetti");
     cy.clickSubmitButton();
 
     // Wait until results are loaded

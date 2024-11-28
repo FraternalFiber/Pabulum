@@ -26,7 +26,7 @@ describe("Home page search", () => {
 
   testSearchQueries.forEach((testSearchQuery) => {
     it("Redirects to /search after typing a keyword", () => {
-      cy.typeIntoSearchField(testSearchQuery);
+      cy.typeIntoInputField("q", testSearchQuery);
       cy.clickSubmitButton();
       cy.url().should(
         "eq",
@@ -41,7 +41,7 @@ describe("Home page search", () => {
   });
 
   it("Does not redirect after typing an empty query", () => {
-    cy.typeIntoSearchField(" ");
+    cy.typeIntoInputField("q", " ");
     cy.clickSubmitButton();
     cy.url().should("eq", `http://localhost:5173/`);
   });

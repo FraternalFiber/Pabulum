@@ -2,7 +2,7 @@
 
 declare namespace Cypress {
   interface Chainable<Subject = any> {
-    typeIntoSearchField(query: string): Chainable<any>;
     clickSubmitButton(): Chainable<any>;
+    typeIntoInputField(name: string, value: string): Chainable<any>;
   }
 }
