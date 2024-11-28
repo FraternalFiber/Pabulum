@@ -35,8 +35,8 @@ describe("Search functionality", () => {
   ];
 
   testSearchQueries.forEach((testSearchQuery) => {
-    it("Displays correct results or a 'no results' message after searching for a keyword", () => {
-      cy.get("input[name='q']").type(testSearchQuery.q);
+    it(`Displays correct results or a "no results" message after searching for a keyword ${testSearchQuery.diet || testSearchQuery.cuisine || testSearchQuery.mealType ? "with filters" : ""}`, () => {
+      cy.typeIntoSearchField(testSearchQuery.q);
 
       if (testSearchQuery.diet) {
         cy.get("button[role='combobox']").eq(0).click();
@@ -53,7 +53,7 @@ describe("Search functionality", () => {
         cy.get(`div[data-value="${testSearchQuery.mealType}"]`).click();
       }
 
-      cy.get("button[type='submit']").click();
+      cy.clickSubmitButton();
 
       // Wait until results are loaded
       cy.get("[data-testid='loading-skeletons']").should("not.exist");
@@ -72,19 +72,19 @@ describe("Search functionality", () => {
   });
 
   it("Does not perform a search after not typing anything", () => {
-    cy.get("button[type='submit']").click();
+    cy.clickSubmitButton();
     cy.get("[data-testid='search-container']").should("not.exist");
   });
 
   it("Does not perform a search after typing an empty query", () => {
-    cy.get("input[name='q']").type(" ");
-    cy.get("button[type='submit']").click();
+    cy.typeIntoSearchField(" ");
+    cy.clickSubmitButton();
     cy.get("[data-testid='search-container']").should("not.exist");
   });
 
   it("Redirects to correct recipe page after clicking a result card", () => {
-    cy.get("input[name='q']").type("spaghetti");
-    cy.get("button[type='submit']").click();
+    cy.typeIntoSearchField("spaghetti");
+    cy.clickSubmitButton();
 
     // Wait until results are loaded
     cy.get("[data-testid='loading-skeletons']").should("not.exist");
@@ -94,9 +94,9 @@ describe("Search functionality", () => {
         cy.get("[data-testid='recipe-result-card']")
           .eq(0)
           .invoke("attr", "href")
-          .then((recipe_link) => {
+          .then((recipeId) => {
             cy.get("[data-testid='recipe-result-card']").eq(0).click();
-            cy.url().should("eq", `http://localhost:5173${recipe_link}`);
+            cy.url().should("eq", `http://localhost:5173${recipeId}`);
           });
       }
     });
