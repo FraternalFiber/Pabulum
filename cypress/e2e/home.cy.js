@@ -25,7 +25,7 @@ describe("Home page search", () => {
   let testSearchQueries = ["pizza", "qwertyuiop123"];
 
   testSearchQueries.forEach((testSearchQuery) => {
-    it("Redirects to /search after typing a keyword", () => {
+    it("Redirects to search page after searching for a keyword", () => {
       cy.typeIntoInputField("q", testSearchQuery);
       cy.clickSubmitButton();
       cy.url().should(

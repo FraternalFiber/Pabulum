@@ -19,7 +19,7 @@ describe("User recipes API", () => {
     });
   });
 
-  let testData = {
+  let testRecipeData = {
     description: "Test description",
     diets: [],
     imageChanged: false,
@@ -43,8 +43,8 @@ describe("User recipes API", () => {
 
   const testFormData = new FormData();
 
-  for (const key in testData) {
-    testFormData.append(key, JSON.stringify(testData[key]));
+  for (const key in testRecipeData) {
+    testFormData.append(key, JSON.stringify(testRecipeData[key]));
   }
 
   let testRecipeId;

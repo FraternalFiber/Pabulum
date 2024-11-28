@@ -29,5 +29,5 @@ Cypress.Commands.add("clickSubmitButton", () => {
 });
 
 Cypress.Commands.add("typeIntoInputField", (name, value) => {
-  cy.get(`input[name='${name}']`).type(value);
+  cy.get(`[name='${name}']`).type(value);
 });
