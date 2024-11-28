@@ -73,5 +73,12 @@ describe("Create recipe page create functionality", () => {
     cy.clickSubmitButton();
     cy.wait(4000);
     cy.url().should("not.eq", `http://localhost:5173/user/recipes/create`);
+    cy.get("[data-testid='delete-recipe-button']").click();
+    cy.get("[data-testid='delete-recipe-confirm-button']").click();
+  });
+
+  it("Does not redirect after not typing anything", () => {
+    cy.clickSubmitButton();
+    cy.url().should("eq", `http://localhost:5173/user/recipes/create`);
   });
 });
