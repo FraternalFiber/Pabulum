@@ -22,7 +22,7 @@ export const recipeDetailController = async (req, res) => {
   // console.log('Details fetch: ' + test_counter)
 
   try {
-    fetch(url)
+    return fetch(url)
       .then((response) => {
         if (!response.ok) {
           throw {

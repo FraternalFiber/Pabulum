@@ -2,32 +2,37 @@ import request from "supertest";
 import server from "./index.mjs";
 
 describe("Server Tests", () => {
-  afterAll(() => {
-    server.close(); // Close the server after all tests
+  let logSpy;
+
+  beforeAll(() => {
+    logSpy = jest.spyOn(console, "log").mockImplementation(() => {});
   });
 
-  describe("GET /", () => {
-    it("should return a success message", async () => {
-      const response = await request(server).get("/");
-      expect(response.statusCode).toBe(200);
-      expect(response.body).toEqual({ status: "Server is working properly" });
-    });
+  afterAll((done) => {
+    logSpy.mockRestore();
+
+    if (server.listening) {
+      server.close(done);
+      return;
+    }
+
+    done();
   });
 
-  describe("Middleware Tests", () => {
-    it("should use the cors middleware", async () => {
-      const response = await request(server).get("/");
-      expect(response.headers["access-control-allow-origin"]).toBeDefined();
-    });
+  it("GET / should return a success message", async () => {
+    const response = await request(server)
+      .get("/");
 
-    it("should use the json middleware", async () => {
-      const response = await request(server).post("/").send({ data: "test" });
-      expect(response.statusCode).toBe(404); // Assuming no route is defined for POST /
-    });
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toEqual({ status: "Server is working properly" });
+  });
 
-    it("should use the urlencoded middleware", async () => {
-      const response = await request(server).post("/").send("data=test");
-      expect(response.statusCode).toBe(404); // Assuming no route is defined for POST /
-    });
+  it("should allow cross-origin requests with CORS", async () => {
+    const response = await request(server)
+      .get("/")
+      .set("Origin", "http://localhost:3000");
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers["access-control-allow-origin"]).toBe("*");
   });
 });

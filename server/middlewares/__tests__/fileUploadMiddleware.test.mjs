@@ -1,19 +1,32 @@
-// uploadFile.test.mjs
 import express from "express";
 import request from "supertest";
-import multer from "multer";
 import { uploadFile } from "../fileUploadMiddleware.mjs";
-import { ACCEPTED_IMAGE_TYPES, MAX_RECIPE_IMAGE_SIZE } from "../../constants.mjs";
-import fs from "fs";
-import path from "path";
+import { MAX_RECIPE_IMAGE_SIZE } from "../../constants.mjs";
 
-const app = express();
-app.use(express.json());
-app.post("/upload", uploadFile(), (req, res) => {
-  res.status(200).json({ success: true, message: "File uploaded successfully" });
-});
+const createApp = () => {
+  const app = express();
+  app.use(express.json());
+
+  app.post("/upload", uploadFile(), (req, res) => {
+    res.status(200).json({
+      success: true,
+      message: "File uploaded successfully",
+      body: req.body,
+      filePresent: Boolean(req.file),
+      hasImageField: Object.prototype.hasOwnProperty.call(req.body, "image"),
+    });
+  });
+
+  return app;
+};
 
 describe("uploadFile middleware", () => {
+  let app;
+
+  beforeEach(() => {
+    app = createApp();
+  });
+
   it("should upload a valid image file", async () => {
     const response = await request(app)
       .post("/upload")
@@ -26,6 +39,9 @@ describe("uploadFile middleware", () => {
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.message).toBe("File uploaded successfully");
+    expect(response.body.filePresent).toBe(true);
+    expect(response.body.body.key).toBe("value");
+    expect(response.body.hasImageField).toBe(false);
   });
 
   it("should return an error for unsupported file type", async () => {
@@ -77,37 +93,26 @@ describe("uploadFile middleware", () => {
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.message).toBe("File uploaded successfully");
+    expect(response.body.filePresent).toBe(false);
+    expect(response.body.body.key).toBe("value");
+    expect(response.body.hasImageField).toBe(false);
   });
 
-  it("should delete req.body.image if image is attached", async () => {
+  it("should delete req.body.image when image is attached", async () => {
     const response = await request(app)
       .post("/upload")
       .attach("image", Buffer.from("fake image content"), {
         filename: "valid-image.jpg",
         contentType: "image/jpeg",
       })
-      .field("image", JSON.stringify("value"));
+      .field("image", JSON.stringify("value"))
+      .field("key", JSON.stringify("value"));
 
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.message).toBe("File uploaded successfully");
-
-    // Check that req.body.image has been deleted
-    // To do this, we need to add a custom middleware in the test app to inspect req.body
-    app.post("/inspect", (req, res) => {
-      if (req.body.image === undefined) {
-        res.status(200).json({ success: true, message: "Image field deleted" });
-      } else {
-        res.status(400).json({ success: false, message: "Image field not deleted" });
-      }
-    });
-
-    const inspectResponse = await request(app)
-      .post("/inspect")
-      .send({ ...response.body });
-
-    expect(inspectResponse.status).toBe(200);
-    expect(inspectResponse.body.success).toBe(true);
-    expect(inspectResponse.body.message).toBe("Image field deleted");
+    expect(response.body.filePresent).toBe(true);
+    expect(response.body.body.key).toBe("value");
+    expect(response.body.hasImageField).toBe(false);
   });
 });
