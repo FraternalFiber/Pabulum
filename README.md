@@ -32,6 +32,7 @@
 - Next thing to do is pasting API key from ([Spoonacular API](https://spoonacular.com/food-api) -> console -> Profile) into the `.env` file under project directory `/server/` as following: `SPOONACULAR_APIKEY=<API key here>`
 
 - In console go to project directory
+- in both `/server/` and `/client/` directories run `npm install` to install all needed dependencies
 - To run server run `npm run dev` command in `/server/` directory
 - To run client run `npm run dev` command in `/client/` directory
 
