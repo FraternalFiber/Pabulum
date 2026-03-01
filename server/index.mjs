@@ -4,10 +4,11 @@ import cors from "cors";
 
 import generalRoutes from "./routes/generalRoutes.mjs";
 import userRoutes from "./routes/userRoutes.mjs";
+import { HOST, PORT } from "./constants.mjs";
 
 const app = express();
-const hostname = "127.0.0.1";
-const port = 42069;
+const hostname = HOST;
+const port = PORT;
 
 // Middleware for sending cross-origin resource sharing HTTP header, in order for client to access API responses
 app.use(cors());

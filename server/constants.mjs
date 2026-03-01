@@ -1,3 +1,6 @@
+export const HOST = "127.0.0.1";
+export const PORT = 42069;
+
 export const SPOONACULAR_APIKEY = process.env.SPOONACULAR_APIKEY;
 export const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png"];
 export const MAX_RECIPE_IMAGE_SIZE = 5242881; // 5 MB + 1 (BUG: multer doesn't accept files with exact max size)
